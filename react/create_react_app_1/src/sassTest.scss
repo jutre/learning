@@ -1,0 +1,35 @@
+$text-color:blue;
+
+
+.test-media-queries{
+    color: $text-color;
+    width: 40%;
+    height: 240px;
+    border: 1px solid red;
+    margin: 0 auto;
+    background-color: grey;
+
+    .child-of-test-media-queries{
+        color: yellow;
+        font-weight: bold;
+    }  
+
+    &:after{
+        content: " ==== default value, all max-width exceeded SASS";
+    }
+
+    @media screen and (max-width: 800px) {
+        width: 60%;
+        &:after{
+            content: " ==== max w 800 px SASS";
+        }
+    }
+
+    @media screen and (max-width: 400px) {
+        width: 95%;
+        &:after{
+            content: " ==== max w 400 px SASS";
+        }
+    }
+
+}

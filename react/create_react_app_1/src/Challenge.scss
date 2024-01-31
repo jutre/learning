@@ -1,0 +1,379 @@
+/*for easy adjusting device width if needed later */
+$mobile-breakpoint:790px; 
+
+:root{ 
+    --newsletter-form-indent: 20px;
+    --links-hover-color: #4066A5;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+body, h1, h2, ul, li{
+    margin: 0;
+}
+body, a, input{
+    color: #6A707B;
+    text-decoration: none;
+    font-family: 'Arial';
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 28px;
+}
+
+
+a:hover{
+    color: var(--links-hover-color); 
+}
+
+.cols-container{
+    display: flex;
+    min-height: 100vh;
+    @media screen and (max-width: $mobile-breakpoint) {
+        /*we need div that spans till screen bottom, but content is vertically shorter, set it this way;
+        it will be used to show background image till screen bottom behind .content-wrapper*/
+        height: 100vh;
+    }
+}
+
+.left-col{
+    flex: 0 0 680px; /*defined width for desktop*/
+    padding: 91px 80px 0 80px;
+    background: linear-gradient(180deg, #FFFFFF 0%, #F2F5FA 100%);
+    
+    @media screen and (max-width: $mobile-breakpoint) {
+        background: none;
+        padding: 0;
+
+        /*div width determined by screen width*/
+        width: unset; 
+        flex: 1 1 auto;
+        
+        /*we need that second child of .left-col (.content-wrapper) would span till the bottom of parent 
+        div  to display background img till the bottom of mobile screen*/
+        display: flex;
+        flex-direction: column;
+    }
+}
+
+.top-bar{
+    color: black;
+    display: flex;
+    justify-content: space-between;
+    
+    height: 40px;
+
+    @media screen and (max-width: $mobile-breakpoint){
+        background-color: #FFFFFF;
+        height: 66px;
+        align-items: center;
+        padding: 0 20px;
+        /*flex-shrink: 0;*/
+    }
+}
+
+.top-bar{
+    .logo-pineaple{
+        width: 118px;
+        height: 40px;
+        background-image: url(challenge_assets/logo_pineapple.svg);
+
+        @media screen and (max-width: $mobile-breakpoint){
+            width: 24px;
+            background-image: url(challenge_assets/logo_pineapple_mobile.svg);
+        }
+    }
+
+    .links{
+        margin-top: 14px;
+
+        @media screen and (max-width: $mobile-breakpoint){
+            margin-top: 6px;
+        }
+    }
+    .links a{
+        line-height: 26px;
+
+        @media screen and (max-width: $mobile-breakpoint){
+            font-size: 14px;
+            line-height: 24px;
+        }
+    }
+    .links ul{
+        display: flex;
+        list-style: none;
+        padding: 0;
+    }
+    
+    .links ul li{
+        margin-left: 20px;
+    }
+}
+ 
+
+
+
+
+.content{
+    padding: 234px var(--newsletter-form-indent) 60px var(--newsletter-form-indent);
+}
+
+
+.newsletter-subscr-form h1{
+    font-family: Georgia;
+    font-size: 32px;
+    font-weight: 400;
+    line-height: 44px;
+    letter-spacing: 0em;
+    text-align: left;
+    color: #131821;
+}
+
+.newsletter-subscr-form h2{
+    font-weight: 400;
+    font-size: 16px;
+    margin-top: 15px;
+}
+
+.newsletter-subscr-form .subscription-success-logo{
+    width: 44px;
+    height: 70px; 
+    background-image: url(challenge_assets/subscription_success.svg);
+
+    /*in form and success view first H1 in subscription form component is in the same distance from page top 
+    element, it is defined using div.content padding. But sucess logo is above that H1, lift it up
+    by usin absolute position and negative margin, as all other elements' distaces are to be the same */
+    position: absolute;
+    margin-top: -100px;
+
+    @media screen and (max-width: $mobile-breakpoint){
+        position: static;
+        margin-top: 0;
+    }
+}
+
+.email-input{
+    display: flex;
+    margin-top: 50px;
+    border-left: 4px solid #4066A5;
+}
+
+.email-input input[type="text"]{
+    height: 70px;
+    flex-grow: 1; /*expand width till submit button*/
+    border: 1px solid #E3E3E4;
+    border-left: none;
+    border-right: none;
+    padding-left: 44px;
+    line-height: 24px;
+    font-size: 16px;
+    outline: none;
+}
+
+.submit-button{
+    background-color: white;
+    width: 83px;
+    border: 1px solid #E3E3E4;
+    border-left: none;
+    /*for centering on both axis*/
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.submit-button input{
+    display: none;
+}
+
+.submit-button svg{
+    width:40px;
+    fill: #131821;
+    opacity: 0.3;
+}
+
+.email-input:hover, .email-input:hover input[type="text"], .email-input:hover .submit-button , .email-input:hover .submit-button svg{
+    border-color: #4066A5 ;
+    fill: #4066A5 ;
+    opacity: 1;
+}
+
+.email-input.error, .email-input.error input[type="text"], .email-input.error .submit-button{
+    border-color: red;
+}
+
+.error-msg{
+    color: #B80808;
+    font-size: 12px;
+    font-family: Arial;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 18px; 
+    margin-top: 5px;
+    /* there is enough place for error message under input, make it not to shift following elements down*/
+    position: absolute;
+}
+
+.agree-toc-input{
+    margin-top: 50px;
+    line-height: 28px;
+}
+
+/*copied custom checkbox styling from tailwindcss*/
+[type="checkbox"] {
+    appearance: none;
+    background-color: #4066A5;
+    width: 20px;
+    height: 20px;
+    margin: 0;
+}
+[type="checkbox"]:checked {
+    background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 16 16' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L6.5 9.086l4.293-4.293a1 1 0 0 1 1.414 0z'/%3E%3C/svg%3E");
+}
+
+.agree-toc-input input[type="checkbox"]{
+    width: 20px;
+    height: 20px;
+    margin: 0 15px 0 0;
+}
+.agree-toc-input a{
+    color: #131821;
+    text-decoration: underline;
+}
+.agree-toc-input a:hover{
+    color: var(--links-hover-color);
+}
+
+.social-netw-links{
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding-top: 50px;
+    margin-top: 50px; /*same distance from form view and submitted form above*/
+    border-top: 1px solid #E3E3E4;
+}
+
+/* .social-netw-links div{
+    width: 46px;
+    height: 46px;
+    border: 2px solid #E2E3E4;
+    border-radius: 50%;
+    text-align: center;
+    
+} */
+.social-netw-links div a{
+    display: block;
+    width: 46px;
+    height: 46px;
+    border: 2px solid #E2E3E4;
+    border-radius: 50%;
+    text-align: center;
+
+    line-height: 42px;
+    color: rgba(19, 24, 33, 0.3);  
+}
+.social-netw-links div a:hover{
+    box-shadow: 0px 20px 40px rgba(19, 24, 33, 0.3);
+}
+
+.social-netw-links div.facebook a:hover{
+    color: #FFFFFF;
+    border-color: #4267B2;
+    background-color: #4267B2;
+}
+
+.social-netw-links div.facebook a:active{
+    color: #FFFFFF;
+    border-color: red;
+    background-color: red;
+}
+
+.social-netw-links div.instagram a:hover{
+    color: #FFFFFF;
+    border-color: #C13584;
+    background-color: #C13584;
+}
+
+.social-netw-links div.twitter a:hover{
+    color: #FFFFFF;
+    border-color: #1DA1F2;
+    background-color: #1DA1F2;
+}
+
+.social-netw-links div.youtube a:hover{
+    color: #FFFFFF;
+    border-color: #FF0000;
+    background-color: #FF0000;
+}
+
+.right-col{
+    background-image: url(challenge_assets/background_pineaple.jpeg);    
+    background-size: cover;
+    flex: 1 1 auto;
+}
+
+@media screen and (max-width: $mobile-breakpoint) {
+
+
+
+
+    .content-wrapper{
+        flex-grow: 1;
+        background-image: url(challenge_assets/background_pineaple.jpeg);    
+        background-size: cover;
+        background-position-x: -281px;
+        padding: 188px 20px 0 20px;
+    }
+    .content{
+        background: linear-gradient(180deg, #FFFFFF 0%, #F2F5FA 100%);
+        padding: 30px 20px;
+    }
+
+    .newsletter-subscr-form{
+        margin: unset;  
+        padding-bottom: 20px;  
+    }
+
+    .newsletter-subscr-form h1{
+        font-size: 24px;
+        line-height: 34px;
+    }
+
+    .newsletter-subscr-form h2{
+        font-size: 14px;
+        line-height: 26px;
+        margin-top: 10px;
+    }
+    
+    .email-input{
+        margin-left: 0;
+        margin-top: 20px;
+    }
+
+    .email-input input[type="text"]{
+        height: 60px;
+        padding-left: 19px;
+    }
+
+    .submit-button{
+        width: 49px;
+    }
+    .submit-button svg {
+        width: 34px;
+        height: 24px;
+    }
+
+    .agree-toc-input{
+        margin-top: 20px;
+    }
+
+    .social-netw-links{
+        margin-top: 20px;
+        gap: 10px;
+    }
+
+    .right-col{
+        background: none;
+        flex: 0 0 0;
+    }
+
+}
