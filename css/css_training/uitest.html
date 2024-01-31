@@ -1,0 +1,1715 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>CSS test</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/3.0.0/css/font-awesome.min.css"  crossorigin="anonymous">
+        <style type="text/css" media="screen">
+            /*@font-face {
+                font-family: raleway;
+                src: url(regular-releway.woff2) format('woff2'),url(regular-releway.woff2) format('woff');
+                font-weight: 400;
+                font-style: normal
+            }*/
+
+            body{
+                background-color: rgb(189, 189, 235);
+                font: 17px 'Nimbus Sans';
+                /* margin: 0; */
+            }
+
+            div{
+                color: white;
+                box-sizing: border-box;
+            }
+
+            .padding-all-dimensions{
+                padding: 5px;
+            }
+
+            div.spacer{
+                height: 15px;
+            }
+
+            .bg-color{
+                background-color: white;
+            }
+
+
+            /*div with rounded corners, determined width, height*/
+            .container-with-background { 
+                width: 300px;
+                height: 200px;
+                /*border: 0.5px solid red;*/
+                border-radius: 25px;
+                background-color: #cccccc;
+            }
+            .with-background-and-padding{ 
+                /*border: 0.5px solid green;*/
+                border-radius: 25px;
+                background-color: green;
+                /*background-color is visible behind content excluding padding*/
+                background-clip: content-box; 
+                /*when "width" property and "padding-left"," padding-right" is set, padding, 
+                border goes inside of width*/
+                box-sizing:border-box;
+                padding: 10px;
+                width: 300px;
+            }
+
+
+            .absolute-relative-test-container{
+                background-color: white;
+                width: 300px;
+                padding: 10px;
+                box-sizing:border-box;
+                /*relative element within this container won't give the height for this container, 
+                so we need to add margin below the container to place next element after container 
+                of absolute element*/
+                margin-bottom: 230px ; 
+            }
+            
+
+
+            .userBox{    
+                width: 123px;
+                text-align: center;
+            }
+            .userPicture {
+                position: relative;
+                width: 123px;
+                height: 123px;
+                margin: 0 auto;
+                display: block;
+                background: #f8f8f8;
+                border-radius: 3px;
+            }
+            .userPicture > img {
+                    width: 123px;
+                    height: 123px;
+                    border-radius: 3px;
+                    display: block;
+            }
+            .happy_bd {
+                background: url('happy_bd.png') no-repeat left top;
+                position: absolute;
+                left: 0;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 1;
+            }
+            a {
+                color: #205a9a;
+                text-decoration: none;
+                outline: none;
+            }
+            .clear{
+                clear: both;
+            }
+
+
+            .flex-container{
+                display: flex;
+                flex-wrap: wrap;
+                width: 300px;
+                border: 1px solid rgb(0, 255, 76);
+                box-sizing: content-box;
+            }
+            .inside-flex{
+                width: 150px;
+                border: 1px solid yellow;
+                box-sizing: border-box;
+            }
+
+
+            .with_before{
+                background-color: red;
+                position: relative;
+                padding-top: 40px;
+            }
+            .with_before::before{
+                content: "content from ::before, positioned absolutelly";
+                display: block;
+                border: 1px solid green;
+                height: 20px;
+                position: absolute;
+                top: 0;
+            }
+
+
+            .with_line_in_background::before{
+                content: '';
+                position: absolute;
+                top: 50%;
+                transform: translateY(-50%);
+                display: block;
+                background-color: white;
+                height: 3px;
+                width: 100%;
+            }
+
+
+            .line-image-above-text{
+                width: 400px;
+                border-top:1px solid red;
+                padding-top: 20px;
+                position: relative;
+                margin-top: 15px;
+            }
+            .line-image-above-text::before{
+                content: '';
+                background: url(icon.blockquote.png) center no-repeat;
+                position: absolute;
+                /*top is half of element size to have line in the middle*/
+                top: -17px;
+                left: 50%;
+                /*element left starts at 50% of base element width, move it half of elements size to 
+                place it in center*/
+                margin-left: -17px;
+                width: 34px;
+                height: 34px;
+                /*possibly neede in some browsers*/
+                z-index: 2;
+            }
+
+            .line-image-above-text.second-version::before{
+                content: '';
+                background: url(icon.blockquote.png) center no-repeat;
+                position: absolute;
+                top: 0;
+                left: 50%;
+                /*with this there is no need to adjust element's position by setting margin-left to half of 
+                element's width and setting top offset to half of element height*/
+                transform: translate(-50%,-50%);
+                margin-left: unset; /*disable set by previous rule*/
+                width: 34px;
+                height: 34px;
+                /*possibly neede in some browsers*/
+                z-index: 2;
+            }
+
+
+            .control-button{
+                position: absolute;
+                top: 0;
+                width: 40px;
+                border: 1px solid red;
+                background-color: rgba(210, 48, 48, 0.5);
+                box-sizing: border-box;
+                height: 100%; /*or bottom:0*/
+                display: flex;
+                align-items: center;
+                z-index: 1;
+            }
+            .control-button.prev-button{
+                left: 0;
+            }
+            .control-button.next-button{
+                right: 0;
+            }
+
+
+
+            .test-transition{
+                width: 100px; 
+                height: 100px;
+                background-color: red;
+                transition: height 0.2s linear;
+            }
+            .test-transition:hover{
+                height: 200px;
+            }
+
+            
+
+            /*body > :not(div:last-of-type){
+                display:none;
+            }*/
+
+            .yellow-bg-100x100{
+                width: 100px;
+                height: 100px;
+                background-color: yellow;
+            }
+
+            .red-border{
+                border: 1px solid red;
+            }
+
+
+            .padding-left-right-10px{
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            .margin-left-right-negative{
+                margin-left: -10px;
+                margin-right: -10px;
+            }
+
+            .width-180px{
+                width: 180px;
+            }
+
+            :root { 
+                --main-color: red;
+                --flex-basis: 150px;
+                --flex-container-bg-color: rgb(255, 255, 255);}
+            /*------------*/
+            
+            
+            .background-as-svg{ 
+                background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 16 16' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L6.5 9.086l4.293-4.293a1 1 0 0 1 1.414 0z'/%3E%3C/svg%3E");
+            }
+
+            
+        </style>
+    <script>
+
+        var offset = 0;
+        function moveLeft(){
+            if(offset > -50){
+                offset = offset-10;
+                document.getElementById('items').style.transform = 'translateX(' + offset + 'px)';
+            }
+        }
+        function moveRight(){
+            if(offset <0){
+                offset = offset+10;
+                document.getElementById('items').style.transform = 'translateX(' + offset + 'px)';
+            }
+        }
+    </script>
+    </head>
+    <body>
+        
+
+        <style>
+            .layers-test-using-pseude-element{
+                background-color: blue;
+                z-index: 1;
+                position: relative;
+            }
+            .layers-test-using-pseude-element::before{
+                content: "";
+                color:black;
+                background-color: red;
+                position: absolute;
+                width: 50px;
+                height: 15px;
+                z-index: -1;
+            }
+            
+        </style>
+
+        <h4>Test layers </h4>
+        <div class="layers-test-using-pseude-element">
+            Text in div, it has background and block content created using ::before selector
+        </div>
+        <div class="spacer"></div>
+
+
+        <!-- ==================================================-->
+        <div style="position: relative;
+                    background-color: blue;
+                    z-index: 1;">
+            Text in div, it has background, contains text followed by a div
+
+            <div style="position: absolute;
+                        width: 30px;
+                        height: 30px;
+                        background-color: red;
+                        top: 0;
+                        left: 0;
+                        z-index: -1;">
+                
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+
+        <!-- ==================================================-->
+        <div style="position: relative;">
+            <div style="position: relative;
+                        background-color: blue;
+                        z-index: 1;"> 
+                Div in div, div has background, contains text, followed by another div with background    
+            </div>
+
+            <div style="position: absolute;
+                        width: 30px;
+                        height: 30px;
+                        background-color: red;
+                        top: 0;
+                        left: 0;
+                        z-index: -1;">
+                
+            </div>
+        </div>
+        <div class="spacer"></div>
+        
+
+
+        <style>
+            .selectors-test :first-child{
+                color: blue;
+                background-color: yellow;
+                
+            }
+            .selectors-test :first-child:after{
+                content: "created with :first-child::after - combination";
+                color:black;
+                background-color: red;
+                margin: 10px;
+            }
+            
+        </style>
+
+        <h4>Test selectors </h4>
+        <div style="display: flex; border: 1px solid red;"
+              class="selectors-test">
+            
+            <div>
+                first child
+            </div>
+
+            <div>
+                second child
+            </div>
+
+            <div>
+                third child
+            </div>
+        </div>
+
+
+
+        <h4>Testing label </h4>
+        <form>
+            <label>Text and checkbox is inside label tag
+                <input type="checkbox" name="field1"/>
+            </label>
+            <label>Another text and checkbox is inside label tag
+                <input type="checkbox" name="field2"/>
+            </label>
+        </form>
+        <div class="spacer"></div>
+
+
+
+        <h4>Length unit test</h4>
+        <div style="display: flex; 
+                    align-items: flex-start;
+                    border: 1px solid red;"
+              class="em-test">
+            
+            <div style="background-color: blue;">
+                        div with height not set, determined by text
+            </div>
+
+            <div style="background-color: green; 
+                        height: 1em;">
+                div height: 1em;
+            </div>
+
+            <div style="background-color: grey; 
+                        height: 1rem;">
+                div height: 1rem;
+            </div>
+
+        </div>
+        <div class="spacer"></div>
+
+        <h4>Selectors test</h4>
+        <style>
+            /* .selector-test [type="checkbox"]{ */
+            .selector-test [type="checkbox"] + div{
+                color: red;
+            }
+            .selector-test [type="checkbox"]:checked + div{
+                /* .selector-test [type="checkbox"]:is(:checked) + div{ */
+                color: green;
+            }
+
+            .selector-test  :is(.class-name-test1)::after {
+                content: ", ::after added using :is() selector";
+                color:red;
+             }
+        </style>
+        <div class="selector-test">
+            <input type="checkbox" /> 
+            <div>
+                div after checkbox changes color on whether checkbox is cheched 
+            </div>
+                
+            <div class="spacer"></div>
+
+            <div class="class-name-test1">
+                div has class name "class-name-test1"
+            </div>
+        </div>
+        
+        <div class="spacer"></div>
+
+
+
+        <!-- =============================================================== -->
+        <h4>Margin test</h4>
+        
+        <style>
+            .previous-element{
+                background-color:red;
+                width: 400px;
+                height: 25px;
+            }
+        </style>
+        <div class="previous-element">
+            previous element
+        </div>
+        <div style="background-color: green;
+                    width: 340px;">
+
+            <div style="width: 240px;
+                        background-color: blue;
+                        margin-top:10px;
+                        margin-bottom:10px; 
+                        margin-left: 10px;">
+                first child, has margin top and bottom :10px; - <br/>
+                DOES NOT create indent from parent top edge when parent has NO border.<br/>
+                Margin left HAS effect
+            </div>
+        </div>
+        <div class="spacer"></div>
+        
+        
+
+        <div class="previous-element">
+            previous element
+        </div>
+        <div style="border: 2px solid yellow;
+                    background-color: green;
+                    width: 340px;">
+
+            <div style="width: 240px; 
+                        background-color: blue;
+                        margin-top:10px;
+                        margin-bottom:10px;
+                        margin-left: 10px;">
+                first child, has margin top and bottom :10px; - <br/>
+                they DO create indent from parent top edge when parent has border
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+
+        <div class="previous-element">
+            previous element
+        </div>
+        <div style="background-color: green;
+                    width: 340px; height: 150px;">
+
+            <div style="width: 240px;
+                        background-color: blue;
+                        margin-top:10px;
+                        margin-left: 10px;
+                        position: absolute;">
+                first child, has margin top:10px and position:absolute - <br/>
+                DOES create indent from parent top edge when parent has NO border.<br/>
+                Margin left HAS effect
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+
+        <div class="previous-element">
+            previous element
+        </div>
+        <div style="display:flex;
+                    background-color: green;
+                    width: 340px;">
+            <div style="background-color: blue;
+                        margin-top:10px;
+                        margin-bottom:10px;
+                        margin-left: 10px;
+                        margin-right: 10px;">
+                first child, has margin top and bottom :10px; - <br/>
+                HAS effect when parent is flex container, also left, right margins.
+            </div>
+        </div>
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+
+
+
+
+        <!-- =============================================================== -->
+        <h4>how to lift element above container and center it</h4> 
+
+        <div class="previous-element">
+            previous element
+        </div>
+        <div style="background-color: green;
+                    width: 340px;">
+
+            <div style="width: 240px; 
+                        background-color: blue;
+                        position: relative;     /* needed*/
+                        top: -10px;             /* needed*/
+                        margin:0 auto 0 auto;   /* needed*/">
+
+                        This approach uses position:relative and negative top value for first div in 
+                        container. <br/>
+                        (Additionally set margin-bottom, possibly, negative to correct folloging
+                        element position). <br/>
+                        Use this if needed only to lift element up and center, and other elements
+                        remain in their flow
+            </div>
+            <div style="width: 240px; height: 100px;
+                        background-color: yellow;
+                        color: black;
+                        margin:0 auto;">
+                    some content after.<br/> 
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+        <div class="previous-element">
+            previous element
+        </div>
+        <div style="background-color: green;
+                    width: 340px;
+                    padding-top: 150px; /* needed*/
+                    position: relative; /* needed*/">
+
+            <div style="width: 240px; 
+                        height: 140px;
+                        background-color: blue;
+                        position: absolute;             /* needed*/
+                        top:-10px;                      /* needed*/
+                        left: 50%;                      /* needed*/
+                        transform: translateX(-50%);    /* needed*/">
+
+                        This approach uses 1) position:absolute, 2) negative top value, 3) position:relative for parent, 
+                        4) padding-top for parent. Use this if also needed to put some additional elements out of flow in
+                        container
+            </div>
+            <div style="width: 240px; height: 100px;
+                        background-color: yellow;
+                        color: black;
+                        margin:0 auto;">
+                    some content after.<br/> 
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+
+        <div class="previous-element">
+            previous element
+        </div>
+        <div style="background-color: green;
+                    width: 340px;
+                    display: flex;          /* needed*/
+                    flex-direction: column; /* needed*/
+                    align-items: center;    /* needed*/">
+
+            <div style="width: 240px; 
+                        background-color: blue;
+                        margin-top:-10px;       /* needed*/
+                        margin-bottom:10px;     /* needed*/">
+                        uses display:flex, this is when margin-top for first element works.<br/>
+                        This is equivalent with position:relative and negative top, but need more properties
+            </div>
+            <div style="width: 240px; height: 100px;
+                        background-color: yellow;
+                        color: black;
+                        margin:0 auto;">
+                    some content after.<br/> 
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+
+        <!-- =============================================================== -->
+
+
+
+        <!-- =============================================================== -->
+
+        <h4>testing line height, front size</h4>
+
+        <div style="display: flex; 
+                    align-items: flex-start;
+                    border: 1px solid red;
+
+                    height:40px;">
+
+            <div style="background-color: blue;
+                        height: 20px;">
+                        div with height 20px for comparison with next div to find out
+                        now line-height property sets height of div
+                
+            </div>
+
+            <div style="background-color: green;
+                        font-size: 14px; 
+                        line-height: 20px;">
+                font-size=14px, line-height=20px;
+            </div>
+            <div style="background-color: red;
+                        font-size: 20px; 
+                        line-height: 20px;">
+                font-size=20px, line-height=20px;
+            </div>
+
+        </div>
+        <div class="spacer"></div>
+
+
+        <div style="width: 140px;
+                    height: 140px;
+                    border: 1px solid red;
+                    font-size: 22px;">
+                    <i class="icon-facebook"></i>
+                testing font aversome icon
+        </div>
+        <div class="spacer"></div>
+
+
+        
+
+
+
+
+
+        <div style="display: flex; 
+                    justify-content: center;
+                    align-items: center;
+
+                    width: 240px;
+                    height: 240px;
+                    border: 1px solid red;">
+            <div style="width: 140px;
+                        height: 140px;
+                        border: 1px solid green;">
+                test child div align in center of parent
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+        <div style="display: flex;
+                    /* flex-direction: column;  */
+                    height: 80px;
+                    align-items: center;
+                    justify-content: center; 
+                    border: 1px solid yellow; ">
+            <div style="flex: 0 0 auto;
+                        max-width: 750px;
+                        background-color: red;" class="padding-all-dimensions">
+                left  flex: 0 0 auto
+            </div>
+            <div style="flex: 0 0 auto;
+                        max-width: 750px;
+                        background-color: green;" class="padding-all-dimensions">
+                middle flex: 0 0 auto
+            </div>
+            <div style="flex: 1 0 23.333333%;
+                        max-width: 750px;
+                        background-color: blue;" class="padding-all-dimensions">
+                right flex: 1 0 23.333333%
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+        <div style="display: flex;
+                    /* flex-direction: column;  */
+                    height: 400px;
+                    align-items: center;
+                    justify-content: center; 
+                    border: 1px solid yellow; ">
+            <div style="
+                        flex-grow: 1;
+                        /* width: 100px;  */
+                        max-width: 750px;
+                        background-color: red;" class="padding-all-dimensions">
+                left  child of flex fffffffffffff ffffffffffffffff fffffffffffffff ffffffff
+            </div>
+            <div style="
+                        /* width: 100px;  */
+                        max-width: 750px;
+                        flex-grow: 51;
+                        background-color: green;" class="padding-all-dimensions">
+                right child of flex
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+        <style>
+
+            /*this works after all max-width are exceeded - largest width*/
+            .test-media-queries{
+                width: 40%;
+                height: 240px;
+                border: 1px solid red;
+                margin: 0 auto;
+                background-color: grey;
+                
+            }
+            .test-media-queries::after{
+                    content: " ==== default value, all max-width exceeded";
+                }
+
+            /*smaller values for max-width operator comes after larget to have all working because if smaller 
+            are  before they, smaller are overriden by larger and have no effect*/
+            @media screen and (max-width: 800px) {
+                .test-media-queries{
+                    width: 70%;
+                }
+                .test-media-queries::after{
+                    content: " ==== max w 800 px";
+                }
+            }
+
+            @media screen and (max-width: 400px) {
+                .test-media-queries{
+                    width: 95%;
+                }
+                .test-media-queries::after{
+                    content: " ==== max w 400 px";
+                }
+            }
+
+            /*--------------------*/
+            /* this works before any min-width is reacher - narrower with*/
+            .test-media-queries2{
+                /* width: 40%; old */
+                width: 95%;
+                height: 240px;
+                border: 1px solid red;
+                margin: 0 auto;
+                background-color: grey;
+            }
+
+            .test-media-queries2::after{
+                    content: "  ==== default value, none min-width reached";
+                }
+
+            /*smaller values for max-width operator comes after larget to have all working because if smaller 
+            are  before they, smaller are overriden by larger and have no effect*/
+            @media screen and (min-width: 400px) {
+                .test-media-queries2{
+                    /* width: 95%; old */
+                    width: 70%;
+                }
+                .test-media-queries2::after{
+                    content: " ==== min w 400 px";
+                }
+            }
+
+            @media screen and (min-width: 800px) {
+                .test-media-queries2{
+                    /* width: 70%; old */
+                    width: 40%;
+                }
+                .test-media-queries2::after{
+                    content: " ==== min w 800 px";
+                }
+            }
+            
+
+            
+            
+        </style>
+        
+        <div  class="test-media-queries"> 
+            test media queries when "max-width" used
+        </div>
+        <div  class="test-media-queries2"> 
+            test media queries when "min-width" used
+        </div>
+        <div class="spacer"></div>
+
+        <h3>Input with appearance: none; and thats lets set background image</h3>
+        <input style="appearance: none;
+                color: red;
+                background-color: green;
+                width: 20px;
+                height: 20px;" 
+                type="checkbox" class="background-as-svg"/>
+        <div class="spacer"></div>
+
+        <style>
+
+            .custom-checkbox [type="checkbox"] {
+                appearance: none;
+                background-color: green;
+                width: 20px;
+                height: 20px;
+            }
+            .custom-checkbox [type="checkbox"]:checked {
+                background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 16 16' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L6.5 9.086l4.293-4.293a1 1 0 0 1 1.414 0z'/%3E%3C/svg%3E");
+            }
+        </style>
+        <div class="custom-checkbox">
+            <label>
+                <input  
+                    type="checkbox" />
+                try to check/ uncheck this
+            </label>
+        </div>
+        <div class="spacer"></div>
+
+
+        <h3>Background tests </h3>
+
+        <div style="width: 240px;
+                    height: 240px;
+                    border: 1px solid red;
+                    margin: 0 auto;
+                    background-color: green;" 
+                    
+                    class="background-as-svg"> 
+            bg test svg code in bg-image property 
+        </div>
+        <div class="spacer"></div>
+
+
+        <div style="width: 240px;
+                    height: 240px;
+                    border: 1px solid red;
+                    margin: 0 auto;
+
+                    background-image: url(cat-grid.png);
+                    background-position: 50% 50%;
+                    background-repeat: no-repeat;"> 
+            bg-position 50% 50% 
+        </div>
+        <div class="spacer"></div>
+
+        
+        <div style="width: 240px;
+                    height: 240px;
+                    border: 1px solid red;
+                    margin: 0 auto;
+
+                    background-image: url(cat-grid.png);
+                    background-position: 20px 60px;
+                    background-size:  60px auto;
+                    background-repeat: no-repeat;"> 
+            bg-position 60px 90px;  background-size:  40px auto;
+
+            <br/><br/> some text, some text, some text, some text, some text, some text
+            , some text, some text, some text
+        </div>
+        <div class="spacer"></div>
+
+
+        <div style="width: 240px;
+                    height: 240px;
+                    border: 1px solid red;
+                    margin: 0 auto;
+
+                    background-image: url(cat-grid-horizontal.jpg);
+                    background-size:  auto 100%;
+                    background-size:  cover;"> 
+            bg test - background-size: width auto,height 100% - same as "cover"  
+        </div>
+        <div class="spacer"></div>
+
+
+        <div style="width: 240px;
+                    height: 240px;
+                    border: 1px solid red;
+                    margin: 0 auto;
+
+                    background-image: url(cat-grid.png);
+                    background-position: 50% 50%;
+                    background-repeat: no-repeat;
+                    background-attachment: fixed;"> 
+            bg-position 50% 50% 
+        </div>
+        <div class="spacer"></div>
+
+
+        <style>
+            .zooming-on-hover-container:hover .zooming-item{
+                transform: scale(1.1);
+            }
+        </style>
+        <div style="width: 240px;
+                    height: 240px;
+                    border: 1px solid red;
+                    margin: 0 auto;
+                    overflow: hidden;
+                    position: relative;"
+              class="zooming-on-hover-container">
+            <div style="height: 100%;
+                        border: 1px solid blue;
+                        color: blue;
+                        background-image: url(cat-grid.jpg);
+                        background-size:  cover;"
+                class="zooming-item"> 
+                first child of div, contains background, serves as background image  
+            </div>
+            <div style="border: 1px solid yellow;
+                        background:rgba(238, 15, 90, 0.5);
+                        position:absolute;
+                        bottom: 0;"> 
+                second child of div, contains title, placed at the bottom of container 
+                div
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+        
+
+        
+        <!--   -->
+        <div style="padding-top: 10px; 
+                    background: rgba(170, 22, 175, 0.5); 
+                    height: 850px;
+                    width: 600px;
+                    margin: 0 auto 0 auto;">
+            
+            each elem has padding
+            <div style="padding-top: 10px;
+                        display: flex;
+                        align-items: flex-start;
+                        background: var(--flex-container-bg-color);">
+                <div style="width: 200px; height: 100px; background-color: red; background-clip: content-box;"
+                        class="padding-left-right-10px">
+                    1 flex item
+                </div>
+                <div style="width: 200px; height: 100px; background-color: green; background-clip: content-box;"
+                        class="padding-left-right-10px">
+                    2 flex item
+                </div>
+                <div style="width: 200px; height: 100px; background-color: yellow; background-clip: content-box;"
+                        class="padding-left-right-10px">
+                    3 flex item
+                </div>
+            </div>
+
+            negative left, right margin;
+            <div style="padding-top: 10px; margin-top: 10px;
+                        display: flex;
+                        align-items: flex-start;
+                        background: var(--flex-container-bg-color);"
+                        class="margin-left-right-negative">
+                <div style="width: 200px; height: 100px; background-color: red; background-clip: content-box;"
+                        class="padding-left-right-10px">
+                    1 flex item
+                </div>
+                <div style="width: 200px; height: 100px; background-color: green; background-clip: content-box;"
+                        class="padding-left-right-10px">
+                    2 flex item
+                </div>
+                <div style="width: 200px; height: 100px; background-color: yellow; background-clip: content-box;"
+                        class="padding-left-right-10px">
+                    3 flex item
+                </div>
+            </div>
+
+
+            gap by justify-content;
+            <div style="padding-top: 10px; margin-top: 10px;
+                        display: flex;
+                        align-items: flex-start;
+                        justify-content: space-between;
+                        background: var(--flex-container-bg-color);"
+                        >
+                <div style=" height: 100px; background-color: red; background-clip: content-box;"
+                        class="width-180px">
+                    1 flex item
+                </div>
+                <div style=" height: 100px; background-color: green; background-clip: content-box;"
+                        class="width-180px">
+                    2 flex item
+                </div>
+                <div style=" height: 100px; background-color: yellow; background-clip: content-box;"
+                        class="width-180px">
+                    3 flex item
+                </div>
+            </div>
+
+            flex-basis overrides width property
+            <div style="padding-top: 10px; margin-top: 10px;
+                        display: flex;
+                        align-items: flex-start;
+                        background: var(--flex-container-bg-color);">
+                <div style="flex-basis:var(--flex-basis); width: 200px; height: 100px; background-color: red; background-clip: content-box;"
+                        class="padding-left-right-10px">
+                    1 flex item
+                </div>
+                <div style="flex-basis:var(--flex-basis); width: 200px; height: 100px; background-color: green; background-clip: content-box;"
+                        class="padding-left-right-10px">
+                    2 flex item
+                </div>
+                <div style="flex-basis:var(--flex-basis); width: 200px; height: 100px; background-color: yellow; background-clip: content-box;"
+                        class="padding-left-right-10px">
+                    3 flex item
+                </div>
+            </div>
+
+            if flex items in summary are wider than flex container, they are shrinked to fit in container
+            <div style="padding-top: 10px; margin-top: 10px;
+                        display: flex;
+                        align-items: flex-start;
+                        background: var(--flex-container-bg-color);">
+                <div style="width: 500px; height: 100px; background-color: red; background-clip: content-box;"
+                        >
+                    1 flex item, width 500 px
+                </div>
+                <div style="width: 200px; height: 100px; background-color: green; background-clip: content-box;"
+                        >
+                    2 flex item, width 200 px
+                </div>
+            </div>
+
+
+            <div style="margin-top: 20px;
+                        background: rgb(219, 27, 85);">
+                margin left, right zero, display block
+            </div>
+            <div style="margin-top: 20px;
+                        background: rgb(54, 15, 224);
+                        margin-left: 10px;
+                        margin-right: 10px;">
+                margin left, right 10px, display block
+            </div>
+
+            <div style="margin-top: 20px;
+                        background: rgb(13, 224, 154);
+                        margin-left: -10px;
+                        margin-right: -10px;">
+                margin left, right -10px, display block
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+        <div style="width: 200px; height: 200px; box-sizing: content-box; border:1px solid red;">
+                <div style="width: 100%; box-sizing: border-box; border:1px solid yellow;margin-left: 100%;margin-right: 10px;">
+                    content
+                </div>
+                    
+        </div>
+        <div class="spacer"></div> 
+        
+            
+       
+
+
+
+        <!-- flex direction - row, both divs with fixed width, overflow of left child is not visible if right child has background -->
+        <div style="display: flex; border: 1px solid yellow; ">
+            <div style="width: 100px; background-color: red;" class="padding-all-dimensions">
+                left child of flex width: 100px
+                <div style="width: 150px; border: 2px solid blue;">subchild, width: 150px</div>
+            </div>
+            <div style="width: 100px; background-color: green;" class="padding-all-dimensions">
+                right child of flex
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+
+        <!-- one div on top of other, fixed height, overflow of top div not visible if bottom div has background-->
+        <div style="border: 1px solid yellow; box-sizing: border-box;">
+            <div style="height: 100px; background-color: red; box-sizing: border-box;" class="padding-all-dimensions">
+                top DIV height: 100px
+                <div style="height: 120px; width: 100px; border: 2px solid blue;" class="padding-all-dimensions">subchild, height: 120px</div>
+            </div>
+            <div style="height: 100px; background-color: green; box-sizing: border-box;" class="padding-all-dimensions">
+                bottom DIV height: 100px
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+        
+
+
+
+        <!-- testing when left column determines height, right height does not stretch the right div-->
+        <div style="display: flex; 
+                    border: 1px solid yellow;
+                    overflow: hidden;">
+            
+            <div style="height: 150px;  
+                        width: 100px;
+                        background-color: red;" 
+                class="padding-all-dimensions">left</div>
+            
+            <div style="width: 100px; background-color: green; position: relative;">
+                <div style="position:absolute" class="padding-all-dimensions">
+                    overflow not visible, wrapper height is determined by left left left left leftleft
+                </div>
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+        <div style="display: flex; 
+                    border: 1px solid yellow;">
+            
+                <div style="height: 100px;  width: 100px;
+                            background-color: red;" 
+                    class="padding-all-dimensions">left</div>
+            
+            <div style="height: 100px;  width: 100px;
+                        background-color: green;
+                        margin-left: 20px; ">
+                this has margin left
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+        <style>
+            .pseudo-element-as-flex-item-test {
+                display: flex; 
+                justify-content: space-between;
+                border: 1px solid red;
+            }
+
+            .pseudo-element-as-flex-item-test > div{
+                background-color: blue;
+            }
+            .pseudo-element-as-flex-item-test::after{
+                content: "added as ::after pseudo element to flexbox container, acts as flex item";
+                color:black;
+                background-color: yellow;
+                flex: 0 0 90px;
+            }
+            
+        </style>
+
+        <h4>Test adding pseudo element to flex container</h4>
+        <div 
+              class="pseudo-element-as-flex-item-test">
+            
+            <div>
+                first child of flex - DIV element
+            </div>
+
+            <div>
+                second child  of flex - DIV element
+            </div>
+
+            <div>
+                third child of flex - DIV element
+            </div>
+        </div>
+
+        
+        <h4>Transition tests</h4>
+        <div class="test-transition padding-all-dimensions">
+            testing transition on hover
+        </div>
+        <div class="spacer"></div>
+
+        <!-- testing slider with prev, next buttons-->
+        <div style="position:relative; width:300px; height: 100px; box-sizing: border-box;
+                    background-color: rgb(0, 195, 255);">
+
+            <div class="control-button prev-button" onclick="moveLeft()">prev</div>
+
+            container width:300px;
+            
+            <div id="items" 
+                style="width:350px; height: 50px; background-color: green; transition: transform 0.2s linear;"
+                class="padding-all-dimensions">
+                child width:350px;
+            </div>
+            
+            <div class="control-button next-button" onclick="moveRight()">next</div>
+        </div>
+        <div class="spacer"></div>        
+        
+
+        <!-- If width of div is not set and it is block display then its width will get a container width -->
+        <div class="bg-color padding-all-dimensions" style="color: black;">
+            If width of DIV is not set and it is block display then its width will get a container width.
+        </div>
+        <div class="spacer"></div>
+
+        <h1 class="bg-color">
+            If width of H1 is not set and it is block display then its width will get a container width.
+        </h1>
+        <div class="spacer"></div>
+
+
+        
+        <!-- testing rounded corners, padding, background-->
+        <div class="container-with-background">
+            <div class="with-background-and-padding">
+                background color is behind content, not padding
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+
+        <h4>Position test</h4>
+
+        <!-- two ways of placing element in a fixed position below relatively to some element initially on page load;
+        so if previous content becomes taller, we won't have to define new proper height relatively to that content-->
+        <div style="position: fixed; right: 10px;">
+            <div style="position: absolute; top: 20px; right: 0;">some content</div> 
+        </div> 
+        <div style="position: fixed; right: 10px;">
+            <div style="margin-top: 20px; margin-right: 220px;">other content</div> 
+        </div> 
+
+
+        <!-- testing relative, absolute positioned elements-->
+        <div class="absolute-relative-test-container">
+            <div style="background-color: green;" class="padding-all-dimensions">
+                static div with content = = = = =
+                = = = = = = = = = = = = = = = = 
+                = = = = = = = = = = = = = = = = 
+                = = = = = = = = = = = = = = = = 
+                = = = = = = = = = = = = = = = = 
+            </div>
+            <div style="position: relative;
+                        background-color: blueviolet;" 
+                    class="padding-all-dimensions">
+                relative div, no coordinates stays on its position; can be visually 
+                moved relatively to its flow position, but actuallly accupies position where
+                it appears in static place. <br/>
+                Most usefull for 1) positioning absolutelly child elements, 2) can position
+                vertically or horizontally in middle of parent element with combination of 
+                left|top:50% and transleteX|transleteY -50% 
+                = = = = = = = = = = = = = = = =
+                = = = = = = = = = = = = = = = =
+            </div>
+
+            <div style="position: relative;">
+                <div style="position: absolute; background-color: red;" 
+                    class="padding-all-dimensions">
+                    div with absolute position - does not occupy any space in flow - does not stretch
+                    container, so we do not see any background of container behind this element.|||  
+                    The width of current element is bounded by width of container  
+                    block as no width attribute set (ONLY IF CONTAINER HAS 
+                    POSITION:RELATIVE).  |||
+                    Coordinates are not set, placed in static position in container
+                </div>
+            </div>
+        </div>
+
+
+        <div style="position: relative;
+                    width: 200px;
+                    height: 40px;
+                    margin-bottom: 300px;
+                    padding: 10px;
+                    background-color: white;"       >
+            <div style="position: absolute; 
+                        width: 100%;
+                        margin-left: 20px;
+                        background-color: red;" 
+                        > position:absolute; if container has position:relative only in that case
+                        width of absolute child in percentage works (percentage is of parent width).
+                        This element also has margin-left which is also works, shifting element to right
+
+            </div>
+        </div>
+
+
+        <div style="position: relative;
+                    width: 200px;
+                    height: 80px;
+                    margin-bottom: 300px;
+                    padding: 10px;
+                    background-color: white;"       >
+            <div style="position: absolute; 
+                        width: 100%;
+                        margin-left: 20px;
+                        background-color: red;" 
+                        > first element with position:absolute
+
+            </div>
+            <div style="position: absolute; 
+                        width: 100%;
+                        margin-top: 35px;
+                        background-color: green;" 
+                        > second element with position:absolute. Both start at container top
+
+            </div>
+        </div>
+
+        <div class="spacer"></div>
+
+
+        <!-- testing where start of coordinates of container of absolute positioned child element starts - they starts 
+            on containers edge -->
+            <div style="position:relative; 
+                        width:300px; height: 200px; 
+                        padding-top: 50px; 
+                        background-color: white; border: 1px solid blue;">
+            
+            <div style="width:250px; background-color: green;" class="padding-all-dimensions">
+                First element in container, static. Container has padding-top: 50px
+            </div>
+
+            <div style="position:absolute; 
+                        top:0;
+                        background-color: red;">
+                2nd element in container, absolute, top:0;
+            </div>
+            
+        </div>
+        <div class="spacer"></div>
+
+        
+
+
+        <div style="border: 1px solid red;
+                    height: 240px; width: 340px;
+                    position: relative;">
+
+            <div style="
+                    background-color: blue;
+                    position: absolute;margin-top: 25px;
+                    top: 0;">
+                first div - absolute position - top:0, has margin-top which works as 
+                top edge of element
+            </div>
+            <div style="width: 250px; height: 18px;
+                        background-color: green;
+                        position: absolute;">
+                second div in container, static
+            </div>
+
+        </div>
+        <div class="spacer"></div>
+
+
+
+        <div style="border: 1px solid red;
+                    height: 240px; width: 340px;
+                    position: relative;">
+
+            <div style="width: 240px; height: 180px; 
+                    background-color: blue;
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    bottom: 0;
+                    margin-right: auto;
+                    margin-left: auto;">
+                margins are relative to a 'bounding box.' For an 
+                absolute positioned element, left/right/top/bottom rules position the element's bounding box.
+                To center horizontally, set left, right:0, width and margin left, right: auto
+            </div>
+
+        </div>
+        <div class="spacer"></div>
+
+
+        <div style="border: 1px solid red;
+                    height: 240px; width: 340px;
+                    position: relative;">
+
+            <div style="width: 240px; 
+                    background-color: blue;
+                    position: absolute;
+                    left: 50%;
+                    transform: translateX(-50%);">
+                it's easer to center absolute block in container with <br/>
+                left or top: 50%;<br/>
+                transform: translateX(-50%), translateY(-50%);
+            </div>
+
+        </div>
+        <div class="spacer"></div>
+
+         
+       
+
+        <!-- testing positioning in absolute position of content added with help of ::before -->
+        <div class="with_before padding-all-dimensions">
+            this element has ::before in CSS,  positioned absolute
+        </div>
+        <div class="spacer"></div>
+
+
+         <div style="width: 200px; height: 200px; 
+                        box-sizing: content-box; 
+                        border:1px solid red; 
+                        overflow: hidden; resize: horizontal;">
+            <div style="padding-bottom: 50%; 
+                        background-color: green;
+                        position: relative">
+                <div style="position: absolute">get fixed aspect ratio of child div, here we can absolutelly put some content</div>
+            </div>
+                
+        </div>
+        <div class="spacer"></div>
+
+
+        <div style="width: 240px;
+                    height: 240px;
+                    border: 1px solid red;">
+            <div style="position:relative;
+                        top:50%;left:50%;
+                        transform: translate(-50%, -50%);
+
+                        width: 140px;
+                        height: 140px;
+                        border: 1px solid green;">
+                position:relative;
+                top:50%;left:50%;
+                transform: translate(-50%, -50%);
+            </div>fffffffff
+        </div>
+        <div class="spacer"></div>
+
+
+
+        
+
+
+
+        <!-- -->
+        <h4>Test 100% width for absolutely positioned</h4>
+        <div style="position:relative;
+                    padding: 10px ;
+                    background-color: yellow;"
+            class="menu-container">
+            <div style="display: flex; justify-content: center;
+                        background-color: red;">
+                <div style="width: 300px; border: 5px solid green;">
+                    Main menu 1 (width: 300px)
+                    <div style="position:absolute;
+                                left: 0; /*start at relative ancestor left edge*/
+                                width: 100%; 
+                                border: 5px solid blue;
+                                color: black;">
+                                Submenu is here<br/>
+                                Submenu is here<br/>
+                                Submenu is here<br/>
+                    </div>
+                </div>
+                <div style="width: 200px; border: 5px solid green; margin-left: 10px;">
+                    Main menu 1 (width: 200px)
+                </div>
+            </div>
+        </div>
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+        <div class="spacer"></div>
+
+
+
+        <!-- testing line behind centered content -->
+        <div style="position:relative; text-align: center; border: 1px solid red;">
+            <!-- this div used as line behind-->
+            <div style="position:absolute; top:50%; transform: translateY(-50%);
+                        height: 3px; width: 100%; background-color: #fff;"></div>
+
+            <div style="position:relative; 
+                        display: inline-block; /*to prevent spanning along 100% width*/ 
+                        background-color: blueviolet;">
+                centered text with line in background
+            </div>
+        </div>
+        <div class="spacer"></div>
+        <!-- another way, not using separate div as line in background, but using ::before-->
+        <div style="position:relative; text-align: center; border: 1px solid red;"
+             class="with_line_in_background">
+            
+            <div style="position:relative; 
+                        display: inline-block; /*to prevent spanning along 100% width*/
+                        background-color: blueviolet;">
+                centered text with line in background
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+
+        <!-- testing overlay over image-->
+        <div class="userBox">
+            <a class="userPicture" href="#">
+                <img src="cat.jpg" alt="Vārds Uzvārds">
+                <span class="happy_bd"></span>
+            </a>
+        </div> 
+        <div class="spacer"></div>
+
+
+        <!-- ======================== ======================== ======================== -->
+
+        <h4>Change behaviour of inline if absolute display</h4>
+
+        <div style="width: 540px;
+                    height: 140px;
+                    border: 1px solid red;
+                    position: relative;">
+            <div>It is div</div>
+            <span style="background-color: green; 
+                    width: 50%;">
+                some span, inline display, width 50%; does not work
+            </span>
+            <div>It is div</div>
+            <span style="background-color: green; 
+                    width: 50%; position: absolute">
+                span, inline display, position absolute width 50%; works
+            </span>
+            <div>some div</div>
+
+        </div>
+        <div class="spacer"></div>
+
+        <p>using that option, we can create line with help of ::before pseudo element, as its display is absolute, it acts as 
+            block</p>
+        <style>
+            .test-pseudo-elems{
+                border: 1px solid red;
+                width: 700px;
+                text-align: center;
+                color: black;
+                font-size: 25px;
+                line-height: 25px;
+                position: relative;
+            }
+
+            .test-pseudo-elems::before{
+                content: "";
+                width: 48%;
+                height: 3px;
+                background-color: green;
+                position: absolute;
+                top: 50%;
+                margin-left: -50%;
+            }
+
+            .test-pseudo-elems::after{
+                content: "";
+                width: 48%;
+                height: 3px;
+                background-color: green;
+                position: absolute;
+                top: 50%;
+                margin-left: 3%;
+            }
+        </style>
+
+        <div class="test-pseudo-elems">
+            Line in center with help of pseudo element
+        </div>
+        <div class="spacer"></div>
+
+        <!-- Using flexbox to align flexbox elements centered horizontally -->
+        <div style="display: flex; justify-content: center;
+                    background-color: blueviolet;">
+            <div style="width: 300px; border: 1px solid white; padding: 10px;">
+                Using flexbox to align flexbox elements centered horizontally.
+                
+            </div>
+            <div style="width: 200px; border: 1px solid white;  padding: 10px; margin-left: 10px;">
+                R width: 200px;
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+
+        <!-- testing floating flex elements with flex-wrap: wrap-->
+        <div class="flex-container">
+            <div class="inside-flex padding-all-dimensions">1 flex child</div>
+            <div class="inside-flex padding-all-dimensions">2 flex child</div>
+            <div class="inside-flex padding-all-dimensions">3 flex child</div>
+        </div>
+        <div class="spacer"></div>
+
+
+
+        <!-- testing centering div horizontally without setting it's width -->
+        <div style="width: 400px; border: 1px solid green;">
+
+            <div style="background-color: rgb(236, 151, 40);" class="padding-all-dimensions">
+                some content, some content, some content, some content,
+                some content, some content, some content, some content, some content
+            </div>
+            <!-- using wrapper div to center-->
+            <div style="text-align: center;">
+                <div style="display:inline-block; /* or :inline-flex*/ 
+                            background-color: rgb(124, 85, 33);" class="padding-all-dimensions">
+                    centering div horizontally,<br/> 
+                    not setting width,<br/>
+                    using wrapper div
+                </div>
+            </div>
+        </div>
+        <div class="spacer"></div>
+        <!-- second version of centering div horizontally without setting it's width -
+             we do not use wrapper div centering-->
+        <div style="width: 400px; border: 1px solid green;  text-align: center;">
+
+            <div style="background-color: rgb(236, 151, 40); text-align: left;" class="padding-all-dimensions">
+                some content, some content, some content, some content,
+                some content, some content, some content, some content, some content
+            </div>
+            
+            <div style="display:inline-block; 
+                        background-color: rgb(124, 85, 33);" class="padding-all-dimensions">
+                centering div horizontally,<br/> 
+                not setting width,<br/>
+                not using wrapper div
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+        <!-- centering div horizontally by setting it's width and margin left, right: auto-->
+        <div style="width: 400px; border: 1px solid green;">
+
+            <div style="background-color: rgb(236, 151, 40);" class="padding-all-dimensions">
+                some content, some content, some content, some content,
+                some content, some content, some content, some content, some content
+            </div>
+            
+            <div style="width: 200px; margin-left: auto; margin-right: auto; 
+                        background-color: rgb(124, 85, 33);" class="padding-all-dimensions">
+                centering div horizontally,<br/> 
+                by setting width and<br/>
+                margin-left, right to 'auto'
+            </div>
+        </div>
+        <div class="spacer"></div>
+
+
+        <div class="line-image-above-text">
+            testing line and image in the center above this text
+        </div>
+        <div class="line-image-above-text second-version">
+            testing line and image in the center above this text
+        </div>
+        <div class="spacer"></div>
+
+
+
+
+
+
+
+
+        <!-- Testing var usage in inline style parameter-->
+        <div style="color: var(--main-color);">Testing var usage in inline style parameter</div>
+        <div class="spacer"></div>
+
+    </body>
+</html>

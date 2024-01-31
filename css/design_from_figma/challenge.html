@@ -1,0 +1,426 @@
+<!DOCTYPE html >
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <title>Challenge</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"  crossorigin="anonymous"/>
+        
+        <style type="text/css" media="screen">
+
+            :root{ 
+                --newsletter-form-indent: 40px;
+                --links-hover-color: #4066A5;
+            }
+
+            *{
+                box-sizing:border-box;
+            }
+
+            body, h1, h2, ul, li{
+                margin: 0;
+            }
+            body, a, input{
+                color: #6A707B;
+                text-decoration: none;
+                font-family: 'Arial';
+                font-weight: 400;
+                font-size: 16px;
+                line-height: 28px;
+            }
+            
+
+            a:hover{
+                color: var(--links-hover-color); 
+            }
+
+            .cols-container{
+                display: flex;
+            }
+            .left-col{
+                width: 680px;
+                padding: 100px;
+                background: linear-gradient(180deg, #FFFFFF 0%, #F2F5FA 100%);
+                flex: 0 0 auto;
+            }
+            .top-bar{
+                color: black;
+                display: flex;
+                justify-content: space-between;
+                /* align-items: center; */
+                height: 40px;
+            }
+
+            .top-bar .logo-pineaple{
+                display: flex;
+            }
+            .top-bar .logo-pineaple img{
+                display: block;
+            }
+            .top-bar .logo-pineaple span{
+                line-height: 16px;
+                margin: 20px 0 0 15px;
+            }
+
+            .top-bar .links{
+                margin-top: 14px;
+            }
+            .top-bar .links a{
+                line-height: 26px;
+            }
+            .top-bar .links ul{
+                display: flex;
+                list-style: none;
+                padding: 0;
+            }
+
+            .top-bar .links ul li{
+                margin-left: 20px;
+            }
+
+            .content{
+                    padding: 234px var(--newsletter-form-indent) 0 var(--newsletter-form-indent);
+                }
+
+            .newsletter-form-container{
+                border-bottom: 1px solid #E3E3E4;
+                padding-bottom: 50px;
+            }
+
+            .newsletter-form-container h1{
+                font-family: Georgia;
+                font-size: 32px;
+                font-weight: 400;
+                line-height: 44px;
+                letter-spacing: 0em;
+                text-align: left;
+                color: #131821;
+            }
+
+            .newsletter-form-container h2{
+                font-weight: 400;
+                font-size: 16px;
+                margin-top: 15px;
+            }
+            
+            .email-input{
+                margin-top: 50px;
+                margin-left: calc( var(--newsletter-form-indent)*-1);
+                margin-right: calc( var(--newsletter-form-indent)*-1 - 100px);
+                position: relative;
+                border-left: 4px solid #4066A5;
+            }
+            
+            .email-input input[type="text"]{
+                height: 70px;
+                width: 100%;
+                border: 1px solid #E3E3E4;
+                border-left: none;
+                border-right: none;
+                /* border-left: 4px solid #4066A5; */
+                padding-left: 44px;
+                line-height: 24px;
+                font-size: 16px;
+                outline: none;
+            }
+     
+            .submit-button{
+                position: absolute;
+                left: 100%;
+                background-color: white;
+                width: 83px;
+                height: 100%;
+                border: 1px solid #E3E3E4;
+                border-left: none;
+            }
+            .submit-button input{
+                display: none;
+            }
+
+            .submit-button svg{
+                width:40px;
+                fill: #131821;
+                opacity: 0.3;
+                position: relative;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+            }
+
+            .email-input:hover, .email-input:hover input[type="text"], .email-input:hover .submit-button , .email-input:hover .submit-button svg{
+                border-color: #4066A5 ;
+                fill: #4066A5 ;
+                opacity: 1;
+            }
+
+            .email-input.error, .email-input.error input[type="text"], .email-input.error .submit-button{
+                border-color: red;
+            }
+
+            .agree-tof-input{
+                margin-top: 53px;
+                line-height: 28px;
+            }
+
+            [type="checkbox"] {
+                appearance: none;
+                background-color: #4066A5;
+                width: 20px;
+                height: 20px;
+                margin: 0;
+            }
+            [type="checkbox"]:checked {
+                background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg viewBox='0 0 16 16' fill='%23fff' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M12.207 4.793a1 1 0 0 1 0 1.414l-5 5a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L6.5 9.086l4.293-4.293a1 1 0 0 1 1.414 0z'/%3E%3C/svg%3E");
+            }
+
+            .agree-tof-input input[type="checkbox"]{
+                width: 20px;
+                height: 20px;
+                margin: 0 15px 0 0;
+            }
+            .agree-tof-input a{
+                color: #131821;
+                text-decoration: underline;
+            }
+            .agree-tof-input a:hover{
+                color: var(--links-hover-color);
+            }
+            
+            .social-netw-links{
+                display: flex;
+                justify-content: center;
+                gap: 20px;
+                margin-top: 50px;
+            }
+
+            /* .social-netw-links div{
+                width: 46px;
+                height: 46px;
+                border: 2px solid #E2E3E4;
+                border-radius: 50%;
+                text-align: center;
+                
+            } */
+            .social-netw-links div a{
+                display: block;
+                width: 46px;
+                height: 46px;
+                border: 2px solid #E2E3E4;
+                border-radius: 50%;
+                text-align: center;
+
+                line-height: 42px;
+                color: rgba(19, 24, 33, 0.3);  
+            }
+            .social-netw-links div a:hover{
+                box-shadow: 0px 20px 40px rgba(19, 24, 33, 0.3);
+            }
+
+            .social-netw-links div.facebook a:hover{
+                color: #FFFFFF;
+                border-color: #4267B2;
+                background-color: #4267B2;
+            }
+
+            .social-netw-links div.facebook a:active{
+                color: #FFFFFF;
+                border-color: red;
+                background-color: red;
+            }
+
+            .social-netw-links div.instagram a:hover{
+                color: #FFFFFF;
+                border-color: #C13584;
+                background-color: #C13584;
+            }
+
+            .social-netw-links div.twitter a:hover{
+                color: #FFFFFF;
+                border-color: #1DA1F2;
+                background-color: #1DA1F2;
+            }
+
+            .social-netw-links div.youtube a:hover{
+                color: #FFFFFF;
+                border-color: #FF0000;
+                background-color: #FF0000;
+            }
+            
+            .right-col{
+  
+                background-image: url(pineaple.jpeg);
+                background-size: cover;
+                flex: 1 1 auto;
+            }
+
+            @media screen and (max-width: 790px) {
+
+                .cols-container{
+                    /* height: 812px; */
+                    height: 100vh;
+                }
+
+                .left-col{
+                    background: none;
+                    padding: 0;
+                    width: unset;
+                    flex: 1 1 auto;
+                    display: flex;
+                    flex-direction: column;
+                }
+
+                .top-bar{
+                    background-color: #FFFFFF;
+                    height: 66px;
+                    align-items: center;
+                    padding: 0 20px;
+                    flex-shrink: 0;
+                }
+
+                .top-bar .logo-pineaple span{
+                    display: none;
+                }
+
+                .top-bar .links{
+                    margin-top: 6px;
+                }
+
+                .top-bar .links a{
+                    font-size: 14px;
+                    line-height: 24px;
+                }
+
+                .content-wrapper{
+                    flex-grow: 1;
+                    /* background-image: url(virsi.jfif); */
+                    background-image: url(pineaple.jpeg);
+                    background-size: cover;
+                    background-position-x: -281px;
+                    padding: 188px 20px 0 20px;
+                }
+                .content{
+                    background: linear-gradient(180deg, #FFFFFF 0%, #F2F5FA 100%);
+                    padding: 30px 20px;
+                }
+
+                .newsletter-form-container{
+                    margin: unset;  
+                    padding-bottom: 20px;  
+                }
+
+                .newsletter-form-container h1{
+                    font-size: 24px;
+                    line-height: 34px;
+                }
+
+                .newsletter-form-container h2{
+                    font-size: 14px;
+                    line-height: 26px;
+                    margin-top: 10px;
+                }
+                .email-input{
+                    margin-right: 49px;
+                    margin-left: 0;
+                    margin-top: 20px;
+                }
+
+                .email-input input[type="text"]{
+                    height: 60px;
+                    padding-left: 19px;
+                }
+
+                .submit-button{
+                    width: 49px;
+                }
+                .submit-button svg {
+                    width: 34px;
+                    height: 24px;
+                }
+
+                .agree-tof-input{
+                    margin-top: 20px;
+                }
+
+                .social-netw-links{
+                    margin-top: 20px;
+                    gap: 10px;
+                }
+
+                .right-col{
+                    background: none;
+                    flex: 0 0 0;
+                }
+
+            }
+        </style>
+
+        <script>
+            function testfunc(){
+                var internalVar = 1;
+                return 2;
+            }
+            var functVar = testfunc;
+            console.log(functVar.prototype.internalVar)
+        </script>
+
+</head>
+<body>
+
+    <div class="cols-container">
+        <div class="left-col">
+            
+            <div class="top-bar">
+                <div class="logo-pineaple">
+                    <svg width="25" height="40" viewBox="0 0 25 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M5.75658 14.5161L0 7.41936L6.57895 8.54839L5.75658 0.967742L10.5263 6.45161L12.5 0L14.4737 6.45161L19.2434 0.967742L18.4211 8.54839L25 7.41936L19.2434 14.5161H5.75658ZM8.07206 10.1146L7.51478 4.97752L11.0926 9.09101L12.5 4.49046L13.9074 9.09101L17.4852 4.97752L16.9279 10.1146L21.8124 9.27632L18.6088 13.2258H6.39123L3.18759 9.27632L8.07206 10.1146Z" fill="#4066A5"/>
+                    <path fill-rule="evenodd" clip-rule="evenodd" d="M20.0658 40H5.26316L0.328947 35.1613V20.6452L5.26316 15.8065H20.0658L25 20.6452V35.1613L20.0658 40ZM7.67582 27.2055L11.8448 23.1172L5.72958 17.1738L1.64474 21.1796V21.344L7.67582 27.2055ZM17.9841 17.0968H7.51948L12.7752 22.2048L17.9841 17.0968ZM8.61039 28.1138L12.7794 24.0255L16.8012 27.9342L12.6322 32.0225L8.61039 28.1138ZM13.7098 23.1131L17.7316 27.0218L23.6842 21.1844V21.1796L19.6828 17.2557L13.7098 23.1131ZM13.5667 32.9308L17.7357 28.8425L23.6842 34.6238V34.6268L19.5208 38.7097H19.5127L13.5667 32.9308ZM18.6662 27.9301L23.6842 32.8071V23.0092L18.6662 27.9301ZM6.7454 28.1179L1.64474 23.1606V33.1199L6.7454 28.1179ZM7.67998 29.0262L11.7017 32.9349L5.81302 38.7097H5.80818L1.80679 34.7857L7.67998 29.0262ZM17.6435 38.7097H7.67383L12.6363 33.8432L17.6435 38.7097Z" fill="#4066A5"/>
+                    </svg>
+                    <span>pineaple.</span>
+                </div>
+                <div class="links">
+                    <ul>
+                        <li><a href="#">About</a></li>
+                        <li><a href="#">How it works</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="content-wrapper">
+                <div class="content">
+                    <div class="newsletter-form-container">
+                        <h1>Subscribe to newsletter</h1>
+                        <h2>Subscribe to our newsletter and get 10% discount on pineapple glasses.</h2>
+                        
+                        <form>
+                            <div  class="email-input">
+                                <input  type="text"  placeholder="Type your email address here…"/> 
+                                <label  class="submit-button">
+                                    <input type="submit" />
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2022 Fonticons, Inc. --><path d="M438.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L338.8 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l306.7 0L233.4 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"/></svg>
+                                </label>
+                            </div>
+                            <div class="agree-tof-input">
+                                <label >
+                                    <input name="question_4" type="checkbox" class="" value="true"/><span>I agree to <a href="#">terms of service</a></span>
+                                </label>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div class="social-netw-links">
+                        <div class="facebook"><a href="#"><i class="fa fa-facebook"></i></a></div>
+                        <div class="instagram"><a href="#"><i class="fa fa-instagram"></a></i></div>
+                        <div class="twitter"><a href="#"><i class="fa fa-twitter"></a></i></div>
+                        <div class="youtube"><a href="#"><i class="fa fa-youtube-play"></a></i></div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        
+        <div class="right-col">
+
+        </div>
+    </div>
