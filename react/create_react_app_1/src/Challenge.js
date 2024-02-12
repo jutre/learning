@@ -1,103 +1,113 @@
 import './Challenge.scss';
 
-import React , { useState} from 'react';
+import React, {useState} from 'react';
 
 
-
-
+/**
+ * returns form view or succesfull submit message
+ * @returns 
+ */
 function SubcriptionForm(){
-  const [showForm, setShowForm] = useState(true);
-  const [email, setEmail] = useState("");
+
+  const [inputs, setInputs] = useState({});
   const [inputError, setInputError] = useState("");
-  const [agreedToc, setAgreedToc] = useState(false);
+  const [showForm, setShowForm] = useState(true);
+  /* signals if form was submitted at least once*/
+  const [submitAttemptHappened, setSubmitAttemptHappened] = useState(false);
 
+  const  onInputFieldsChange = (event) => {
 
-  /*const handleSubmit = (event) => {
-    event.preventDefault();
-
-    //clear previous errors 
-    setInputError("")
-
-    if(!email){
-      setInputError("Email address is required")
-      setShowForm(true)
-
-    }else if(!validateEmailFormat(email)){
-      setInputError("Please provide a valid e-mail address")
-      setShowForm(true)
-    
-    }else if(email.toLowerCase().endsWith(".co")){
-      setInputError("We are not accepting subscriptions from Colombia emails")
-      setShowForm(true)
-    
-    //passed all checks, show sucess
-    }else{
-      setShowForm(false) 
+    //sets changed input's value in state variable
+    let name = event.target.name;
+    let value = event.target.value;
+    //process value for checkbox other way
+    if(event.target.type === "checkbox"){
+      value = event.target.checked;
     }
-  }*/
+    setInputs(values => ({...values, [name]: value}))
 
+
+    //if form was once submitted than do validation immediately on input change
+    if(submitAttemptHappened){
+      /*due to timings React updates state we need to construct object that has new value
+        of field that has just changed as preceeding setInputs() call does not update "inputs"
+        state variable immidiatelly*/
+      const currentInputFieldsValues = {...inputs, [name]: value};
+      validateInput(currentInputFieldsValues);
+    }
+
+  }
+
+  /**
+   * sets state variable whether to show form or not depending on validation result
+   * 
+   * @param  event 
+   */
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    //clear previous errors 
-    setInputError("")
+    //after first submit input will be validated while changing fields
+    setSubmitAttemptHappened(true);
 
-    let validationResult = validateInput();
-    //
+    let validationResult = validateInput(inputs);
     if(!validationResult){
       setShowForm(true)
-
-    //passed all checks, show sucess
     }else{
       setShowForm(false) 
     }
   }
 
-  //if input is incorrect, add error class
+
+
+  //if incorrect input, add error class
   let emailInputFieldClsName = "email-input";
   if(inputError){
     emailInputFieldClsName += " error";
   }
 
-  let form = (
-    <div className="newsletter-subscr-form">
-      <h1>Subscribe to newsletter</h1>
-      <h2>Subscribe to our newsletter and get 10% discount on pineapple glasses.</h2>
-
-      <form onSubmit={handleSubmit}>
-        <div className={emailInputFieldClsName}>
-          <input  type="text" 
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  placeholder="Type your email address here…" />
-
-          <label className="submit-button">
-            <input type="submit" />
-            {/*need svg tag here, not img with link to svg file because we need color change on hover*/}
-            <svg width="24" height="14" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M17.7071 0.2929C17.3166 -0.0976334 16.6834 -0.0976334 16.2929 0.2929C15.9023 0.683403 15.9023 1.31658 16.2929 1.70708L20.5858 5.99999H1C0.447693 5.99999 0 6.44772 0 6.99999C0 7.55227 0.447693 7.99999 1 7.99999H20.5858L16.2929 12.2929C15.9023 12.6834 15.9023 13.3166 16.2929 13.7071C16.6834 14.0976 17.3166 14.0976 17.7071 13.7071L23.7071 7.70708C24.0977 7.31658 24.0977 6.6834 23.7071 6.2929L17.7071 0.2929Z" />
-            </svg>
-          </label>
-        </div>
-
-        {inputError && 
-          <div className='error-msg'>{inputError}</div>
-        }
-        
-        <div className="agree-toc-input">
-          <label>
-            <input  type="checkbox"  
-                    checked={agreedToc} onChange={e => setAgreedToc(e.target.checked)} />
-              <span>I agree to <a href="#">terms of service</a></span>
-          </label>
-        </div>
-      </form>
-    </div>
-  );
-  
   if(showForm){
-    return form;
+    return (
+      <div className="newsletter-subscr-form">
+        <h1>Subscribe to newsletter</h1>
+        <h2>Subscribe to our newsletter and get 10% discount on pineapple glasses.</h2>
+  
+        <form onSubmit={handleSubmit}>
+          <div className={emailInputFieldClsName}>
+            <input  type="text"
+                    name="email" 
+                    value={inputs.email || ""}
+                    onChange={onInputFieldsChange}
+                    placeholder="Type your email address here…" />
+  
+            <label className="submit-button">
+              <input type="submit" />
+              {/*need svg tag here, not img with link to svg file because we need color change on hover*/}
+              <svg width="24" height="14" viewBox="0 0 24 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.7071 0.2929C17.3166 -0.0976334 16.6834 -0.0976334 16.2929 0.2929C15.9023 0.683403 15.9023 
+                1.31658 16.2929 1.70708L20.5858 5.99999H1C0.447693 5.99999 0 6.44772 0 6.99999C0 7.55227 0.447693 7.99999 
+                1 7.99999H20.5858L16.2929 12.2929C15.9023 12.6834 15.9023 13.3166 16.2929 13.7071C16.6834 14.0976 17.3166 
+                14.0976 17.7071 13.7071L23.7071 7.70708C24.0977 7.31658 24.0977 6.6834 23.7071 6.2929L17.7071 0.2929Z" />
+              </svg>
+            </label>
+          </div>
+  
+          {inputError && 
+            <div className='error-msg'>{inputError}</div>
+          }
+          
+          <div className="agree-toc-input">
+            <label>
+              <input  type="checkbox"
+                      name="agreedToc"
+                      checked={inputs.agreedToc || false} onChange={onInputFieldsChange} />
+                <span>I agree to <a href="#">terms of service</a></span>
+            </label>
+          </div>
+        </form>
+      </div>
+    );
+
   }else{
     return (
       <div className="newsletter-subscr-form">
@@ -109,26 +119,31 @@ function SubcriptionForm(){
   }
 
 
-  /* validates input. If input is correct, return true, if input is not correct, returns false and sets
-/error message to state */
-function validateInput(){
+  /**
+   * Validates input fields. If input is correct, return true, false otherwise. 
+   * Sets error message to state variable
+   * @param inputs object that represents form input values
+   * @returns 
+   */
+function validateInput(inputs){
 
-  /*
-  *email field validation
-  */
-  if(!email){
+  //clear previous error message if any 
+  setInputError("")
+
+
+  if(!inputs.email){
     setInputError("Email address is required")
     return false;
 
-  }else if(!validateEmailFormat(email)){
+  }else if(!validateEmailFormat(inputs.email)){
     setInputError("Please provide a valid e-mail address")
     return false;
   
-  }else if(email.toLowerCase().endsWith(".co")){
+  }else if(inputs.email.toLowerCase().endsWith(".co")){
     setInputError("We are not accepting subscriptions from Colombia emails")
     return false;
   
-  }else if(!agreedToc){
+  }else if(!inputs.agreedToc){
     setInputError("You must accept the terms and conditions")
     return false;
 
