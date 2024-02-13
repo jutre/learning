@@ -1,10 +1,10 @@
 # Description
-This directory contains files with code that was created to learn and test various basic ascepts of React and some various technical aspects.
+This directory contains files with code that was created to learn and test various basic ascepts of React and some technical aspects.
 
 Most notable files are:
 
 ### src/Challenge.js 
-Contains completed responsive design and functionality - a form that performs input validation and displays submit success message.
+Contains complete responsive design and functionality - a form that performs input validation and displays submit success message.
 An email should be valid, must not end with ".co" (Columbian), checbox must be checked. After first submit with invalid data validation is being performed while typing.
 Result can be viewed instantly - [hosted on Sandbox](https://codesandbox.io/p/sandbox/page-with-design-and-submit-form-x62rx3)
 
