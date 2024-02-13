@@ -1,4 +1,4 @@
-import './Challenge.scss';
+import './challenge_assets/Challenge.scss';
 
 import React, {useState} from 'react';
 

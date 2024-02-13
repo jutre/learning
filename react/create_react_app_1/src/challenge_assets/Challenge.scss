@@ -77,11 +77,11 @@ a:hover{
     .logo-pineaple{
         width: 118px;
         height: 40px;
-        background-image: url(challenge_assets/logo_pineapple.svg);
+        background-image: url(logo_pineapple.svg);
 
         @media screen and (max-width: $mobile-breakpoint){
             width: 24px;
-            background-image: url(challenge_assets/logo_pineapple_mobile.svg);
+            background-image: url(logo_pineapple_mobile.svg);
         }
     }
 
@@ -139,7 +139,7 @@ a:hover{
 .newsletter-subscr-form .subscription-success-logo{
     width: 44px;
     height: 70px; 
-    background-image: url(challenge_assets/subscription_success.svg);
+    background-image: url(subscription_success.svg);
 
     /*in form and success view first H1 in subscription form component is in the same distance from page top 
     element, it is defined using div.content padding. But sucess logo is above that H1, lift it up
@@ -311,7 +311,7 @@ a:hover{
 }
 
 .right-col{
-    background-image: url(challenge_assets/background_pineaple.jpeg);    
+    background-image: url(background_pineaple.jpeg);    
     background-size: cover;
     flex: 1 1 auto;
 }
@@ -323,7 +323,7 @@ a:hover{
 
     .content-wrapper{
         flex-grow: 1;
-        background-image: url(challenge_assets/background_pineaple.jpeg);    
+        background-image: url(background_pineaple.jpeg);    
         background-size: cover;
         background-position-x: -281px;
         padding: 188px 20px 0 20px;
