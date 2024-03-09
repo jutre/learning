@@ -145,11 +145,9 @@ h1, h2, h3{
 }
 
 .add_book_link {
-    @media screen and (min-width: $mobile-breakpoint) {
-        position: absolute;
-        top: 0;
-        right: 0; 
-    }
+    position: absolute;
+    top: 0;
+    right: 0; 
 
     a {
         @include button-appearance;
