@@ -31,7 +31,10 @@ import ReactDOM from 'react-dom/client';
 //import App from './submit_form_modular_context_scalar/Submit_form';
 
 //import App from './App_miscalaneous_testing';
-import App from './better_solution_than_context_api/Add_remove_form';
+//import App from './better_solution_than_context_api/Add_remove_form';
+//import App from './add_remove_form/Add_remove_form';
+//import App from './redux_study/redux_api_study/Redux_api_research';
+import App from './redux_study/redux_sample_app/Redux_sample_app';
 
 
 
