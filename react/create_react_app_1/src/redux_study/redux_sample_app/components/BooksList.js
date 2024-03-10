@@ -1,12 +1,16 @@
+import { useEffect } from "react";
 import { connect } from 'react-redux';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { routes } from "../config";
 import { getAllBooks } from '../selectors/books';
 import { doDeleteBook } from '../actions/bookActions';
 import { ModalDialog } from './ModalDialog';
-
-
+import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 function BooksList ({ booksArr, onBookDelete }) {
+  useEffect(() => {
+    setPageTitleTagValue("Books");
+  }, []);
+  
   const navigate = useNavigate();
   /**
    * deletes book in redux store and redirects to book list url.
@@ -14,6 +18,8 @@ function BooksList ({ booksArr, onBookDelete }) {
    */
   function deleteBook(bookId){
     onBookDelete(bookId);
+    //restore page title tag
+    setPageTitleTagValue("Books");
     navigate(routes.bookListPath);
   }
 
@@ -22,6 +28,8 @@ function BooksList ({ booksArr, onBookDelete }) {
    * for deletion
    */
   function cancelSelectionForDeleting(){
+    //restore page title tag
+    setPageTitleTagValue("Books");
     navigate(routes.bookListPath);
   }
 
@@ -46,7 +54,9 @@ function BooksList ({ booksArr, onBookDelete }) {
     if(selectedBook){
       modalDialogMessage = `Are you sure you want to delete "${selectedBook.title}"?`;
       showModalDialog = true;
-    
+
+      //on modal dialog change page title
+      setPageTitleTagValue("Delete book");
     }else{
       deletionErrorMessage = `A book with id="${deleteBookId}" was not found!`;
     }

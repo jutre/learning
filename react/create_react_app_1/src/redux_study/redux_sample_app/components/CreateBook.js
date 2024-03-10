@@ -1,15 +1,19 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { doCreateBook } from "../actions/bookActions";
 import { routes } from "../config";
 import { FormBuilder } from '../utils/FormBuilder';
 //needed for action distching
 import store from "../store/store";
+import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 
 
 function CreateBook() {
   const [showForm, setShowForm] = useState(true);
 
+  useEffect(() => {
+    setPageTitleTagValue("Create new book");
+  }, []);
 
   let  formFieldsDefinition = [
     {label: "Title", name:"title", type:"text", rule:"required"}, 

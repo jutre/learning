@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getBookById } from "../selectors/books";
 import { doUpdateBook } from "../actions/bookActions";
@@ -6,6 +6,7 @@ import { routes } from "../config";
 import { FormBuilder } from '../utils/FormBuilder';
 //neede for selectors and action distching
 import store from "../store/store";
+import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 
 
 /**
@@ -24,7 +25,9 @@ function BookEditing() {
     return initialData;
   });
 
-  
+  useEffect(() => {
+    setPageTitleTagValue("Edit book");
+  }, []);
   
   let  formFieldsDefinition = [
     {label: "id", name:"id", type:"hidden"},
