@@ -1,7 +1,9 @@
-import { createStore } from 'redux';
-import rootReducer from '../reducers';
+import { configureStore } from '@reduxjs/toolkit'
+import booksReducer from '../features/booksSlice';
 
 
-const store = createStore(rootReducer);
+const store = configureStore({
+    reducer: {booksState: booksReducer}
+});
 
 export default store;

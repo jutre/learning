@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { routes } from "../config";
 import { getAllBooks } from '../selectors/books';
-import { doDeleteBook } from '../actions/bookActions';
+import { bookDeleted } from "../features/booksSlice";
 import { ModalDialog } from './ModalDialog';
 import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 function BooksList ({ booksArr, onBookDelete }) {
@@ -110,7 +110,7 @@ const mapStateToProps = state => ({
 
 
 const mapDispatchToProps = dispatch => ({
-  onBookDelete: bookId => dispatch(doDeleteBook(bookId)),
+  onBookDelete: bookId => dispatch(bookDeleted(bookId)),
 });
 
 

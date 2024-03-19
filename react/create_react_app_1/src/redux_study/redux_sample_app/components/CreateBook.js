@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { doCreateBook } from "../actions/bookActions";
+import { bookCreated } from "../features/booksSlice";
 import { routes } from "../config";
 import { FormBuilder } from '../utils/FormBuilder';
 //needed for action distching
@@ -20,7 +20,7 @@ function CreateBook() {
     {label: "Description", name:"description", type:"textarea", rule:"required"}];
     
   function saveSubmittedData(bookData){
-    store.dispatch(doCreateBook(bookData));
+    store.dispatch(bookCreated(bookData));
     setShowForm(false);
   }
 

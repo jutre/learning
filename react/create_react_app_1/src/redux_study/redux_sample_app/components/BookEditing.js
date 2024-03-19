@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getBookById } from "../selectors/books";
-import { doUpdateBook } from "../actions/bookActions";
+import { bookUpdated } from "../features/booksSlice";
 import { routes } from "../config";
 import { FormBuilder } from '../utils/FormBuilder';
 //neede for selectors and action distching
@@ -38,7 +38,7 @@ function BookEditing() {
     //part of loading indicator
     setSubmitingIndicator(true);
 
-    store.dispatch(doUpdateBook(bookData))
+    store.dispatch(bookUpdated(bookData))
     
     //simulation of end of fetching, not using real submiting data to server
     setTimeout( () => {setSubmitingIndicator(false)}, 500); 
