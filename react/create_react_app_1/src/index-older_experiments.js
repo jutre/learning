@@ -29,7 +29,9 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link
+  Link,
+  useParams, 
+  useNavigate
 } from "react-router-dom";
 
 function getDateStr(){
@@ -98,6 +100,23 @@ function Dashboard() {
   return (
     <div>
       <h2>Dashboard</h2>
+    </div>
+  );
+}
+
+
+function Edit() {
+  const { bookId } = useParams();
+  const navigate = useNavigate();
+
+  console.log('Edit - param from path', bookId);
+
+  console.log('rendering Edit', getDateStr());
+  return (
+    <div>
+      <h2>Edit</h2>
+      <div>param from path value [{bookId}]</div>
+      <div onClick={()=>{navigate("/edit")}}>Navigate to editing without params</div>
     </div>
   );
 }
