@@ -310,6 +310,21 @@ h1, h2, h3{
     margin-bottom: $margin_or_padding_base * 2;
 }
 
+div.table{
+    margin-bottom: $margin_or_padding_base * 2;
+
+    .row{
+        display: flex;
+        :first-child{
+            flex: 0 0 120px;
+            font-weight: bold;
+        }
+        > div{
+            padding: 0 $margin_or_padding_base $margin_or_padding_base 0;
+         }
+    }
+}
+
 form{
     max-width: 700px;
 

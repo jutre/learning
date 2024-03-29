@@ -9,7 +9,7 @@ import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 
 
 function CreateBook() {
-  const [showForm, setShowForm] = useState(true);
+  const [createdBook, setCreatedBook] = useState(null);
 
   useEffect(() => {
     setPageTitleTagValue("Create new book");
@@ -21,11 +21,11 @@ function CreateBook() {
     
   function saveSubmittedData(bookData){
     store.dispatch(bookCreated(bookData));
-    setShowForm(false);
+    setCreatedBook(bookData);
   }
 
   let mainContent;
-  if(showForm){
+  if( ! createdBook){
     mainContent = 
       <FormBuilder  formFieldsDefinition={formFieldsDefinition} 
                     successfulSubmitCallback={saveSubmittedData}/>;
@@ -33,6 +33,16 @@ function CreateBook() {
     mainContent = (
       <>
         <div className="info_message">Book data was saved.</div>
+        <div className="table">
+          <div className="row">
+            <div>Title:</div>
+            <div>{createdBook.title}</div>
+          </div>
+          <div className="row">
+            <div>Description:</div>
+            <div>{createdBook.description}</div>
+          </div>
+        </div>
         <div className="navigation"><Link to={routes.bookListPath}>Return to book list</Link></div>
       </>
     );

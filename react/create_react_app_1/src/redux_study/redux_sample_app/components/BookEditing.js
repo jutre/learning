@@ -17,15 +17,36 @@ import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 function BookEditing() {
   const [submitingIndicator, setSubmitingIndicator] = useState(false);
 
+  
+  //load book data from store and keep in compnent's state. Components state is needed as component
+  //will be re-rendered when submitting indicator will appear and we need a way to perform data loading only once
+  const [formInitialData, setFormInitialData] = useState({});
+
+  //will contain possible errors
+  const [errorMsg, setErrorMsg] = useState();
+
   const { bookId } = useParams();
-  const [formInitialData, setFormInitialData] = useState(() => {
-
-    //data getting from store runs only once because function is passed to React state initialisation hook
-    const initialData = getBookById(store.getState(), bookId);
-    return initialData;
-  });
-
   useEffect(() => {
+    
+    //load initial book data for editing
+    //(runs after first render, but on first render form was displayed with empty, but user did not see that)
+
+    //exclude non integer and values less than one
+    if (! /^[1-9][0-9]*$/.test(bookId)) {
+      setErrorMsg(bookId + " - invalid parameter value! Value must be integer greater than zero.");
+
+    } else {
+      let bookIdIntVal = parseInt(bookId);
+      const initialData = getBookById(store.getState(), bookIdIntVal);
+
+      if (initialData === undefined) {
+        setErrorMsg(`A book with id="${bookId}" was not found!`);
+      } else {
+        setFormInitialData(initialData);
+      }
+    }
+
+    //setting page title from here
     setPageTitleTagValue("Edit book");
   }, []);
   
@@ -53,10 +74,15 @@ function BookEditing() {
       
       <h2>Edit book</h2>
       
-      <FormBuilder  formFieldsDefinition={formFieldsDefinition} 
+      {errorMsg 
+        ?
+        <div className='error'>{errorMsg}</div>
+        :
+        <FormBuilder formFieldsDefinition={formFieldsDefinition} 
                     submitButtonText="Update"
                     initialData={formInitialData} 
                     successfulSubmitCallback={saveSubmittedData}/>
+      }
 
       {submitingIndicator&&
         <div className="load_indicator">saving...</div>}

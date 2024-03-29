@@ -39,11 +39,21 @@ function BooksList ({ booksArr, onBookDelete }) {
   //vars must be defined here to be reachable in jsx
   let modalDialogMessage;
   let deletionErrorMessage;
+  let deleteBookId = 0;
+
   const { search: queryParamsString } = useLocation();
-  let deleteBookId = (new URLSearchParams(queryParamsString)).get("deleteId");
-  //try to get and integer from parameter value
-  deleteBookId = parseInt(deleteBookId);
-  if(deleteBookId){
+  let deleteBookIdParam = (new URLSearchParams(queryParamsString)).get("deleteId");
+
+  if(deleteBookIdParam ){
+    //exclude non integer and values less than one
+    if( ! /^[1-9][0-9]*$/.test(deleteBookIdParam)){
+      deletionErrorMessage = deleteBookIdParam +" - invalid parameter value! Value must be integer greater than zero.";
+    }else{
+      deleteBookId = parseInt(deleteBookIdParam);
+    }
+  }
+
+  if(deleteBookId > 0){
     /*place the title of selected book in confirmation dialog. 
     Aso check if book for deletion exists, maybe user got to current url from browser history 
     when he deleted book previously*/
