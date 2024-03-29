@@ -1,0 +1,5 @@
+# Description
+This directory contains files with code that was created to learn typescript. 
+Added typescript to [code](https://github.com/jutre/learning/tree/main/react/create_react_app_1/src/redux_study/redux_sample_app) that was created earlier.
+Also look at [readme file](https://github.com/jutre/learning/blob/main/react/create_react_app_1/README.md) for description about originally created code.
+
