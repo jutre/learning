@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 /**
  * 
@@ -21,21 +21,61 @@ import { useState } from 'react';
  * if all fields pass validation
  * @returns 
  */
-export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit", initialData = {}, successfulSubmitCallback }) {
-  /*TODO. Currently for the checkbox type input fields initial state object's values are interpreted as Truthy or Falsy
-  and stanslated to checked/unchecked state, loosing initial input field value, also after submitting the value for
-  those fields are returned as true/false. But there is little inconsistency - if form is submitted
-  imidiatelly without mofication of any input field, value attacked to checkbox will be returned to successfulSubmitCallback 
-  as they were passed in initial data.  TODO possibly do one of this: 1) convert initial value to Boolean before setting
-  into initial state (by using useRef() of useEffect which will run once); 2) Or maybe create behaviour like in case with
-  submitting forms with checkbox to server side if uncheckbed, no value sent to server for this fields (at least with PHP
-  it works such way) -  it depends on what we need, but usually checked/unchecked means true or false, best values for those
-  fiels would be true/false
-  TODO finish code for creating radio buttons*/
+export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit", initialData, successfulSubmitCallback }) {
+  /*
+  TODO finish code for creating radio input, select
+  TODO - currently in case if initial data object contains properties that are not present as form fields they are also
+  submitted (unmodified). Decide is it is needed to eliminate them and submit only object with fields that are 
+  present in form as input fields */
 
-  //will track all input fields values, initially set to component property value
-  const [inputFieldValues, setInputFieldValues] = useState(initialData);
+  //will track all input fields values
+  const [inputFieldValues, setInputFieldValues] = useState({});
   const [inputErrors, setInputErrors] = useState({});
+
+  
+  useEffect(() => {
+    /*Setting initial form data to component's state in useEffect hook which depends on @param initialData value. 
+    We can't do just  useState(initialData) as doing such way in case parent component re-renders with other @param initialData value,
+    new value won't be set to component's state as useState runs once. This is done for case a design pattern is used when parent component 
+    renders for the first time with empty data (then form as it's child is rendered with empty fields) and then parent component loads data 
+    from somehow in useEffect hook and re-renders with loaded data that must be initially sed in form fields*/
+
+
+    /*Code to reach consistency. Initial data for form is plain object with key/value pairs, where value suplies initial
+    value for all kind of input elements, for checkbox that value is used for "checked" attribute. Any type of data can be suplied
+    for ths attribute in this object, React would convert it to Truthy/Falsey value when setting it for input element. If user changes
+    in form checkbox to opposite value and then sets back like removing initial check mark and then puting it back 
+    and then submits it, the value passed to successfulSubmitCallback will be 'true' withboolean type. But in case user does not 
+    change the checkbox state and submits the form, the data passed to successfulSubmitCallback for the ckeckbox field will be same
+    value that was passed in initial data object having expactly same type, for example a string value "on". 
+    The following code converts all initial values for checkboxes to boolean type to correct than inconsitency. The outcome is 
+    always passing boolean type value to successfulSubmitCallback for checbox fields*/
+
+    //Create a copy of @param initialData object as it might be modified. In some cases passed value might be read only as with
+    //objects coming from Redux, but we need an object that can be modified for checkbox fields values correction
+    if(! initialData){
+      initialData = {};
+    }
+    let initialDataCopy = {...initialData};
+    let correctedCheckboxValues = {};
+    formFieldsDefinition.forEach(formElementDef => {
+      let fieldName = formElementDef.name;
+      if(formElementDef.type === "checkbox"){
+        if( typeof (initialDataCopy[fieldName]) !== "boolean"){
+          correctedCheckboxValues[fieldName] = Boolean(initialDataCopy[fieldName]);
+        }
+      }
+    })
+
+    if(Object.keys(correctedCheckboxValues).length !== 0){
+      initialDataCopy = { ...initialDataCopy, ...correctedCheckboxValues };
+    }
+
+    //finally set corrected data to state
+    setInputFieldValues(initialDataCopy);
+
+  }, [initialData]);
+
 
   const onInputFieldsChange = (event) => {
     //sets changed input's value in state variable
@@ -55,8 +95,9 @@ export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit",
     let errors = {}; //actually clear previous errors, as this will be filled with errors from current validation
 
     for (const formElementDef of formFieldsDefinition) {
-      if (formElementDef.rule === "required" && !inputFieldValues[formElementDef.name]) {
-        errors = { ...errors, [formElementDef.name]: "this field must not be empty" };
+      let fieldName = formElementDef.name;
+      if (formElementDef.rule === "required" && !inputFieldValues[fieldName ]) {
+        errors = { ...errors, [fieldName ]: "this field must not be empty" };
       }
     }
   
@@ -68,34 +109,34 @@ export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit",
 
     //set actual errors to state for displaying
     setInputErrors(errors);
-  };
+  }
 
  
 
   return (
     <form onSubmit={handleSubmit}>
-      {(formFieldsDefinition).map((formElementDef, index) => {
+      {(formFieldsDefinition).map((formElementDef) => {
+        let fieldName = formElementDef.name;
 
-        //Input elements of different types have different attritutes, use object to add needed attributes conditionally.
-        //All input elements have name attribute, are controlled input fields having change handler and current value 
-        let fieldValue = inputFieldValues[formElementDef.name] || "";
+        //Adding attributes present in all input elements.
+        //All input elements also have change handler as they are controlled input fields
         let inputElemAttributes = {
-          name: formElementDef.name,
-          id: formElementDef.name,
-          onChange: onInputFieldsChange,
-          value: fieldValue
+          name: fieldName ,
+          id: fieldName ,
+          onChange: onInputFieldsChange
         };
 
-        //create "checked" attrute value (true or false) from field value
+        //in "checbox" input element assign current field's value to "checked" attribute,
+        //for all other input types value goes to "value" attribute.
+        //Do not allow 'undefined' value for "checked" or "value" attributes to have controlled input element -
+        //field's value's initial data might be 'undefined' usually for forms without initial data
         if (formElementDef.type === "checkbox") {
-          inputElemAttributes.checked = inputFieldValues[formElementDef.name];
-          /*in javascript strings like "false", "0" are interpereted as Truthy values, convert those to Falsey
-          in case input object's value tests as Truthy*/
-          if (inputElemAttributes.checked) {
-            if ((/false/i).test(inputFieldValues[formElementDef.name]) || inputFieldValues[formElementDef.name] === "0") {
-              inputElemAttributes.checked = false;
-            }
+          inputElemAttributes.checked = inputFieldValues[fieldName];
+          if(inputElemAttributes.checked === undefined){
+            inputElemAttributes.checked = false;
           }
+        }else{
+          inputElemAttributes.value = inputFieldValues[fieldName] || "";
         }
 
         //create "input", "textarea", etc. html tag corresponding to type of input in form definition object
@@ -117,7 +158,7 @@ export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit",
         //for "hidden" type input return just <input> tag here, no additional wrapping or label
         if(formElementDef.type === "hidden"){
           //recteate tag by adding "key" attribute which is needed for React in list rendering
-          return <input {...inputElemAttributes}  key={formElementDef.name}/>;
+          return <input {...inputElemAttributes}  key={fieldName}/>;
         }
 
         /*for all input tags except checkbox, label comes before input field, checkbox also have
@@ -128,17 +169,17 @@ export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit",
           inputTagWithLabel = (
             <>
               <div>{inputTag}</div> 
-              <label htmlFor={formElementDef.name}>{formElementDef.label}</label>
+              <label htmlFor={fieldName}>{formElementDef.label}</label>
             </>) ;
         }else{
-          inputTagWithLabel = <> <label htmlFor={formElementDef.name}>{formElementDef.label}</label> {inputTag} </>;
+          inputTagWithLabel = <> <label htmlFor={fieldName}>{formElementDef.label}</label> {inputTag} </>;
         }
         return (
-          <div className={fieldWrapperCssClass} key={formElementDef.name}>
+          <div className={fieldWrapperCssClass} key={fieldName}>
             {inputTagWithLabel}
 
-            {inputErrors[formElementDef.name] &&
-              <div className='input_error'>{inputErrors[formElementDef.name]}</div>}
+            {inputErrors[fieldName] &&
+              <div className='input_error'>{inputErrors[fieldName]}</div>}
           </div>);
       }
       )}
