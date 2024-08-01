@@ -67,7 +67,7 @@ function BookEditing() {
 
 
   return  (
-    <div>
+    <div className="book_editing">
       <div className="navigation">
         <Link to={routes.bookListPath}>Back</Link>
       </div>
