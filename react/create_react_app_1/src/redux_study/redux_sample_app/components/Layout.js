@@ -1,5 +1,5 @@
 import { routes } from "../config";
-import PageHeader from "./PageHeader";
+import PageHeader from "./page_header/PageHeader";
 import BookEditing from "./BookEditing";
 import BooksList from "./BooksList";
 import CreateBook from "./CreateBook";
@@ -17,16 +17,18 @@ import {
 const Layout = () => {
   return (
     <div className="root_container">
-      <div className="layout_wrapper"><PageHeader/></div>
-      <div className="layout_wrapper content_wrapper">
-        <Router>
+      <Router>
+        <div className="layout_wrapper">
+          <PageHeader/>
+        </div>
+        <div className="layout_wrapper content_wrapper">
             <Routes>
               <Route path={routes.bookListPath} element={<BooksList/>}/>  
               <Route path={routes.bookEditPath} element={<BookEditing/>}/>
               <Route path={routes.createBookPath} element={<CreateBook/>}/>
-            </Routes>   
-        </Router>
-      </div>
+            </Routes>     
+        </div>
+      </Router>
     </div>
   )
 }

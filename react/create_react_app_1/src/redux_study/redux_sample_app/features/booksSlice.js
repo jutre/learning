@@ -1,13 +1,39 @@
 import { createSlice } from '@reduxjs/toolkit';
 
-const initialState = [];
+let initialState = [];
 for (let i = 1; i <= 10; i++){
   initialState.push({
     id: i, 
     title: "This is sample title for book, we have some more text here in title " + i,
     description: "Book " + i + " description text here"})
 }
+//----------
+initialState= [];
+initialState.push({
+  id: 1, 
+  title: "Calculus, part one",
+  description: "Calculus, part one - description text here"})
+  
+  initialState.push({
+    id: 2, 
+    title: "Calculus, part two",
+    description: "Calculus, part two description text here"})
+      
+  initialState.push({
+    id: 3, 
+    title: "Calculus, part three",
+    description: "Calculus, part three description text here"})
+      
+  initialState.push({
+    id: 4, 
+    title: "The basics of physics",
+    description: "The basics of physics description text here"})
 
+  initialState.push({
+      id: 5, 
+      title: "Tranzistor circuit basics",
+      description: "Tranzistor circuit basics description text here"})
+//--------
 const booksSlice = createSlice({
   name: 'books',
   initialState,

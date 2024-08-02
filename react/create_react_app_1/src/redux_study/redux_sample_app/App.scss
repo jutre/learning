@@ -1,11 +1,14 @@
-/*this will be base for padding or margin. Other margin or padding value will be double of this value*/
-$margin_or_padding_base: 15px;
+/*typical margin or padding values used in styling will be base value of dobule value.
+For better readibility create dedicated variables instead of multiplying in CSS rules */
+$margin_padding_base: 15px;
+$margin_padding_double: $margin_padding_base * 2;
 
-$mobile-breakpoint:400px;
-$header-height:80px;
+$tablet-breakpoint:400px;
+$large-screen-breakpoint:992px;
 $button-padding:10px;
 $modal-border-radius:10px;
 
+$text-color:rgb(31, 41, 55);
 $link_color:blue;
 $link_hover_color:rgb(149, 149, 149);
 
@@ -36,7 +39,7 @@ $button_hover_background_color: rgb(0, 118, 192);
     box-sizing:border-box;
 }
 
-body, h1, h2, h3, h4, h5, h6{
+body, h1, h2, h3, h4, h5, h6, ul{
     margin: 0;
 }
 
@@ -47,7 +50,7 @@ body{
 
 
 body, a, input, textarea{
-    color: rgb(31, 41, 55);
+    color: $text-color;
     text-decoration: none;
     font-family: 'Arial';
     font-weight: 400;
@@ -62,7 +65,7 @@ a{
 
 
 h1, h2, h3{
-    margin-bottom: $margin_or_padding_base * 2;
+    margin-bottom: $margin_padding_double;
 }
 
 .root_container{
@@ -75,7 +78,245 @@ h1, h2, h3{
 
 .header{
     background-color: rgba(141, 148, 157, 0.5);
-    padding: $margin_or_padding_base * 2 $margin_or_padding_base;
+    padding: $margin_padding_double $margin_padding_base;
+    position: relative;
+    //this div contains two abosolute positioned divs, one of it also has links as children. To get those links have css :hover effect,
+    //be clickable, to overlap other absolute positioned divs in container's next sibling, it is was enough to set z-index
+    //on abosolute positioned divs itself, z-index must be attached to paren't div. Also 
+    z-index: 1000;
+}
+
+
+.about-info-pane{
+    position: relative;
+
+    .handle-tab-row{
+        display: flex;
+
+
+        //a div after info div control tab. Contains a
+        //border that spans above opened info div in active state
+        .tab-row-supplement{
+            flex-grow: 1;
+            border-width: 0 0 1px 0;
+            border-color: transparent;
+            border-style: solid;
+            //border above info div must disappear at the end of div's collapsing
+            transition: border-color 0.3s step-end;
+        }
+    }
+    
+    .tab{
+        position: relative;
+        cursor: pointer;
+        max-width: max-content;
+        background-color: rgb(131, 230, 230);
+        border: 1px solid grey;
+        //border below tab must become visible at the end of div's collapsing
+        transition: border-color 0.3s step-end;
+        padding: $margin_padding_base;
+
+        .icon{
+            display: inline-block;
+            width: 20px;
+            height: 10px;
+
+            /*creating arrow with pseudo element */
+            &:after {
+                content: "";
+                position: absolute;
+                border-width: 10px 10px 0 10px;
+                border-style: solid;
+                border-color: #555 transparent transparent transparent;
+            }
+        }
+    }
+
+    .body{
+        position: absolute;
+        //in mobile view info div's body must be stacked above input fields which goes as next sibling
+        z-index: 20;
+        transform: scaleY(0);    
+        transform-origin: top;
+        transition: transform 0.3s ease;
+        width: 100%;
+        background-color: rgb(131, 230, 230);
+        border-color: grey;
+        border-style: solid;
+        border-width: 0px 1px 1px 1px; ;
+        padding: $margin_padding_base;
+    }     
+        
+}
+
+
+.search-bar{
+
+    position: relative;
+    margin-top: $margin_padding_double;
+    @media screen and (min-width: $large-screen-breakpoint) { 
+        margin-top:unset;
+        position: absolute;
+        top: 50%;
+        left:50%; 
+        transform: translateX(-50%) translateY(-50%);
+        width: 500px;
+    }
+
+    
+
+    .search-form{
+        position: relative;
+        //input field's border has to be visible above it's next sibling div (resut list)
+        z-index: 12;
+
+        input {
+            padding-right: 70px;
+            //width to equal with form width, but form is equal to containing element width, 
+            width: 100%;
+        }
+
+       .actions{
+            position: absolute;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            padding-right: 8px;
+
+            button{
+                height: 36px;
+                width: 36px;
+                background-color: transparent;
+                border-style: none;
+
+                mask-position: center;
+                mask-repeat: no-repeat;
+                padding: 0;
+            }
+
+            button.clear{
+                mask-size: 13px;
+                mask-image: url(assets/clear-form.svg); 
+                background-color: red;
+            }
+            button.submit{
+                mask-size: 21px;
+                mask-image: url(assets/search-submit.svg); 
+                background-color: black;
+            }
+       }
+    }
+}
+
+.search-results{
+    display: none;
+    width: 100%;
+    position: absolute;
+    margin-top: -$margin_padding_base;
+    padding-top: $margin_padding_base;
+    
+    background-color: white;
+    border-radius: 0 0 7px 7px;
+    border: 1px solid gray;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+    
+    
+    a{
+        display: block;
+        padding: $margin_padding_base;
+        position: relative;
+        z-index: 1;
+
+        //::before pseudo element will act as expanding background for link on hover, expanding from middle
+        //of block to margins by width of pseudo element
+        &:before{
+            content: "";
+            display: block;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 0;
+            position: absolute;
+            background-color: #f4f4f6;
+            width: 0;
+            height: 100%;
+            z-index: -1;
+            transition: width 0.1s ease-in;
+        }
+
+        &:hover{
+            color: $text-color;
+            
+            &:before{
+                width: 100%;
+            }
+        }
+
+        &:last-child {
+            border-radius: 0 0 7px 7px;
+
+            &:before{
+                border-radius: 0 0 7px 7px;
+            }
+        }
+    }
+}
+.search-results.active{
+    display: block;
+}
+  
+.about-info-pane.active{ 
+
+    //add a border below element to be visible above the info div that is located under
+    .handle-tab-row .tab-row-supplement {
+        border-bottom-color: grey;
+
+        //when info div is starting to appear, border above growing info div must appear immediatelly
+        transition: unset;
+    }
+
+    .tab {
+        //when info pane opened, remove border under the tab
+        border-bottom-color: transparent;
+        //when tab becomes active, border under tab must disappear immediatelly because 
+        //info div underneath is starting to appear and a tab must have common
+        //unseparated background with div underneath
+        transition: unset;
+
+        //flip the triangle
+        .icon::after{
+            border-width: 0px 10px 10px 10px;
+            border-color: transparent transparent #555 transparent;
+        }
+    }
+
+    .body{
+        display: block;
+        transform: scaleY(1);
+        line-height: 26px;
+        
+        //create custom bullets
+        ul{
+            list-style: none;
+            padding-left: $margin_padding_double;
+            li{
+                position: relative;
+
+                &:before{
+                    content: "";
+                    display: block;
+                    position: absolute;
+                    left: -23px;
+                    top: 9px;
+                    
+                    background-color: $text-color;
+                    width: 10px;
+                    height: 10px;
+                }
+            }
+        }
+    }
 }
 
 .error{
@@ -91,12 +332,12 @@ h1, h2, h3{
 .layout_wrapper{
     
 
-    @media screen and (min-width: $mobile-breakpoint) {
-        margin:0 $margin_or_padding_base;
+    @media screen and (min-width: $tablet-breakpoint) {
+        margin:0 $margin_padding_base;
     }
 
-    @media screen and (min-width: 1024px) {     
-        width: 1000px;
+    @media screen and (min-width: $large-screen-breakpoint) {     
+        width: 950px;
         margin:0 auto;
     }
 }
@@ -104,13 +345,13 @@ h1, h2, h3{
 //class for element that wraps around content for creating padding, background for content
 .content_wrapper{
     background-color: white;
-    padding: $margin_or_padding_base * 2  $margin_or_padding_base;
+    padding: $margin_padding_double  $margin_padding_base;
     //make content column with it's background span till end of containing element (which spans at least to window bottom)
     flex: 1 1 auto;
 }
 
 .navigation{
-    padding-bottom: $margin_or_padding_base * 2;
+    padding-bottom: $margin_padding_double;
 
     a{
         
@@ -142,6 +383,13 @@ h1, h2, h3{
 
 .book_list{
     position: relative;
+
+    .search_results_heading{
+        a{font-weight: bold;}
+        .entered_search_string_message{
+            padding: $margin_padding_base 0;
+        }
+    }
 }
 
 .add_book_link {
@@ -173,7 +421,7 @@ h1, h2, h3{
 
         .title {
             flex: 1 1 auto;
-            padding: $margin_or_padding_base 0;
+            padding: $margin_padding_base 0;
         }
     }
 
@@ -294,7 +542,7 @@ h1, h2, h3{
         justify-content: center;
         cursor: pointer;
         padding: $button-padding;
-        margin-top: $margin_or_padding_base;
+        margin-top: $margin_padding_base;
         background-color: white;
         color: rgb(70, 170, 233);
 
@@ -307,11 +555,11 @@ h1, h2, h3{
 
 
 .create_book .info_message{
-    margin-bottom: $margin_or_padding_base * 2;
+    margin-bottom: $margin_padding_double;
 }
 
 div.table{
-    margin-bottom: $margin_or_padding_base * 2;
+    margin-bottom: $margin_padding_double;
 
     .row{
         display: flex;
@@ -320,7 +568,7 @@ div.table{
             font-weight: bold;
         }
         > div{
-            padding: 0 $margin_or_padding_base $margin_or_padding_base 0;
+            padding: 0 $margin_padding_base $margin_padding_base 0;
          }
     }
 }

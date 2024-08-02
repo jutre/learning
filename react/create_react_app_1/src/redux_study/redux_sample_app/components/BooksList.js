@@ -1,11 +1,26 @@
 import { useEffect } from "react";
 import { connect } from 'react-redux';
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { routes } from "../config";
 import { getAllBooks } from '../selectors/books';
 import { bookDeleted } from "../features/booksSlice";
 import { ModalDialog } from './ModalDialog';
 import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
+import { searchBooks } from "../utils/utils";
+
+
+/**
+ * returns value of get parameter from window current location string. If parameter is not present in window.location string, returs null
+ * 
+ * @param {string} paramName - name of parameter 
+ * @returns {string | null} 
+ */
+function getQueryParamValue(paramName){
+  const  queryParamsString  = window.location.search;
+  let paramValue = (new URLSearchParams(queryParamsString)).get(paramName);
+  return paramValue;
+}
+
 function BooksList ({ booksArr, onBookDelete }) {
   useEffect(() => {
     setPageTitleTagValue("Books");
@@ -33,23 +48,59 @@ function BooksList ({ booksArr, onBookDelete }) {
     navigate(routes.bookListPath);
   }
 
+  //used for showing error messages in needed situations
+  let errorMessageStrPlaceholder;
   
-  //book is selected for deletion - initialise confirmation dialog for inserting later in html
-  let showModalDialog = false;
-  //vars must be defined here to be reachable in jsx
-  let modalDialogMessage;
-  let deletionErrorMessage;
-  let deleteBookId = 0;
 
-  const { search: queryParamsString } = useLocation();
-  let deleteBookIdParam = (new URLSearchParams(queryParamsString)).get("deleteId");
+  //search parameter is passed
+  let selectedForSearchMessageStr;
+  let searchStringParamVal = getQueryParamValue("search");
+  let allBooksListUrl;
 
-  if(deleteBookIdParam ){
-    //exclude non integer and values less than one
-    if( ! /^[1-9][0-9]*$/.test(deleteBookIdParam)){
-      deletionErrorMessage = deleteBookIdParam +" - invalid parameter value! Value must be integer greater than zero.";
+  //if length is zero after trimming, ignore it, set search string to null to prevent entering the search block
+  if(searchStringParamVal){
+    searchStringParamVal = searchStringParamVal.trim();
+    if(searchStringParamVal.length === 0){
+      searchStringParamVal = null;
+    }
+  }
+
+  if(searchStringParamVal){
+    //if search string after whitespace trimming is not empty, always show entered search string and link to all records link
+    allBooksListUrl = routes.bookListPath;
+
+    selectedForSearchMessageStr = `Your searched for "${searchStringParamVal}".`;
+
+    //search phrase length is less than three symbols - searching is not performed in such case, 
+    //display error message that search phrase must be at least three symbols, display empty book list
+    if(searchStringParamVal.length < 3){
+      booksArr = [];
+      errorMessageStrPlaceholder = "Searching string must contain at least three symbols"
+    
     }else{
-      deleteBookId = parseInt(deleteBookIdParam);
+      
+      //add info how much records were found
+      booksArr = searchBooks(booksArr, searchStringParamVal);
+      if(booksArr.length === 0){
+        selectedForSearchMessageStr += " Nothing was found."
+      }else{
+        selectedForSearchMessageStr += ` Number of records found - ${booksArr.length}.`;
+      }
+    }
+  }
+  
+  
+  //book is selected for deletion, initialise confirmation modal dialog
+  let showModalDialog = false;
+  let modalDialogMessageStr;
+  let deleteBookIdParamVal = getQueryParamValue("deleteId");
+  let deleteBookId = 0;
+  if(deleteBookIdParamVal){
+    //exclude non integer and values less than one
+    if( ! /^[1-9][0-9]*$/.test(deleteBookIdParamVal)){
+      errorMessageStrPlaceholder = deleteBookIdParamVal +" - invalid parameter value! Value must be integer greater than zero.";
+    }else{
+      deleteBookId = parseInt(deleteBookIdParamVal);
     }
   }
 
@@ -62,16 +113,15 @@ function BooksList ({ booksArr, onBookDelete }) {
     );
     
     if(selectedBook){
-      modalDialogMessage = `Are you sure you want to delete "${selectedBook.title}"?`;
+      modalDialogMessageStr = `Are you sure you want to delete "${selectedBook.title}"?`;
       showModalDialog = true;
 
       //on modal dialog change page title
       setPageTitleTagValue("Delete book");
     }else{
-      deletionErrorMessage = `A book with id="${deleteBookId}" was not found!`;
+      errorMessageStrPlaceholder = `A book with id="${deleteBookId}" was not found!`;
     }
   }
-
 
   return  (
     <div className="book_list">
@@ -80,8 +130,19 @@ function BooksList ({ booksArr, onBookDelete }) {
         <Link to={routes.createBookPath}>Add book</Link>
       </div>
 
-      {deletionErrorMessage&&
-        <div className='error'>{deletionErrorMessage}</div>}
+      
+
+      {selectedForSearchMessageStr &&
+        <div className="search_results_heading">
+          <div><Link to={allBooksListUrl}>Display all records</Link></div>
+          <div className="entered_search_string_message">{selectedForSearchMessageStr}</div>
+        </div>
+      }
+
+
+      {errorMessageStrPlaceholder &&
+        <div className='error'>{errorMessageStrPlaceholder}</div>
+      }
 
       <div className="list">
         {(booksArr || []).map(elem  => {
@@ -106,7 +167,7 @@ function BooksList ({ booksArr, onBookDelete }) {
       </div>
       
       {showModalDialog&&
-        <ModalDialog  content={modalDialogMessage}
+        <ModalDialog  content={modalDialogMessageStr}
         confirmFunction={()=>deleteBook(deleteBookId)} 
         cancelFunction={cancelSelectionForDeleting}/>}
     </div>
