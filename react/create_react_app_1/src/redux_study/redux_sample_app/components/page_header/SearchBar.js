@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import store from "../../store/store";
-import { getAllBooks } from "../../selectors/books";
-import { searchBooks } from "../../utils/utils";
+import { selectBooksByTitle } from "../../features/booksSlice";
 import { routes } from '../../config';
 import { Link, useNavigate } from "react-router-dom";
 
@@ -111,9 +110,14 @@ export function SearchBar() {
 
     //try to find books by title
     } else {
-      let booksArr = getAllBooks(store.getState());
-      
-      let searchResultTemp = searchBooks(booksArr, filterText);
+      //here Redux store is used directly. As a first reason this is done instead of using react-redux.useSelector hook
+      //is technical - data in this component from store in needed only in case when user performs searching, searching is 
+      //processed in event handler function and in here we can't invoke React hooks. 
+      //We could get data from state using useSelector hook in render() method of component, but it would be waste of resources
+      //as user might even not perform searching, also this component would unnecesarry re-render when books state changes, like
+      //book gets added, deleted      
+      let searchResultTemp = selectBooksByTitle(store.getState(), filterText);
+
       //set current search result to state (it might be also an empty array if nothing found)  
       setSearchResult(searchResultTemp);
 

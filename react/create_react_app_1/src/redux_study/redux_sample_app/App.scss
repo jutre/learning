@@ -411,6 +411,98 @@ h1, h2, h3{
     }
 }
 
+.book_editing{ 
+    .content_section{
+        max-width: 700px;
+        position: relative;
+    }
+
+    .delete_book_link{
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
+}
+
+
+.actions {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+
+    .button {
+        border-width: 0px;
+        border-radius: 50%;
+        color: white;
+        background-color: $button_background_color;
+        background-clip: border-box;
+        cursor: pointer;
+        width: 35px;
+        height: 35px;
+        margin-left: 10px;
+        /*make relative and assign z-index as it contains positioned element for icons displaying and
+        may contain link which should be in front of background, for background smaller z-index will be set*/
+        position: relative;
+        z-index: 20;
+
+        //css for creating ::before pseudo element which serves as background for edit, delete buttons
+        @mixin action-button-background($background-image) {
+            content: "";
+            mask-image: url($background-image);
+            mask-position: center;
+            mask-repeat: no-repeat;
+            mask-size: 20px;
+            background-color: white;
+            display: block;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            z-index: -10;
+        }
+
+        &.edit {
+            &::before {
+                @include action-button-background("assets/edit.svg");
+            }
+        }
+
+        &.delete {
+            &::before {
+                @include action-button-background("assets/delete.svg");
+            }
+        }
+
+        &.add-to-favorites {
+            &::before {
+                @include action-button-background("assets/add-to-favourites-flag.svg");
+            }
+        }
+
+        &.is-added-to-favorites {
+            &::before {
+                @include action-button-background("assets/is-added-to-favorites-flag.svg");
+                background-color: black;
+            }
+        }
+
+        &:hover {
+            background-color: $button_hover_background_color;
+        }
+
+        //any links inside rounded container should fill the container div
+        a {
+            display: block;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+
+    }
+
+
+}
+
 .list{
     .item {
         display: flex;
@@ -425,82 +517,19 @@ h1, h2, h3{
         }
     }
 
-    .actions {
-        flex: 0 0 auto;
-        display: flex;
-        align-items: center;
-
-        .button {
-            border-width: 0px;
-            border-radius: 50%;
-            color: white;
-            background-color: $button_background_color;
-            background-clip: border-box;
-            cursor: pointer;
-            width: 35px;
-            height: 35px;
-            margin-left: 10px;
-            /*make relative and assign z-index as it contains positioned element for icons displaying and
-            may contain link which should be in front of background, for background smaller z-index will be set*/
-            position: relative;
-            z-index: 20;
-
-            //css for creating ::before pseudo element which serves as background for edit, delete buttons
-            @mixin action-button-background($background-image) {
-                content: "";
-                mask-image: url($background-image);
-                mask-position: center;
-                mask-repeat: no-repeat;
-                mask-size: 20px;
-                background-color: white;
-                display: block;
-                width: 100%;
-                height: 100%;
-                position: absolute;
-                top: 0;
-                z-index: -10;
-            }
-
-            &.edit {
-                &::before {
-                    @include action-button-background("assets/edit.svg");
-                }
-            }
-
-            &.delete {
-                &::before {
-                    @include action-button-background("assets/delete.svg");
-                }
-            }
-
-            &:hover {
-                background-color: $button_hover_background_color;
-            }
-
-            //any links inside rounded container should fill the container div
-            a {
-                display: block;
-                width: 100%;
-                height: 100%;
-                border-radius: 50%;
-            }
-
-        }
-
-
-    }
+    
 }
 
 .overlay_for_modal_dialog{
     position: fixed;
     inset: 0px;
-    z-index: 120;
+    z-index: 3000;
     background-color: rgba(0, 0, 0, 0.65);
 }
 .modal_dialog{
     position: fixed;
     inset: 0px;
-    z-index: 120;
+    z-index: 3000;
     overflow: auto;
 
     .container{
@@ -573,7 +602,8 @@ div.table{
     }
 }
 
-.book_editing form{
+//forms and text input fields in content section
+.content_wrapper form{
     max-width: 700px;
 
     .field{

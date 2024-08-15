@@ -71,6 +71,12 @@ export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit",
       initialDataCopy = { ...initialDataCopy, ...correctedCheckboxValues };
     }
 
+    //TODO - add type casting for all input fields with type "text", "textarea", "hidden", "select" (possibly others) to text
+    //before calling successfulSubmitCallback(). This way can help iliminate errors like when initial input data is set
+    //but a certain field is not modified in form, it is submitted back with same type as it was in initial data, like
+    //"integer", but when it was modified in form, is changes to "string" type and that could cause errors when looking
+    //object by same type and not finding it 
+
     //finally set corrected data to state
     setInputFieldValues(initialDataCopy);
 

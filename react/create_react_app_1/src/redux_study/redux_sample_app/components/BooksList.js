@@ -1,52 +1,50 @@
-import { useEffect } from "react";
-import { connect } from 'react-redux';
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useSelector } from 'react-redux';
+import { Link, useLocation } from "react-router-dom";
 import { routes } from "../config";
-import { getAllBooks } from '../selectors/books';
-import { bookDeleted } from "../features/booksSlice";
-import { ModalDialog } from './ModalDialog';
+import { getAllBooksIds, selectBookIdsByTitle } from "../features/booksSlice";
+import { BookListItem } from "./BooksListItem";
 import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
-import { searchBooks } from "../utils/utils";
+import { getQueryParamValue } from "../utils/utils";
+import { BookDeletionConfirmationDialog } from "./BookDeletionConfirmationDialog";
+import store from "../store/store";
 
+function BooksList () {
 
-/**
- * returns value of get parameter from window current location string. If parameter is not present in window.location string, returs null
- * 
- * @param {string} paramName - name of parameter 
- * @returns {string | null} 
- */
-function getQueryParamValue(paramName){
-  const  queryParamsString  = window.location.search;
-  let paramValue = (new URLSearchParams(queryParamsString)).get(paramName);
-  return paramValue;
-}
+  /**
+   * generates deleting url for a book. Besides adding "deleteId" get param to all urls, also adds "search" get param is user is on
+   * search result list. "search" param is added to keep search string that was entered before user clicked delete link to show books 
+   * that still match search criteria after deleting
+   * @param {*} bookId 
+   * @param {*} searchStringParamVal 
+   * @returns 
+   */
+  function getBookDeletionUrl(bookId, searchStringParamVal){
+    /*carry book id in url for better user experience. When delete button is pressed then confirm
+    dialog will be snown. In this situation user might press back on browser and will get to previous 
+    page - book list, but if for deleting button would be used click handler and state, clicking back
+    user would get to whatever page he previously was but that would not be book list*/
+    let deleteUrl = routes.bookListPath + "?deleteId="+ bookId;
 
-function BooksList ({ booksArr, onBookDelete }) {
+    if(searchStringParamVal){
+      deleteUrl += "&search=" + searchStringParamVal; 
+    }
+    return deleteUrl;
+  }
+
+  //it is needed to call a hook from react-router to cause this component to re-render when react-router generated 
+  //links are changed. The changing part or link for current page is adding, removing deleteId parameter
+  useLocation();
+
+  const [hadDeleteLink, setHadDeleteLink] = useState("false");
+  
   useEffect(() => {
     setPageTitleTagValue("Books");
   }, []);
-  
-  const navigate = useNavigate();
-  /**
-   * deletes book in redux store and redirects to book list url.
-   * Intended to call from modal confirmation dialog on "Confirm" button
-   */
-  function deleteBook(bookId){
-    onBookDelete(bookId);
-    //restore page title tag
-    setPageTitleTagValue("Books");
-    navigate(routes.bookListPath);
-  }
 
-  /**
-   * redirects to book list page without params that way no book is selected 
-   * for deletion
-   */
-  function cancelSelectionForDeleting(){
-    //restore page title tag
-    setPageTitleTagValue("Books");
-    navigate(routes.bookListPath);
-  }
+  let booksIds = useSelector(state => getAllBooksIds(state));
+
+  
 
   //used for showing error messages in needed situations
   let errorMessageStrPlaceholder;
@@ -74,64 +72,70 @@ function BooksList ({ booksArr, onBookDelete }) {
     //search phrase length is less than three symbols - searching is not performed in such case, 
     //display error message that search phrase must be at least three symbols, display empty book list
     if(searchStringParamVal.length < 3){
-      booksArr = [];
+      booksIds = [];
       errorMessageStrPlaceholder = "Searching string must contain at least three symbols"
     
     }else{
       
+      //here store is accessed directly to get state as we need the selector only in those case is search form is submitted
+      //that's why we can't use useSelector hook as it can't be called conditionally. This will not cause to show outdated data in
+      //this page, as if user deletes a record from a found books list, component will re-render because at the beginning all books
+      //list is fetched using useSelector hook
+      booksIds = selectBookIdsByTitle(store.getState(), searchStringParamVal);
+
       //add info how much records were found
-      booksArr = searchBooks(booksArr, searchStringParamVal);
-      if(booksArr.length === 0){
+      if(booksIds.length === 0){
         selectedForSearchMessageStr += " Nothing was found."
       }else{
-        selectedForSearchMessageStr += ` Number of records found - ${booksArr.length}.`;
+        selectedForSearchMessageStr += ` Number of records found is ${booksIds.length}.`;
       }
     }
   }
-  
-  
-  //book is selected for deletion, initialise confirmation modal dialog
-  let showModalDialog = false;
-  let modalDialogMessageStr;
+
+
+  let displayDeletionConfirmationDialog = false;
   let deleteBookIdParamVal = getQueryParamValue("deleteId");
   let deleteBookId = 0;
-  if(deleteBookIdParamVal){
-    //exclude non integer and values less than one
-    if( ! /^[1-9][0-9]*$/.test(deleteBookIdParamVal)){
-      errorMessageStrPlaceholder = deleteBookIdParamVal +" - invalid parameter value! Value must be integer greater than zero.";
-    }else{
+  //the url of book list user will be redirected after he confirms book deleting. This is basic url, search params might be added later 
+  let afterDeletingRedirectUrl = routes.bookListPath;
+  
+  if (deleteBookIdParamVal) {
+
+    //delete id must be positive integer, reject non integer and values less than one by displaying error message
+    if (!/^[1-9][0-9]*$/.test(deleteBookIdParamVal)) {
+      errorMessageStrPlaceholder = `Invalid "deleteId" parameter value "${deleteBookIdParamVal}"! Value must be integer greater than zero.`;
+
+    } else {
       deleteBookId = parseInt(deleteBookIdParamVal);
+      //if deleteId value is a positive integer, display a dialog confirmation modal dialog component - besides confirmation dialog displaying
+      //and deleting or canceling deletion depending on user actions it will also check if selected book for deletion exists. We can't check 
+      //if book exists in this component here because we can't conditionally invoke react-redux.useSelector hook, but we need deletable book
+      //info only on deleting
+      if (deleteBookId > 0) {
+        if(hadDeleteLink === "false")
+          setHadDeleteLink("yes")
+        displayDeletionConfirmationDialog = true;
+        //if search params is entered then add is to book list page to display list with search string user entered before 
+        //choosing deleting option and to list books that are still found by search string 
+        if(searchStringParamVal){
+          afterDeletingRedirectUrl += "?search=" + searchStringParamVal;
+        }
+      }
     }
   }
 
-  if(deleteBookId > 0){
-    /*place the title of selected book in confirmation dialog. 
-    Aso check if book for deletion exists, maybe user got to current url from browser history 
-    when he deleted book previously*/
-    const selectedBook = booksArr.find(
-      (book) => book.id === deleteBookId
-    );
-    
-    if(selectedBook){
-      modalDialogMessageStr = `Are you sure you want to delete "${selectedBook.title}"?`;
-      showModalDialog = true;
-
-      //on modal dialog change page title
-      setPageTitleTagValue("Delete book");
-    }else{
-      errorMessageStrPlaceholder = `A book with id="${deleteBookId}" was not found!`;
-    }
-  }
-
+  
+  
+  
+  
+console.log('state is', store.getState());
   return  (
     <div className="book_list">
-      <h2>Books</h2>
+      <h2>Books</h2>{hadDeleteLink}
       <div className="add_book_link">
         <Link to={routes.createBookPath}>Add book</Link>
       </div>
-
-      
-
+ 
       {selectedForSearchMessageStr &&
         <div className="search_results_heading">
           <div><Link to={allBooksListUrl}>Display all records</Link></div>
@@ -139,53 +143,34 @@ function BooksList ({ booksArr, onBookDelete }) {
         </div>
       }
 
-
       {errorMessageStrPlaceholder &&
         <div className='error'>{errorMessageStrPlaceholder}</div>
       }
 
-      <div className="list">
-        {(booksArr || []).map(elem  => {
-          //replace bookId segment in book edit route pattern
-          let editUrl = routes.bookEditPath.replace(":bookId", elem.id);
+      {//add deletion confirmation dialog here as error message from dialoag in book is not found should
+       //be placed before book list
+      displayDeletionConfirmationDialog &&
+        <BookDeletionConfirmationDialog bookId={deleteBookId} 
+          afterDeletingRedirectUrl={afterDeletingRedirectUrl} cancelActionUrl={routes.bookListPath}/>
+      }
 
-          /*carry book id in url for better user experience. When delete button is pressed then confirm
-          dialog will be snown. In this situation user might press back on browser and will get to previous 
-          page - book list, but if for deleting button would be used click handler and state, clicking back
-          user would get to whatever page he previously was but that would not be book list*/
-          let deleteUrl = routes.bookListPath + `?deleteId=${elem.id}`;
-        
-          return (
-            <div key={elem.id} className="item">
-              <div className="title">{elem.title}</div>
-              <div className="actions">
-                <div className="button edit"><Link to={editUrl}></Link></div>
-                <div className="button delete"><Link to={deleteUrl}></Link></div>
-              </div>
-            </div>)}
-        )}
+      <div className="list">
+        {//if books array is empty and no searching is done (it might be the case nothing is found), offer adding some books 
+         (booksIds.length === 0 && !searchStringParamVal)&& 
+          <div>There are no books added yet, please add one!</div>
+        }
+        {booksIds &&
+          (booksIds).map(bookId =>
+            <BookListItem key={bookId} bookId={bookId} 
+            deleteUrl={getBookDeletionUrl(bookId, searchStringParamVal)}/>
+          )
+        }
       </div>
       
-      {showModalDialog&&
-        <ModalDialog  content={modalDialogMessageStr}
-        confirmFunction={()=>deleteBook(deleteBookId)} 
-        cancelFunction={cancelSelectionForDeleting}/>}
+      
     </div>
   )
 }
 
-const mapStateToProps = state => ({
-  booksArr: getAllBooks(state)
-});
 
-
-
-const mapDispatchToProps = dispatch => ({
-  onBookDelete: bookId => dispatch(bookDeleted(bookId)),
-});
-
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(BooksList);
+export default BooksList;

@@ -1,4 +1,18 @@
-export function ModalDialog({ content, confirmFunction, cancelFunction }) {
+/**
+ * 
+ * @param {string} content - string that will be displayed in modal box as a question
+ * @param {function} confirmFunction - function that will be executed when use pressed "Yes" button
+ * @param {function} cancelFunction - - function that will be executed when use pressed "No" button
+ * @param {jsx} contentJsx - jsx, this prop may be passed as direct jsx or as a React component
+ * return value, passed to component like <ModalDialog {...other props} contentDisplayComponent={<SomeComponent/?} />.
+ * The value of this prop will be passed displayed under "content" prop output. the contentDisplayComponent prop is usefull
+ * when it is needed to conditionally display information from a Redux store, like title of an object for deletion. It is
+ * not possible to conditionally call react-redux.useSelector function, but we need it only when user selects deletion, not all 
+ * the time. For this case it is convenient to create a component that fetches data from redux and returns value as jsx and
+ * the modal dialog will display the information of the object of modal dialog question for example the title of item to be deleted
+ * @returns 
+ */
+export function ModalDialog({ content, confirmFunction, cancelFunction, contentJsx = null }) {
 
 
   /**
@@ -28,7 +42,12 @@ export function ModalDialog({ content, confirmFunction, cancelFunction }) {
       <div className='modal_dialog'>
         <div className='container'>
           <div className='body'>
-            <div className='content'>{content}</div>
+            <div className='content'>
+              <div>{content}</div>
+              {contentJsx &&
+                <div>{contentJsx}</div>
+              }
+            </div>
             <div className='controls'>
               <button className='button_confirm' onClick={() => { _confirm(); }}>Yes</button>
               <span className='button_cancel' onClick={() => { _cancel(); }}>No</span>

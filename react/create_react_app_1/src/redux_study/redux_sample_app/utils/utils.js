@@ -33,29 +33,16 @@ export function closeDivOnClickOutsideOfDiv(event, beginningOfMenuRef, documentR
   documentRef.current.removeEventListener('click', docClickEventHandlerIdentifier);
 }
 
+
 /**
- * searches in array of objects those whose 'title' property contains search phrase.
- * Returns array with those objects that matched the search, if none found, returns empty
- * array
- * @param {array[object]} booksArr array of objects which contains property 'title'
- * @param {string} filterText
- * @returns {array[object]}
+ * returns value of get parameter from window current location string. If parameter is not present in window.location string, returs null
+ *
+ * @param {string} paramName - name of parameter
+ * @returns {string | null}
  */
-export function searchBooks(booksArr, filterText) {
-
-  filterText = filterText.trim();
-  //don't perfoms searching if search text less than three symbols
-  if (filterText.length < 3) {
-    return [];
-  }
-
-  let searchResult = [];
-  booksArr.forEach((book) => {
-    if (book.title.toLowerCase().indexOf(filterText.toLowerCase()) !== -1) {
-      searchResult.push(book);
-    }
-  });
-
-  return searchResult;
+export function getQueryParamValue(paramName) {
+  const queryParamsString = window.location.search;
+  let paramValue = (new URLSearchParams(queryParamsString)).get(paramName);
+  return paramValue;
 }
 
