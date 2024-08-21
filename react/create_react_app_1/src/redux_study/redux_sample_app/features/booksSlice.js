@@ -36,7 +36,7 @@ const booksSlice = createSlice({
   reducers: {
     bookUpdated(state, action){
       //ensure entity id field is of int type 
-      const bookId = String(action.payload.id);
+      const bookId = parseInt(action.payload.id);
       let newData = {...action.payload}; 
       //removing id property from update object to prevent updating id of existing entity in state
       delete newData["id"];
@@ -79,35 +79,109 @@ export const {
   selectIds: getAllBooksIds,
   selectAll: getAllBooks,
   selectEntities: getBookEntities
-} = booksAdapter.getSelectors((state) => state.booksState)
+} = booksAdapter.getSelectors((state) => state.books)
+
+
+export const selectBookFullInfoById = createSelector(
+  //input selector - book info from books state
+  getBookById,
+  //input selector - favorite books state
+  (state, bookId) => state.favoriteBooks[bookId],
+  //input selector - pass parent selector's second param param to output selector
+  (state, bookId) => bookId,
+  (bookInfo, addedToFavorites, bookId) => {
+    let fullBookInfo = {...bookInfo};
+    fullBookInfo["isAddedToFavorites"] = addedToFavorites === true;
+    return fullBookInfo;
+  }
+)
 
 /**
- * returns array of book objects where book title contains a search string
+ * Function that implements actual search algorithm - performs search in array of book objects for objects where "title" field 
+ * has a substring equal to parameter's "searchStr" value. 
+ * Function is used in two different selectors which do same search logic but receive input parameters in different way
+ * 
+ * @param {array of objects} booksArr - books array to be filtered by title fields. Each object must contain "title" field
+ * @param {string} searchStr - string to be searched in book.title field
+ * @returns book array consisting of books where "title" field has a substring equal to parameter's "searchStr" value
  */
-export const selectBooksByTitle = createSelector(
-  //input selector - all books
+const performSearchByTitle = (booksArr, searchStr) => {
+  //don't perform any filtering if search string value is falsey (null,undefined, empty string), return whole list.
+  //This behaviour is what is needed when current function is invoked in selector used in book list component, in
+  //this case selector returns whole book list without filtering - the value of search string in filters state is null when
+  //not any filtering is done. Such result would not fit for selector that is used for autocomplete search bar component result list
+  //but it is possible to use current function in that selector in other cases as no searching is done (selector is not invoked) until 
+  //user inputs at least three symbols
+  if(!searchStr){
+    return booksArr;
+  }
+  //ensure input parameter is string type to invoke trim() function
+  searchStr = String(searchStr);
+
+  //return unfiltered book list if search string value after trimming is empty string. This if what is needed for selector
+  //used in book list component - when user submits search form with search string containing only whitespaces, this input is ignored
+  //as filter value. For selector used for autocomplete search bar this result is not used as no searching is done until 
+  //user inputs at least three symbols
+  searchStr = searchStr.trim();
+  if (searchStr === "") {
+    return booksArr;
+
+  //return empty book list if search string not empty but length is less than three symbols. In such case display empty book list in 
+  //book list component (then also message is displayed that seach string must be of length of at least three symbols). In case of 
+  //autocomplete search bar this result is not used as no searching is done until user inputs at least three symbols
+  }else if (searchStr.length === 2 || searchStr.length === 2) {
+    return [];
+  }
+
+  return booksArr.filter((book)=>
+    book.title.toLowerCase().indexOf(searchStr.toLowerCase()) !== -1
+  )
+}
+/**
+ * returns array of book objects where book title contains a search string. This selector is intended to use in
+ * autocomplete search bar where search string is obtained from input form, books must be filtered while user
+ * types, so this selector has two input parameters: state and search string to search in title
+ */
+export const selectBooksListByTitle = createSelector(
+  //input selector - all books from current slice
   getAllBooks,
   //input selector - just returns second argument of parent selector to transformation function
   (state, searchStr) => searchStr,
   (books, searchStr) => {
-    searchStr = searchStr.trim();
-    //don't perfoms searching if search text less than three symbols
-    if (searchStr.length < 3) {
-      return [];
-    }
+    return performSearchByTitle(books, searchStr)
+  }
+)
 
-    return books.filter((book)=>{
-      return book.title.toLowerCase().indexOf(searchStr.toLowerCase()) !== -1;
-    })
+/**
+ * selects books from state filtered by title field using search string residing in filters state. When search string 
+ * is empty then unfiltered list is returned. 
+ * Intended to use when user submits search form as an intermediate selector for another selector which will extract book ids
+ */
+const selectFilteredBooks = createSelector(
+  //input selector - all books from current slice
+  getAllBooks,
+  //input selector - get filters state
+  (state) => state.filters,
+  (books, filters) => {
+    return performSearchByTitle(books, filters.searchString)
   }
 );
 
 /**
- * returns array of book ids by extractin it from selectBooksByTitle result
+ * returns array of book ids by extractin it from selectBooksListByTitle result
  */
 export const selectBookIdsByTitle = createSelector(
   //input selector - all books with matching title
-  selectBooksByTitle,
+  selectBooksListByTitle,
+  (booksObjArr) => {
+    return booksObjArr.map((book)=> book.id)
+  }
+);
+
+
+export const selectFilteredBooksIds = createSelector(
+  //input selector - filtered books 
+  selectFilteredBooks,
   (booksObjArr) => {
     return booksObjArr.map((book)=> book.id)
   }

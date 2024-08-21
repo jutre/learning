@@ -41,7 +41,7 @@ const favoriteBooksSlice = createSlice({
   }
 });
 
-export const { bookFavoriteStateToggled, bookRemovedFromFavorites } = favoriteBooksSlice.actions
+export const { bookFavoriteStateToggled } = favoriteBooksSlice.actions
 export default favoriteBooksSlice.reducer
 
 //
@@ -51,6 +51,6 @@ export const isBooksAddedToFavorites = (state, bookId) => {
   //accessing object props using brackets notation would work also with int type keys, but as in general object props keys
   //may be in form of string int type key value is converted to string before using this value in brackets notation
   let bookIdStrVal = String(bookId);
-  return state.favoriteBooksState[bookIdStrVal] === true;
+  return state.favoriteBooks[bookIdStrVal] === true;
 }
 

@@ -1,14 +1,14 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from "react-router-dom";
 import { routes } from "../config";
-import { getBookById } from "../features/booksSlice";
-import { bookFavoriteStateToggled, isBooksAddedToFavorites} from "../features/favoriteBooksSlice"
+import { selectBookFullInfoById } from "../features/booksSlice";
+import { bookFavoriteStateToggled } from "../features/favoriteBooksSlice"
 
 
 export function BookListItem({bookId, deleteUrl}) {
   
-  let book = useSelector(state => getBookById(state, bookId));
-  let isBookPresentInFavoritesList = useSelector(state => isBooksAddedToFavorites(state, bookId));
+  let book = useSelector(state => selectBookFullInfoById(state, bookId));
+  //let isBookPresentInFavoritesList = useSelector(state => isBooksAddedToFavorites(state, bookId));
  
   //replace bookId segment in book edit route pattern
   let editUrl = routes.bookEditPath.replace(":bookId", bookId);
@@ -19,9 +19,9 @@ export function BookListItem({bookId, deleteUrl}) {
   function handleAddToFavoritesClick(){
     dispatch(bookFavoriteStateToggled(bookId));
   }
-  
+  console.log('render book list item,  ', bookId);
   let addToFavoritesDivClassName = "button ";
-  if(isBookPresentInFavoritesList){
+  if(book.isAddedToFavorites){
     addToFavoritesDivClassName += "is-added-to-favorites";
   }else{
     addToFavoritesDivClassName += "add-to-favorites";

@@ -1,6 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import store from "../../store/store";
-import { selectBooksByTitle } from "../../features/booksSlice";
+import { selectBooksListByTitle } from "../../features/booksSlice";
 import { routes } from '../../config';
 import { Link, useNavigate } from "react-router-dom";
 
@@ -116,7 +116,7 @@ export function SearchBar() {
       //We could get data from state using useSelector hook in render() method of component, but it would be waste of resources
       //as user might even not perform searching, also this component would unnecesarry re-render when books state changes, like
       //book gets added, deleted      
-      let searchResultTemp = selectBooksByTitle(store.getState(), filterText);
+      let searchResultTemp = selectBooksListByTitle(store.getState(), filterText);
 
       //set current search result to state (it might be also an empty array if nothing found)  
       setSearchResult(searchResultTemp);
@@ -214,11 +214,10 @@ export function SearchBar() {
    * @param {*} event - form submit event - used to prevent submitting of page (from navigating to submitting url)
    */
   function handleSubmit(event) {
-    resetSearchBar();
-
     event.preventDefault();
-
     let bookSearchUrl = routes.bookListPath + "?search=" + searchTerm;
+    //reset search bar after we add current searchTerm to url as resetting search bar sets searchTerm to empty string
+    resetSearchBar();
     navigate(bookSearchUrl);
   }
 
