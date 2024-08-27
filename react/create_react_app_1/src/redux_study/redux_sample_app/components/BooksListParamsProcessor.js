@@ -24,9 +24,6 @@ function BooksListParamProcessor () {
   //links are changed. The changing part or link for current page is adding, removing deleteId parameter
   useLocation();
   
-  //used for showing error messages
-  let errorMessageStrPlaceholder;
-  
   let searchStringParamVal = getQueryParamValue("search");
   
   //
@@ -51,47 +48,61 @@ function BooksListParamProcessor () {
   //
   //process book deletion get parameter in url 
   //
-  let displayDeletionConfirmationDialog = false;
+  let deletableBooksIdsArr = [];
   let deleteBookIdParamVal = getQueryParamValue("deleteId");
-  let deleteBookId = 0;
-  //the url of book list user will be redirected after he confirms book deleting. This is basic url, search params might be added later 
+  //used for showing error messages
+  let errorMessage;
+  let displayDeletionConfirmationDialog = false;
+
+  //the url of book list user will be redirected after he confirms or cancels book deleting - will be redirected to book list. 
+  //List url is created here, search params might be added later 
   let afterDeletingRedirectUrl = routes.bookListPath;
+  let cancelDeletingRedirectUrl = routes.bookListPath;
   
   if (deleteBookIdParamVal) {
-    //delete id must be positive integer, reject non integer and values less than one by displaying error message
-    if (!/^[1-9][0-9]*$/.test(deleteBookIdParamVal)) {
-      errorMessageStrPlaceholder = `Invalid "deleteId" parameter value "${deleteBookIdParamVal}"! Value must be integer greater than zero.`;
+    //delete id must be string consisting of comma separated positive integers. List of integers is used in case of deleting multiple
+    //selected books
+    if (!/^([1-9][0-9]*)(,[1-9][0-9]*)*$/.test(deleteBookIdParamVal)) {
+      errorMessage = 
+        `Invalid "deleteId" parameter value "${deleteBookIdParamVal}"! Value must be comma seperated integers each greater than zero.`;
 
     } else {
-      deleteBookId = parseInt(deleteBookIdParamVal);
-      //if deleteId value is a positive integer, display deletion confirmation modal dialog component - besides confirmation dialog displaying
-      //and deleting or canceling deletion depending on user actions it will also check if selected book for deletion exists. We can't check 
-      //if book exists in this component here because we can't conditionally invoke react-redux.useSelector hook, but we need info about
-      //deletable book only on deleting
-      if (deleteBookId > 0) {
-        displayDeletionConfirmationDialog = true;
-        //if search params is entered then add is to book list page to display list with search string user entered before 
-        //choosing deleting option and to list books that are still found by search string 
-        if(searchStringParamVal){
-          afterDeletingRedirectUrl += "?search=" + searchStringParamVal;
-        }
+      //param value is valid, display dialog
+      displayDeletionConfirmationDialog = true;
+
+      //deleteId parameter consists only of positive integers according to regexpr test, create array of integers from string 
+      let bookIdsStrValues = deleteBookIdParamVal.split(",");
+      bookIdsStrValues.forEach((bookIdStrVal) => {
+        deletableBooksIdsArr.push(parseInt(bookIdStrVal));
+      })
+       
+      //if search param is entered then add it to book list page to redirect to list with search string user entered before 
+      //choosing deleting option to display books that are still found by search string
+      if (searchStringParamVal) {
+        let searchGetParam = "?search=" + searchStringParamVal;
+        afterDeletingRedirectUrl += searchGetParam
+        cancelDeletingRedirectUrl += searchGetParam;
       }
     }
   }
 
-  return  (
+
+  //there are cases then this component does not return any markup like in case of search parameter - it just displatches
+  //action to set search string in redux store; there was possibility to return markup of either confirm dialog or error
+  //message directly from if-else statement in case of deleteId param, but better is to separate markup creation from logic 
+  //processing code. For that reason additional variables (errorMessage, displayDeletionConfirmationDialog) were created
+  //to do simple condition on what is to be returned as markup
+  return (
     <>
-      {errorMessageStrPlaceholder &&
-        <div className='error'>{errorMessageStrPlaceholder}</div>
+      {errorMessage &&
+            <div className='error'>{errorMessage}</div>
       }
 
-      {//add deletion confirmation dialog here as error message from dialoag in book is not found should
-       //be placed before book list
-      displayDeletionConfirmationDialog &&
-        <BookDeletionConfirmationDialog bookId={deleteBookId} 
-          afterDeletingRedirectUrl={afterDeletingRedirectUrl} cancelActionUrl={routes.bookListPath}/>
-      }
-      
+      {displayDeletionConfirmationDialog &&
+        <BookDeletionConfirmationDialog booksIds={deletableBooksIdsArr} 
+                                        afterDeletingRedirectUrl={afterDeletingRedirectUrl} 
+                                        cancelActionUrl={cancelDeletingRedirectUrl}/>
+     }
     </>
   )
 }

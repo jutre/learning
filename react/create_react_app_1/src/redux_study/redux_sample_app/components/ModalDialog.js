@@ -48,7 +48,7 @@ export function ModalDialog({ content, confirmFunction, cancelFunction, contentJ
                 <div>{contentJsx}</div>
               }
             </div>
-            <div className='controls'>
+            <div className='options'>
               <button className='button_confirm' onClick={() => { _confirm(); }}>Yes</button>
               <span className='button_cancel' onClick={() => { _cancel(); }}>No</span>
             </div>

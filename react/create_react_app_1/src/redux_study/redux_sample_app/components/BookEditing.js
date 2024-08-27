@@ -71,8 +71,7 @@ function BookEditing() {
     setTimeout( () => {setSubmitingIndicator(false)}, 500); 
   }
 
-  //create book delete url by adding deleteId parameter to book edit link.
-  //It's done byreplacing bookId segment in book edit route pattern
+  //create book delete url by adding delete parameter to book edit link.
   let deleteUrl = routes.bookEditPath.replace(":bookId", bookId) + "?delete=true";
 
   //if user clicks on "Cancel" botton in delete confirmation dialog, page should redirect
@@ -95,14 +94,14 @@ function BookEditing() {
       <div className="content_section">
         <h2>Edit book</h2>
 
-        <div className="delete_book_link actions">
-          <div className="button delete">
+        <div className="delete_book_link">
+          <div className="action_button delete">
             <Link to={deleteUrl}></Link>
           </div>
         </div>
         
         {showDeletionConfirmationDialog &&
-          <BookDeletionConfirmationDialog bookId={bookId} 
+          <BookDeletionConfirmationDialog booksIds={[bookId]} 
                                           afterDeletingRedirectUrl={afterDeletingRedirectUrl} 
                                           cancelActionUrl={deletionCancelActionUrl}/>
         }

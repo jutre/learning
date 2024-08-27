@@ -11,6 +11,7 @@ $modal-border-radius:10px;
 $text-color:rgb(31, 41, 55);
 $link_color:blue;
 $link_hover_color:rgb(149, 149, 149);
+$checkbox_color:rgb(64, 102, 165);
 
 
 //"button-appearance" mixin can't be used for buttons with svg masks, but we need background values also there
@@ -384,10 +385,10 @@ h1, h2, h3{
 .book_list{
     position: relative;
 
-    .search_results_heading{
-        a{font-weight: bold;}
-        .entered_search_string_message{
-            padding: $margin_padding_base 0;
+    .search_results_summary{
+        padding: $margin_padding_base 0;
+        a{
+            font-weight: bold;
         }
     }
 }
@@ -411,6 +412,114 @@ h1, h2, h3{
     }
 }
 
+.action_button {
+    border-width: 0px;
+    border-radius: 50%;
+    color: white;
+    background-color: $button_background_color;
+    background-clip: border-box;
+    cursor: pointer;
+    width: 35px;
+    height: 35px;
+    
+    /*make relative and assign z-index as it contains positioned element for icons displaying and
+    may contain link which should be in front of background, for background smaller z-index will be set*/
+    position: relative;
+    z-index: 20;
+
+
+    //css for creating ::before pseudo element which serves as background for edit, delete buttons
+    @mixin action-button-background($background-image) {
+        content: "";
+        mask-image: url($background-image);
+        mask-position: center;
+        mask-repeat: no-repeat;
+        mask-size: 20px;
+        background-color: white;
+        display: block;
+        width: 100%;
+        height: 100%;
+        position: absolute;
+        top: 0;
+        z-index: -10;
+    }
+
+    &.edit {
+        &::before {
+            @include action-button-background("assets/edit.svg");
+        }
+    }
+
+    &.delete {
+        &::before {
+            @include action-button-background("assets/delete.svg");
+        }
+    }
+
+    &.add-to-favorites {
+        &::before {
+            @include action-button-background("assets/add-to-favourites-flag.svg");
+        }
+    }
+
+    &.is-added-to-favorites {
+        &::before {
+            @include action-button-background("assets/is-added-to-favorites-flag.svg");
+            background-color: black;
+        }
+    }
+
+    &:hover {
+        background-color: $button_hover_background_color;
+    }
+
+    //any links inside rounded container should fill the container div
+    a {
+        display: block;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+    }
+}
+
+.action_button.disabled{
+    background-color: #ccc;
+    cursor: default;
+}
+
+
+.checkbox_wrapper{
+    display: flex;
+    align-items: center;
+    padding: 0 $margin_padding_base;
+}
+.custom_checkbox{
+    border: 2px solid $checkbox_color;
+    display: block;
+    width: 18px;
+    height: 18px;
+    border-radius: 3px;
+    position: relative;
+}
+
+.book_list_selection_bar{
+    display: flex;
+}
+
+
+.custom_checkbox.all_items_deselector::before {
+    content: "";
+    display: block;
+    width: 9px;
+    height: 2px;
+    border-radius: 3px;
+    background-color: $checkbox_color;
+    left: 50%;
+    top: 50%;
+    transform: translateX(-50%) translateY(-50%);
+    position: absolute;
+}
+
 .book_editing{ 
     .content_section{
         max-width: 700px;
@@ -425,85 +534,31 @@ h1, h2, h3{
 }
 
 
-.actions {
-    flex: 0 0 auto;
-    display: flex;
-    align-items: center;
+.book_list .item{
 
-    .button {
-        border-width: 0px;
-        border-radius: 50%;
-        color: white;
-        background-color: $button_background_color;
-        background-clip: border-box;
-        cursor: pointer;
-        width: 35px;
-        height: 35px;
-        margin-left: 10px;
-        /*make relative and assign z-index as it contains positioned element for icons displaying and
-        may contain link which should be in front of background, for background smaller z-index will be set*/
-        position: relative;
-        z-index: 20;
+    input[type=checkbox]{
+        position: absolute;
+        opacity: 0;
 
-        //css for creating ::before pseudo element which serves as background for edit, delete buttons
-        @mixin action-button-background($background-image) {
-            content: "";
-            mask-image: url($background-image);
-            mask-position: center;
-            mask-repeat: no-repeat;
-            mask-size: 20px;
-            background-color: white;
-            display: block;
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0;
-            z-index: -10;
-        }
-
-        &.edit {
-            &::before {
-                @include action-button-background("assets/edit.svg");
+        &:checked + .custom_checkbox{
+            background-color: #ccc;
+            &:after {
+                content: "";
+                position: absolute;
+                left: 4px;
+                top: 0px;
+                width: 4px;
+                height: 9px;
+                border: solid $checkbox_color;
+                border-width: 0 2px 2px 0;
+                transform: rotate(45deg);
             }
         }
-
-        &.delete {
-            &::before {
-                @include action-button-background("assets/delete.svg");
-            }
-        }
-
-        &.add-to-favorites {
-            &::before {
-                @include action-button-background("assets/add-to-favourites-flag.svg");
-            }
-        }
-
-        &.is-added-to-favorites {
-            &::before {
-                @include action-button-background("assets/is-added-to-favorites-flag.svg");
-                background-color: black;
-            }
-        }
-
-        &:hover {
-            background-color: $button_hover_background_color;
-        }
-
-        //any links inside rounded container should fill the container div
-        a {
-            display: block;
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-        }
-
     }
-
-
 }
 
-.list{
+
+.book_list{
     .item {
         display: flex;
 
@@ -515,9 +570,16 @@ h1, h2, h3{
             flex: 1 1 auto;
             padding: $margin_padding_base 0;
         }
-    }
 
-    
+        .actions {
+            flex: 0 0 auto;
+            display: flex;
+            align-items: center;
+            .action_button{
+                margin-left: 10px;
+            }
+        }
+    }
 }
 
 .overlay_for_modal_dialog{
@@ -555,7 +617,7 @@ h1, h2, h3{
         padding: 30px;
     }
 
-    .controls{
+    .options{
         padding: 40px 80px;
         display: flex;
         flex-direction: column;
@@ -610,6 +672,16 @@ div.table{
         margin-bottom: 25px;
     }
 
+    label{
+        display: block;
+        margin-bottom: 5px;
+        font-weight: bold;
+    
+        &::after{
+            content: ":";
+        }
+    }
+
     textarea, [type="text"]{
         width: 100%;
     }
@@ -638,17 +710,7 @@ textarea:focus, [type="text"]:focus{
     outline: none;
 }
 
-label{
-    display: block;
-    margin-bottom: 5px;
-    font-weight: bold;
 
-    &::after{
-        content: ":";
-        //display: inline-block;
-        //margin-left: 3px;
-    }
-}
 
 .load_indicator{
     //when visible prevent content shifting below element

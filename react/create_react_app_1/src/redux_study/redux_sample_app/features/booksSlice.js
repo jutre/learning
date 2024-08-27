@@ -47,6 +47,14 @@ const booksSlice = createSlice({
 
     bookDeleted:booksAdapter.removeOne,
 
+    //action for deleting multiple books
+    multipleBooksDeleted(state, action){console.log('multipleBooksDeleted');
+      let bookIdsArr = action.payload;
+      bookIdsArr.forEach((bookId)=>{
+        booksSlice.caseReducers.bookDeleted(state, { type: 'bookDeleted', payload: bookId });
+      })
+    },
+
     bookCreated:{
       reducer:(state, action) => {
         booksAdapter.addOne(state, action);
@@ -64,9 +72,7 @@ const booksSlice = createSlice({
   }
 });
 
-export const { bookUpdated, bookDeleted, bookCreated } = booksSlice.actions
-//for access to current slice actions in favoriteBooksSlice
-export { booksSlice } 
+export const { bookUpdated, multipleBooksDeleted, bookCreated } = booksSlice.actions 
 
 export default booksSlice.reducer
 
@@ -85,13 +91,14 @@ export const {
 export const selectBookFullInfoById = createSelector(
   //input selector - book info from books state
   getBookById,
-  //input selector - favorite books state
+  //input selector - presence of book in favorite books state
   (state, bookId) => state.favoriteBooks[bookId],
-  //input selector - pass parent selector's second param param to output selector
-  (state, bookId) => bookId,
-  (bookInfo, addedToFavorites, bookId) => {
+  //input selector - presence of book in selection for deleting state
+  (state, bookId) => state.uiControls.booksSelectedInList[bookId],
+  (bookInfo, addedToFavorites, selectedForDeleting) => {
     let fullBookInfo = {...bookInfo};
     fullBookInfo["isAddedToFavorites"] = addedToFavorites === true;
+    fullBookInfo["isSelectedForDeleting"] = selectedForDeleting === true;
     return fullBookInfo;
   }
 )
@@ -168,7 +175,7 @@ const selectFilteredBooks = createSelector(
 );
 
 /**
- * returns array of book ids by extractin it from selectBooksListByTitle result
+ * returns array of book ids by extracting it from selectBooksListByTitle result
  */
 export const selectBookIdsByTitle = createSelector(
   //input selector - all books with matching title
