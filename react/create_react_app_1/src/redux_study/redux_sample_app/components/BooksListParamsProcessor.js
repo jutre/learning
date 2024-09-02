@@ -12,12 +12,11 @@ import { useEffect } from "react";
 import { useDispatch } from 'react-redux'; 
 import { searchStringUpdated } from "../features/filtersSlice"
 import { useLocation } from "react-router-dom";
-import { routes } from "../config";
-import { getQueryParamValue } from "../utils/utils";
+import { getQueryParamValue, getBookListBaseUrl } from "../utils/utils";
 import { BookDeletionConfirmationDialog } from "./BookDeletionConfirmationDialog";
 
 
-function BooksListParamProcessor () {
+function BooksListParamProcessor ({listMode = null}) {
   const dispatch = useDispatch();
 
   //it is needed to call a hook from react-router to cause this component to re-render when react-router generated 
@@ -39,7 +38,8 @@ function BooksListParamProcessor () {
     }
   }
 
-  //set search string to filters state is Redux store if search string changed; happens after component renders
+  //set search string to filters state is Redux store if search string changed
+  //reducers are inoked after current component renders (it re-renders after params change)
   useEffect(() => {
     dispatch(searchStringUpdated(searchStringParamVal));
   }, [searchStringParamVal]);
@@ -54,10 +54,11 @@ function BooksListParamProcessor () {
   let errorMessage;
   let displayDeletionConfirmationDialog = false;
 
-  //the url of book list user will be redirected after he confirms or cancels book deleting - will be redirected to book list. 
+  //the url of book list user will be redirected after he confirms or cancels book deleting 
   //List url is created here, search params might be added later 
-  let afterDeletingRedirectUrl = routes.bookListPath;
-  let cancelDeletingRedirectUrl = routes.bookListPath;
+  let baseUrl = getBookListBaseUrl(listMode);
+  let afterDeletingRedirectUrl = baseUrl;
+  let cancelDeletingRedirectUrl = baseUrl;
   
   if (deleteBookIdParamVal) {
     //delete id must be string consisting of comma separated positive integers. List of integers is used in case of deleting multiple

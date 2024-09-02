@@ -4,7 +4,7 @@ import { selectBooksListByTitle } from "../../features/booksSlice";
 import { routes } from '../../config';
 import { Link, useNavigate } from "react-router-dom";
 
-export function SearchBar() {
+function SearchBar() {
   //holds value of controlled <input/> element
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -229,21 +229,24 @@ export function SearchBar() {
 
 
   return (
-    <div className="search-bar" ref={beginningOfSearchBarRef}>
-          <form onSubmit={handleSubmit} autoComplete="off" className="search-form">
-            <input type='text'
-              value={searchTerm}
-              onChange={handleSearchTermInputChange}
-              onFocus={handleSearchInputFocus} />
+    <div className="search-bar">
+      {/*close opened search bar by clicking outside div that contains form and result list (they will be visible to
+        user bounded in rectangle), the area outside this rectangle is "outside" */}
+      <div className='form_and_results_container' ref={beginningOfSearchBarRef}>
+        <form onSubmit={handleSubmit} autoComplete="off" className="search-form">
+          <input type='text'
+            value={searchTerm}
+            onChange={handleSearchTermInputChange}
+            onFocus={handleSearchInputFocus} />
 
-            <div className='actions'>
-              {searchTerm && 
-                //show input clear button only when input is not empty
-                <button onClick={handleSearchInputClearing}
+          <div className='actions'>
+            {searchTerm &&
+              //show input clear button only when input is not empty
+              <button onClick={handleSearchInputClearing}
                 className='clear' type='button' />}
-              <button className='submit' type='submit' />
-            </div>
-          </form>
+            <button className='submit' type='submit' />
+          </div>
+        </form>
 
         <div className={searchResultsCssClassName}>
           {searchResult.map((book) => {
@@ -251,11 +254,13 @@ export function SearchBar() {
             //replace bookId segment in book edit route pattern
             let editUrl = routes.bookEditPath.replace(":bookId", book.id);
             return (
-              <div key={book.id}  onClick={handleSearchResultLinkClick}><Link to={editUrl}>{book.title}</Link></div>
+              <div key={book.id} onClick={handleSearchResultLinkClick}><Link to={editUrl}>{book.title}</Link></div>
             )
           }
           )}
         </div>
+      </div>
     </div>
   );
 }
+export default SearchBar;

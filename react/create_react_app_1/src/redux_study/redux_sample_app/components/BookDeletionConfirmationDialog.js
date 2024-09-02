@@ -24,7 +24,6 @@ import { ModalDialog } from "./ModalDialog";
  * @returns {jsx} markup that shapes html for confirmation dialog or error message
  */
 export function BookDeletionConfirmationDialog({ booksIds, afterDeletingRedirectUrl, cancelActionUrl }) {
-  console.log('BookDeletionConfirmationDialog' , cancelActionUrl);
   
   const dispatch = useDispatch();
 
@@ -62,7 +61,7 @@ export function BookDeletionConfirmationDialog({ booksIds, afterDeletingRedirect
   //it is impossible to conditionally invoke useSelector hook
   let bookInfo = useSelector(state => getBookById(state, booksIds[0]));
   
-  if(booksIds.length === 1){console.log('booksIds.length === 1', booksIds);
+  if(booksIds.length === 1){
     //in case of deleting single book, display confirmation dialog with question if user wants to delete a selected book which
     //contains deletable book title
     if (bookInfo) {

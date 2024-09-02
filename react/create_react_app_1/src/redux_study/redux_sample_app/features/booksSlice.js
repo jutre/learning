@@ -1,6 +1,7 @@
 import { createSlice, createEntityAdapter, createSelector } from '@reduxjs/toolkit';
-const booksAdapter = createEntityAdapter();
+import { FAVORITE_BOOKS_LIST } from "../constants/bookListModes";
 
+const booksAdapter = createEntityAdapter();
 
 let initialState = {ids:[1,2,3,4,5], entities:{}};
 
@@ -48,7 +49,7 @@ const booksSlice = createSlice({
     bookDeleted:booksAdapter.removeOne,
 
     //action for deleting multiple books
-    multipleBooksDeleted(state, action){console.log('multipleBooksDeleted');
+    multipleBooksDeleted(state, action){
       let bookIdsArr = action.payload;
       bookIdsArr.forEach((bookId)=>{
         booksSlice.caseReducers.bookDeleted(state, { type: 'bookDeleted', payload: bookId });
@@ -152,7 +153,7 @@ const performSearchByTitle = (booksArr, searchStr) => {
 export const selectBooksListByTitle = createSelector(
   //input selector - all books from current slice
   getAllBooks,
-  //input selector - just returns second argument of parent selector to transformation function
+  //input selector - returns second argument of parent selector to transformation function
   (state, searchStr) => searchStr,
   (books, searchStr) => {
     return performSearchByTitle(books, searchStr)
@@ -160,37 +161,47 @@ export const selectBooksListByTitle = createSelector(
 )
 
 /**
- * selects books from state filtered by title field using search string residing in filters state. When search string 
- * is empty then unfiltered list is returned. 
- * Intended to use when user submits search form as an intermediate selector for another selector which will extract book ids
+ * selects books from state filtered by title field using search string residing in filters state or returns favorite books.
+ * Books list state array if filtered using search string or favorite books are returned depending on second parameter of selector
+ * "listMode"
+ * 
+ * @param {string} listMode - empty of equal to FAVORITE_BOOKS_LIST constant
+ * 
  */
 const selectFilteredBooks = createSelector(
   //input selector - all books from current slice
   getAllBooks,
+  
   //input selector - get filters state
   (state) => state.filters,
-  (books, filters) => {
-    return performSearchByTitle(books, filters.searchString)
+  
+  //input selector - returns second argument of parent selector to transformation function
+  (state, listMode) => listMode,
+  
+  //input selector - returns favourites books state to transformation function only if second argument of parent selector 
+  //is equal to favorite book list mode. Output selector needs favorite books state only in case of selecting only favorites 
+  //books, it would not be optimal to return favorites state object to transformation function when all books are selected 
+  //as in this case output selector would run every time a book is added or removed from favorites list - it would cause
+  //unnecesary re-renders. Favorite books information is used only while displaying favorite books list
+  (state, listMode) => listMode === FAVORITE_BOOKS_LIST && state.favoriteBooks,
+  
+  (books, filters, listMode, favoriteBooksObj) => {
+    if (listMode){
+      return books.filter((book)=>favoriteBooksObj[book.id] === true);
+    }else{
+      return performSearchByTitle(books, filters.searchString);
+    }
   }
 );
 
-/**
- * returns array of book ids by extracting it from selectBooksListByTitle result
- */
-export const selectBookIdsByTitle = createSelector(
-  //input selector - all books with matching title
-  selectBooksListByTitle,
-  (booksObjArr) => {
-    return booksObjArr.map((book)=> book.id)
-  }
-);
+
 
 
 export const selectFilteredBooksIds = createSelector(
+  
   //input selector - filtered books 
-  selectFilteredBooks,
+  (state, listMode) => selectFilteredBooks(state, listMode),
   (booksObjArr) => {
     return booksObjArr.map((book)=> book.id)
   }
 );
-

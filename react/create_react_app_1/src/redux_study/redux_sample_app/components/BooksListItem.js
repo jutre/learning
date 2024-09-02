@@ -1,31 +1,26 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from "react-router-dom";
-import { routes } from "../config";
 import { selectBookFullInfoById } from "../features/booksSlice";
 import { bookFavoriteStateToggled } from "../features/favoriteBooksSlice";
 import { bookCollectionAddedToSelection, singleBookRemovedFromSelection } from "../features/uiControlsSlice";
-//temp for debugging
-import store from "../store/store";
 
-export function BookListItem({bookId, deleteUrl}) {
+
+export function BookListItem({bookId, editUrl, deleteUrl}) {
   
   let book = useSelector(state => selectBookFullInfoById(state, bookId));
- 
-  //replace bookId segment in book edit route pattern
-  let editUrl = routes.bookEditPath.replace(":bookId", bookId);
   
-
   const dispatch = useDispatch();
 
   /**
-   * adds to deletable books selection if checkbox is checked next to the book is checked and removes
-   * from selection if checbox is unchecked
+   * handles checbox checking/unchecking event for a single book by adding or removing that book to selection for deleging.
+   * Adds to deletable books selection whne checkbox is checked and removes from selection if checbox is unchecked
    * @param {change event object} event 
    */
   function handleBookSelectionForDeleting(event){
     let isCheckboxChecked = event.target.checked;
     if(isCheckboxChecked){
-      //to add a book to selection, action.payload value must be an array consisting of single element which value is bookId
+      //a general function for adding a collection of books is used to add single book to selection, action.payload value must be 
+      //an array consisting of single element which value is bookId 
       dispatch(bookCollectionAddedToSelection([bookId]));
     
     }else{
@@ -50,7 +45,7 @@ export function BookListItem({bookId, deleteUrl}) {
     addToFavoritesDivClassName += "add-to-favorites";
   }
 
-  //console.log('BooksListItem render, state', bookId, store.getState());
+  
   return  (
     <div className="item">
       <div className="checkbox_wrapper">

@@ -9,44 +9,56 @@ import { selectFilteredBooksIds } from "../features/booksSlice";
 import { selectSearchString } from "../features/filtersSlice";
 import BooksListItemsSelectionBar from "./BooksListItemsSelectionBar"
 import { BookListItem } from "./BooksListItem";
-//temp for debugging
-import store from "../store/store";
+import { getBookListBaseUrl } from "../utils/utils";
+import { FAVORITE_BOOKS_LIST } from "../constants/bookListModes";
 
-function BooksListBody () {
+function BooksListBody ({listMode = null}) {
+
+  function getBookEditUrl(bookId, listMode){
+    //replace bookId segment in book edit route pattern
+    let editUrl = routes.bookEditPath.replace(":bookId", bookId);
+    //if current list is other than all books list, add parameter which contains url to which list to return
+    //to construct "Back to list" link and redirect url the page is redirected after book is deleted in
+    //edit screen
+    if(listMode){
+      editUrl += "?parentListUrl=" + getBookListBaseUrl(listMode);
+    }
+    
+    return editUrl;
+  }
 
   /**
-   * creates deleting url for a book. Adds "search" get param if currently displayed list is search result list.
+   * creates deleting url by adding deleteId parameter to needed book list (all books list of favourites list) url. 
+   * Adds "search" get param if currently displayed list is search result list.
    * "search" param is added to keep displaying search results list after a selected book is deleted.
-   * @param {*} bookId 
-   * @param {*} searchGetParamVal 
+   * Intended to use for a book list item to create delete url for a single book.
+   * @param {int|string} bookId  - 
+   * @param {string} searchGetParamVal 
    * @returns 
    */
-  function getBookDeletionUrl(bookId, searchGetParamVal){
-    /*carry book id in url for better user experience. When delete button is pressed then confirm
-    dialog will be snown. In this situation user might press back on browser and will get to previous 
-    page - book list, but if for deleting button would be used click handler and state, clicking back
-    user would get to whatever page he previously was but that would not be book list*/
-    let deleteUrl = routes.bookListPath + "?deleteId="+ bookId;
-
+  function getBookDeletionUrl(bookId, searchGetParamVal, listMode){
+    
+    let deleteUrl = getBookListBaseUrl(listMode);
+    deleteUrl += "?deleteId=" + bookId;
+    
     if(searchGetParamVal){
       deleteUrl += "&search=" + searchGetParamVal; 
     }
     return deleteUrl;
   }
 
-  let booksIds = useSelector(state => selectFilteredBooksIds(state));
+  let booksIds = useSelector(state => selectFilteredBooksIds(state, listMode));
   let currentSearchString = useSelector(state => selectSearchString(state));
 
 
-  //create url for link to all records that will be shown when search string not empty
+  //create url for returning to unfiltered list link that will be shown when search string is filtered by search string
   let allBooksListUrl = routes.bookListPath;
-
 
   //add info how much records were found during search
   let searchResultsInfoMessage;
   let searchStrTooShortErrorMessage;
   if (currentSearchString) {
-    //ensure search string is of String type to get rid of possible error as we will check length of variable
+    //ensure search string is of String type to get rid of possible error as we will check length of string
     currentSearchString = String(currentSearchString);
     
     searchResultsInfoMessage = `Your searched for "${currentSearchString}".`;
@@ -64,8 +76,17 @@ function BooksListBody () {
         }
     }
   }
+
+  let showEmptyFavoritesListMessage;
+  let showEmptyListMessage;
+  if(booksIds.length === 0){
+    if(listMode === FAVORITE_BOOKS_LIST){
+      showEmptyFavoritesListMessage = true;
+    }else if(!currentSearchString){
+      showEmptyListMessage = true;
+    }
+  }
   
-  console.log('BooksListBody render, state', store.getState(), "ids", booksIds);
   return  (
     <>
       <div className="list">
@@ -89,9 +110,14 @@ function BooksListBody () {
           </div>
         }
 
+        {showEmptyFavoritesListMessage &&
+          <div>There are no any books added to favorite books list.</div>
+        }
         {//if books array is empty and no searching is done (it might be the case nothing is found), offer adding some books 
-          (booksIds.length === 0 && !currentSearchString) &&
-          <div>There are no books added yet. Add them by using "Add book" link!</div>
+          (showEmptyListMessage) &&
+          <div>There are no books added yet. Add them by 
+             using <Link to={routes.createBookPath}>"Add book"</Link> link!
+          </div>
         }
         
         {booksIds.length > 0 &&
@@ -102,7 +128,8 @@ function BooksListBody () {
             {(booksIds).map(bookId =>
               <BookListItem key={bookId} 
                             bookId={bookId}
-                            deleteUrl={getBookDeletionUrl(bookId, currentSearchString)} />
+                            editUrl={getBookEditUrl(bookId, listMode)}
+                            deleteUrl={getBookDeletionUrl(bookId, currentSearchString, listMode)} />
             )}
           </>
         }

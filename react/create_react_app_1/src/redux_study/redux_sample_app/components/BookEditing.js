@@ -71,17 +71,33 @@ function BookEditing() {
     setTimeout( () => {setSubmitingIndicator(false)}, 500); 
   }
 
-  //create book delete url by adding delete parameter to book edit link.
-  let deleteUrl = routes.bookEditPath.replace(":bookId", bookId) + "?delete=true";
+  let parentListUrl = getQueryParamValue("parentListUrl");
+
+  //link url for returning to list must point to list user came from to current edit page (all books list or 
+  //favorites list), same is with redirecting after deleting a book from edit screen
+  let backToListUrl = routes.bookListPath;
+  if(parentListUrl){
+    backToListUrl = parentListUrl;
+  }
+
+  //create current book delete url by adding delete parameter to book edit link.
+  //if edit page was opened from other than all books list, parentListUrl get param is to be keeped in delete url
+  //to redirect page to same list user opened editing page from in case user confirms or cancels deleting
+  let deleteLinkUrl = routes.bookEditPath.replace(":bookId", bookId) + "?delete=true";
+  if(parentListUrl){
+    deleteLinkUrl += "&parentListUrl=" + parentListUrl;
+  }
 
   //if user clicks on "Cancel" botton in delete confirmation dialog, page should redirect
-  //to book editing url withoud any params
+  //to book editing url withoud delete get param, keeping parent list url param
   let deletionCancelActionUrl = routes.bookEditPath.replace(":bookId", bookId)
+  if(parentListUrl){
+    deletionCancelActionUrl += "?parentListUrl=" + parentListUrl;
+  }
 
   //when deleting get param set and data for form is set, show confirmation dialog, otherwise, nothing to delete
   //when data is empty (first render or id of non existing book)
   let showDeletionConfirmationDialog = false;
-  let afterDeletingRedirectUrl = routes.bookListPath;
   if(formInitialData && getQueryParamValue("delete") === "true"){
     showDeletionConfirmationDialog = true;
   }
@@ -89,20 +105,20 @@ function BookEditing() {
   return  (
     <div className="book_editing">
       <div className="navigation">
-        <Link to={routes.bookListPath}>Back</Link>
+        <Link to={backToListUrl}>Back</Link>
       </div>
       <div className="content_section">
         <h2>Edit book</h2>
 
         <div className="delete_book_link">
           <div className="action_button delete">
-            <Link to={deleteUrl}></Link>
+            <Link to={deleteLinkUrl}></Link>
           </div>
         </div>
         
         {showDeletionConfirmationDialog &&
           <BookDeletionConfirmationDialog booksIds={[bookId]} 
-                                          afterDeletingRedirectUrl={afterDeletingRedirectUrl} 
+                                          afterDeletingRedirectUrl={backToListUrl} 
                                           cancelActionUrl={deletionCancelActionUrl}/>
         }
 
