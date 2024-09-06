@@ -8,8 +8,10 @@
 import { useState } from 'react';
 import store from '../../store/store';
 import { fetchBooks } from "../../features/booksSlice";
+import { useNavigate } from "react-router-dom";
+import { routes } from "../../config";
 
-function SettingsForm(){
+function SettingsForm({closeMenuHandler}){
   const [selectedRadioButtonValue, setSelectedRadioButtonValue] = useState("local");
 
   let dataSourceOptions = [
@@ -17,10 +19,16 @@ function SettingsForm(){
     {value: "remote", label: "Data from openlibrary.org"}
   ];
 
-  function handleChange(e){
-    let selectedValue = e.target.value;
+  const navigate = useNavigate();
+
+  function handleChange(event){
+    let selectedValue = event.target.value;
     setSelectedRadioButtonValue(selectedValue);
     store.dispatch(fetchBooks(selectedValue));
+    //after loading new initial data, close menu and redirect to all books list as if currently user is 
+    //on book edit page then book edit page form would be filled with data just loaded
+    closeMenuHandler();
+    navigate(routes.bookListPath);
   }
 
   return (

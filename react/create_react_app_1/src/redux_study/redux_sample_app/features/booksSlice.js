@@ -95,6 +95,9 @@ const booksSlice = createSlice({
         booksAdapter.setAll(state, action.payload)
         state.status = 'idle'
       })
+      .addCase(fetchBooks.rejected, (state, action) => {
+        state.status = 'rejected'
+      })
   }
 });
 

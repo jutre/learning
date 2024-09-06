@@ -40,8 +40,10 @@ const Layout = () => {
           </div>
 
           <div className="layout_wrapper content_wrapper">
+            {fetchingStatus === "rejected" &&
+              <div className="error">fetching books has failed</div>}
             {fetchingStatus === "loading" ? 
-              <div>loading</div>
+              <div>loading...</div>
               :
               <Routes>
                 <Route path={routes.bookListPath} element={<BooksList />} />

@@ -46,7 +46,7 @@ function SettingsMenu(){
    * 
    * @param {*} event 
    */
-  function handleMenuToggle(){ console.log('settings menu handleMenuToggle run');
+  function handleMenuToggle(){
     if(!isMenuOpened){
       setIsMenuOpened(true);
       documentRef.current.addEventListener('click', hideDivOnClickOutsideOfDiv);
@@ -54,6 +54,15 @@ function SettingsMenu(){
       setIsMenuOpened(false);
       documentRef.current.removeEventListener('click', hideDivOnClickOutsideOfDiv);
     }
+  }
+
+  /**
+   * function for hiding menu. Intended to pass to settings form to use for closing menu after new
+   * settings are choosen
+   */
+  function closeMenuHandler(){
+      setIsMenuOpened(false);
+      documentRef.current.removeEventListener('click', hideDivOnClickOutsideOfDiv);
   }
 
   //actually settings form could be shown/hidden by outputting or not  outputting form component depending
@@ -70,7 +79,7 @@ function SettingsMenu(){
     <div className="settings_menu" ref={beginningOfMenuRef}>
       <div onClick={handleMenuToggle} className="settings_icon"></div>
       <div className={menuCssClassName}>
-        <SettingsForm />
+        <SettingsForm closeMenuHandler={closeMenuHandler}/>
       </div>
     </div>
   )

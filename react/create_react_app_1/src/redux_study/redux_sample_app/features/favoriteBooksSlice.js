@@ -2,7 +2,7 @@
  * slice that also updates it's state in response to actions from "booksSlice".
  */
 import { createSlice } from '@reduxjs/toolkit';
-import { multipleBooksDeleted } from './booksSlice';
+import { multipleBooksDeleted, fetchBooks } from './booksSlice';
 
 let initialState = {};
 
@@ -37,11 +37,15 @@ const favoriteBooksSlice = createSlice({
             delete state[bookId];
           }
         })
-        //in general object prop keys are in form of string, convert possible int type key value to string (would work also with int type)
-        // let bookIdStrVal = String(action.payload);
-        // if(state[bookIdStrVal] === true){
-        //   delete state[bookIdStrVal];
-        // }
+      })
+
+      //when initial data is loaded then delete all data from current favorite books state. As completely new data is loaded
+      //existing favorite books data is unrelevant
+      .addCase(fetchBooks.fulfilled, (state, action) => {
+        let favoriteBookIds = Object.keys(state);
+        favoriteBookIds.forEach((bookId) => {
+          delete state[bookId];
+        })
       })
   }
 });
