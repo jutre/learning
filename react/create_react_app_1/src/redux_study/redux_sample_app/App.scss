@@ -1,5 +1,6 @@
 /*typical margin or padding values used in styling will be base value of dobule value.
 For better readibility create dedicated variables instead of multiplying in CSS rules */
+
 $margin_padding_base: 15px;
 $margin_padding_double: $margin_padding_base * 2;
 
@@ -7,7 +8,7 @@ $mobile-breakpoint:450px;
 $tablet-breakpoint:1000px;
 $large-screen-breakpoint:1366px;
 $button-padding:10px;
-$modal-border-radius:10px;
+$elements-border-radius:8px;
 
 $text-color:rgb(31, 41, 55);
 $link_hover_color:rgb(149, 149, 149);
@@ -21,7 +22,7 @@ $button_hover_background_color: rgb(0, 118, 192);
 
 @mixin button-appearance{
     border-width: 0px;
-    border-radius: $modal-border-radius;
+    border-radius: $elements-border-radius;
     color: white;
     background-color: $button_background_color;
     background-clip: border-box;
@@ -115,6 +116,67 @@ h1, h2, h3{
     z-index: -1;
 }
 
+.settings_menu{
+    position: absolute;
+    top: 7px;
+    //same indent from container as other elements
+    right: $margin_padding_base;
+    z-index: 1100;
+    @media screen and (min-width: 850px) { 
+        top: 12px;
+    }
+
+    .settings_icon{
+        height: 22px;
+        width: 22px;
+        mask-position: center;
+        mask-repeat: no-repeat;
+        mask-size: 22px;
+        mask-image: url(assets/settings.svg); 
+        background-color: #555;
+        cursor: pointer;
+    }
+
+    .body{
+        position: absolute;
+        margin-top: 1px;
+        right: 0;
+        //initially hide the menu
+        display: none;
+    }
+}
+.settings_menu .body.active{
+    display: block;
+}
+
+.settings_form{
+    padding: 8px;
+    background-color: white;
+    border: 1px solid $devider_border_color;
+    border-radius: $elements-border-radius;
+    .form_header{
+        margin-bottom: 8px;
+    }
+    .options_wrapper{
+        display: flex;
+    }
+    .option{ 
+        label{
+            display: block;
+            min-width: 135px;
+            height: 100%;
+            padding: $margin_padding_base;
+        }
+        input{
+            position: absolute;
+            opacity: 0;
+        }
+    }
+    .option.active{
+        background-color: #eee;
+    }
+}
+
 
 .list_type_menu{
     
@@ -164,6 +226,7 @@ h1, h2, h3{
 
 //class for element that wraps around content for creating central column 
 .layout_wrapper{
+    position: relative;
     @media screen and (min-width: $mobile-breakpoint) {
         margin:0 $margin_padding_base;
     }
@@ -320,7 +383,6 @@ h1, h2, h3{
                 width: 36px;
                 background-color: transparent;
                 border-style: none;
-
                 mask-position: center;
                 mask-repeat: no-repeat;
                 padding: 0;
@@ -348,7 +410,7 @@ h1, h2, h3{
     padding-top: $margin_padding_base;
     
     background-color: white;
-    border-radius: 0 0 7px 7px;
+    border-radius: 0 0 $elements-border-radius $elements-border-radius;
     border: 1px solid gray;
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     
@@ -384,10 +446,10 @@ h1, h2, h3{
         }
 
         &:last-child {
-            border-radius: 0 0 7px 7px;
+            border-radius: 0 0 $elements-border-radius $elements-border-radius;
 
             &:before{
-                border-radius: 0 0 7px 7px;
+                border-radius: 0 0 $elements-border-radius $elements-border-radius;
             }
         }
     }
@@ -450,10 +512,11 @@ h1, h2, h3{
 .error{
     color: red;
     border: 1px solid red;
-    border-radius: 10px;
+    border-radius: $elements-border-radius;
     padding: 10px;
-    display: inline-block; //prevent spanning to whole available width
-    
+    //prevent spanning to whole available width
+    width: max-content; 
+    margin-bottom: $margin_padding_base;
 }
 
 
@@ -468,7 +531,6 @@ h1, h2, h3{
     padding-bottom: $margin_padding_double;
 
     a{
-        
         text-transform: uppercase;
         font-weight: bold;
         
@@ -679,9 +741,13 @@ h1, h2, h3{
             border-bottom: 1px solid $devider_border_color;
         }
 
-        .title {
+        .book_info {
             flex: 1 1 auto;
             padding: $margin_padding_base 0;
+        }
+
+        .author{
+            font-size: 0.8em;
         }
 
         .actions {
@@ -719,7 +785,7 @@ h1, h2, h3{
         display: flex;
         flex-direction: column;
         border-width: 0px;
-        border-radius: $modal-border-radius;
+        border-radius: $elements-border-radius;
         margin-top: 30px;
         width: 460px;
         background-color: white;
@@ -814,7 +880,7 @@ input, textarea{
     display: block;
     padding: 10px;
     border: 1px solid rgb(229, 231, 235);
-    border-radius: 8px;
+    border-radius: $elements-border-radius;
 }
 
 textarea:focus, [type="text"]:focus{

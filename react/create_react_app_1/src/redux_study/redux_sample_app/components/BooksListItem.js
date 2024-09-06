@@ -56,7 +56,10 @@ export function BookListItem({bookId, editUrl, deleteUrl}) {
           <div className="custom_checkbox"></div>
           </label>
       </div>
-      <div className="title">{book.title}</div>
+      <div className="book_info">
+        <div className="author">{book.author}</div>
+        <div className='title'>{book.title}</div>
+      </div>
       <div className="actions">
         <div className={addToFavoritesDivClassName} onClick={handleAddToFavoritesClick}></div>
         <div className="action_button edit"><Link to={editUrl}></Link></div>

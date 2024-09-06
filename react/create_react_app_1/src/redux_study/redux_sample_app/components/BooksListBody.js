@@ -111,7 +111,7 @@ function BooksListBody ({listMode = null}) {
         }
 
         {showEmptyFavoritesListMessage &&
-          <div>There are no any books added to favorite books list.</div>
+          <div>There are no books added to favorite books list.</div>
         }
         {//if books array is empty and no searching is done (it might be the case nothing is found), offer adding some books 
           (showEmptyListMessage) &&

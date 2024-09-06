@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getQueryParamValue } from "../utils/utils";
-//import { getBookById } from "../selectors/books";
 import { bookUpdated,getBookById } from "../features/booksSlice";
 import { routes } from "../config";
 import { FormBuilder } from '../utils/FormBuilder';
@@ -58,8 +57,9 @@ function BookEditing() {
   
   let  formFieldsDefinition = [
     {label: "id", name:"id", type:"hidden"},
-    {label: "Title", name:"title", type:"text", rule:"required"}, 
-    {label: "Description", name:"description", type:"textarea", rule:"required"}];
+    {label: "Title", name:"title", type:"text", rule:"required"},
+    {label: "Author", name:"author", type:"text", rule:"required"}, 
+    {label: "Preface", name:"preface", type:"textarea"}];
     
   function saveSubmittedData(bookData){
     //part of loading indicator

@@ -1,4 +1,8 @@
-import { createSlice, createEntityAdapter, createSelector } from '@reduxjs/toolkit';
+import {  createSlice, 
+          createEntityAdapter, 
+          createSelector, 
+          createAsyncThunk } from '@reduxjs/toolkit';
+import { getBooksInitialData } from "../client/client";
 import { FAVORITE_BOOKS_LIST } from "../constants/bookListModes";
 
 const booksAdapter = createEntityAdapter();
@@ -31,6 +35,16 @@ initialState.entities["5"]={
       title: "Tranzistor circuit basics",
       description: "Tranzistor circuit basics description text here"};
 //--------
+
+initialState = booksAdapter.getInitialState({
+  status: 'idle',
+})
+
+export const fetchBooks = createAsyncThunk('books/fetchTodos', async (url) => {
+  const response = await getBooksInitialData(url);
+  return response.books;
+})
+
 const booksSlice = createSlice({
   name: 'books',
   initialState,
@@ -70,6 +84,17 @@ const booksSlice = createSlice({
       }
     }
 
+  },
+
+  extraReducers: (builder) => {
+    builder
+      .addCase(fetchBooks.pending, (state, action) => {
+        state.status = 'loading'
+      })
+      .addCase(fetchBooks.fulfilled, (state, action) => {
+        booksAdapter.setAll(state, action.payload)
+        state.status = 'idle'
+      })
   }
 });
 
@@ -205,3 +230,10 @@ export const selectFilteredBooksIds = createSelector(
     return booksObjArr.map((book)=> book.id)
   }
 );
+
+/**
+ * status for fetching books from remore source, used for loading indicator
+ * @param {*} state 
+ * @returns 
+ */
+export const selectBooksFetchingStatus = (state) => state.books.status
