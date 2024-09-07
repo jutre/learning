@@ -35,34 +35,53 @@ export async function getBooksInitialData(dataSource = "local") {
     }else{
       booksArr = [
         {
-          id: 1, 
-          title: "Calculus, part one", 
+          id: 1,
+          title: "Calculus, part one",
           author: "Gilbert Strang",
-          preface: "field for preface"},
-
-          {
-            id: 2, 
-            title: "Calculus, part two", 
-            author: "Gilbert Strang",
-            preface: "field for preface"},
-              
+          preface: "field for preface"
+        },
         {
-            id: 3, 
-            title: "Calculus, part three", 
-            author: "Gilbert Strang",
-            preface: "field for preface"},
-              
+          id: 2,
+          title: "Calculus, part two",
+          author: "Gilbert Strang",
+          preface: "field for preface"
+        },
         {
-            id: 4, 
-            title: "The basics of physics", 
-            author: "Steven Holzner",
-            preface: "field for preface"},
-        
+          id: 3,
+          title: "Calculus, part three",
+          author: "Gilbert Strang",
+          preface: "field for preface"
+        },
         {
-              id: 5, 
-              title: "Transistor circuit basics", 
-              author: "Charles Pike",
-              preface: "field for preface"}
+          id: 4,
+          title: "The basics of physics",
+          author: "Steven Holzner",
+          preface: "field for preface"
+        },
+        {
+          id: 5,
+          title: "Transistor circuit basics",
+          author: "Charles Pike",
+          preface: "field for preface"
+        },
+        {
+          id: 6,
+          title: "Calculus, part six",
+          author: "Gilbert Strang",
+          preface: "field for preface"
+        },
+        {
+          id: 7,
+          title: "Calculus, part seven",
+          author: "Gilbert Strang",
+          preface: "field for preface"
+        },
+        {
+          id: 8,
+          title: "Calculus, part eight",
+          author: "Gilbert Strang",
+          preface: "field for preface"
+        }
       ];
     }
     return new Promise((resolve) => {

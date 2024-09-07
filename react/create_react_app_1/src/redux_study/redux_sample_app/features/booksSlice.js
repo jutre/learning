@@ -7,36 +7,7 @@ import { FAVORITE_BOOKS_LIST } from "../constants/bookListModes";
 
 const booksAdapter = createEntityAdapter();
 
-let initialState = {ids:[1,2,3,4,5], entities:{}};
-
-
-initialState.entities["1"]={
-  id: 1, 
-  title: "Calculus, part one",
-  description: "Calculus, part one - description text here"};
-  
-initialState.entities["2"]={
-    id: 2, 
-    title: "Calculus, part two",
-    description: "Calculus, part two description text here"};
-      
-initialState.entities["3"]={
-    id: 3, 
-    title: "Calculus, part three",
-    description: "Calculus, part three description text here"};
-      
-initialState.entities["4"]={
-    id: 4, 
-    title: "The basics of physics",
-    description: "The basics of physics description text here"};
-
-initialState.entities["5"]={
-      id: 5, 
-      title: "Tranzistor circuit basics",
-      description: "Tranzistor circuit basics description text here"};
-//--------
-
-initialState = booksAdapter.getInitialState({
+let initialState = booksAdapter.getInitialState({
   status: 'idle',
 })
 

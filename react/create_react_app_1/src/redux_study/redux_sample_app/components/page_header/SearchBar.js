@@ -16,6 +16,8 @@ function SearchBar() {
   const [searchResult, setSearchResult] = useState([]);
 
 
+  let bookListWithSearchResultUrl = routes.bookListPath + "?search=" + searchTerm;
+
   //needed for detecting that user clicked outside of search bar div
   const beginningOfSearchBarRef = useRef(null);
 
@@ -215,10 +217,9 @@ function SearchBar() {
    */
   function handleSubmit(event) {
     event.preventDefault();
-    let bookSearchUrl = routes.bookListPath + "?search=" + searchTerm;
     //reset search bar after we add current searchTerm to url as resetting search bar sets searchTerm to empty string
     resetSearchBar();
-    navigate(bookSearchUrl);
+    navigate(bookListWithSearchResultUrl);
   }
 
   //calculate search bar class
@@ -227,6 +228,18 @@ function SearchBar() {
     searchResultsCssClassName += " active";
   }
 
+
+  //result bar displays not more than defined items count. If there are more items in results, display link to all
+  //results listing page which leads to book list url with entered search string
+  let searchResultArrForOutput;
+  let maxItemsCountForOutput = 5;
+  let resultCountExceedsMaxOutputCount = false;
+  if(searchResult.length > maxItemsCountForOutput){
+    searchResultArrForOutput = searchResult.slice(0, maxItemsCountForOutput);
+    resultCountExceedsMaxOutputCount = true;
+  }else{
+    searchResultArrForOutput = searchResult;
+  }
 
   return (
     <div className="search-bar">
@@ -249,15 +262,27 @@ function SearchBar() {
         </form>
 
         <div className={searchResultsCssClassName}>
-          {searchResult.map((book) => {
+          
+          {searchResultArrForOutput.map((book) => {
             //display result list as book titles with link to their edit page.
             //replace bookId segment in book edit route pattern
             let editUrl = routes.bookEditPath.replace(":bookId", book.id);
             return (
-              <div key={book.id} onClick={handleSearchResultLinkClick}><Link to={editUrl}>{book.title}</Link></div>
-            )
-          }
+              <div  key={book.id} 
+                    className="result_item"
+                    onClick={handleSearchResultLinkClick}>
+                <Link to={editUrl}>{book.title}</Link>
+              </div>
+            )}
           )}
+
+          {resultCountExceedsMaxOutputCount &&
+            <div className="result_item list_all_results_link" onClick={handleSearchResultLinkClick}>
+              <Link to={bookListWithSearchResultUrl}>
+                Show all {searchResult.length} found items...
+              </Link>
+            </div>
+          }
         </div>
       </div>
     </div>
