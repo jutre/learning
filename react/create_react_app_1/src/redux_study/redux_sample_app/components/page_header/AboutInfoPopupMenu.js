@@ -80,18 +80,19 @@ function AboutInfoPopupMenu(){
         About this app <span className='icon'></span>
       </div>
 
-      <div className="body">
-        This app was created to get experience with Redux (redux toolkit, data fetching). <br />
-        Other technical features also are used:
-        <ul>
-          <li>react-router</li>
-          <li>created a function that lets quickly generate HTML form by defining it's structure in
-            array of objects</li>
-          <li>various CSS features used to create typical UI elements: popup menu, autocomplete search box,
-            pseudo elements used to create elements or effects
-          </li>
-
-        </ul>
+      <div className="collapsible_body_wrapper">
+        <div className="body">
+          This app was created to get experience with Redux (redux toolkit, data fetching). <br />
+          Other technical features also are used:
+          <ul>
+            <li>react-router</li>
+            <li>created a function that lets quickly generate HTML form by defining it's structure in
+              array of objects</li>
+            <li>various CSS features used to create typical UI elements: popup menu, autocomplete search box,
+              pseudo elements used to create elements or effects
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   )

@@ -204,12 +204,13 @@ h1, h2, h3{
         display: block;
         font-weight: bold;
         padding: 10px;
-        transition: transform 0.1s linear;
+        transition: unset;
 
         &:hover{
-            transform: scale(1.05);
+            transition: transform 0.2s linear;
+            transform: scale(1.08);
             @media screen and (min-width: $tablet-breakpoint) {
-                transform-origin: left;
+                transform-origin: left top;
             }
         }
     }
@@ -309,12 +310,15 @@ h1, h2, h3{
     .tab{
         position: relative;
         z-index: 21;
+        //to be stacked above popup div body and together with transparent bottom border in active state tab would have 
+        //visually undevided common background with popup div
+        margin-bottom: -1px;
         cursor: pointer;
         max-width: max-content;
         background-color: rgb(131, 230, 230);
         border: 1px solid $devider_border_color;
-        //border below tab must become visible at the end of div's collapsing
-        transition: border-color 0.3s step-end;
+        //border below tab must become visible at the end of div's collapsing,
+        transition: border-color 0.1s step-end;
         padding: $margin_padding_base;
 
         .icon{
@@ -333,24 +337,81 @@ h1, h2, h3{
         }
     }
 
-    .body{
+    .collapsible_body_wrapper {
+        display: flex;
+        overflow: hidden;
         position: absolute;
         //in mobile view info div's body must be stacked above input fields which goes as next sibling
         z-index: 20;
-        transform: scaleY(0);    
-        transform-origin: top;
-        transition: transform 0.3s ease;
-        //border above info div must disappear at the end of div's collapsing
+    }
+
+    .body{
         width: 100%;
         background-color: rgb(131, 230, 230);
         border-color: $devider_border_color;
         border-style: solid;
         border-width: 1px;
-        margin-top: -1px;
         padding: $margin_padding_base;
+        line-height: 26px;
+
+        //transition function and margin-bottom, max-height allowing to take div it's natural height and space
+        transition: margin-bottom 0.3s cubic-bezier(0, 0, 0, 1);
+        margin-bottom: 0;
+        max-height: 1000000px;
+        visibility: visible;
+        
+        //create custom bullets
+        ul{
+            list-style: none;
+            padding-left: $margin_padding_double;
+            li{
+                position: relative;
+
+                &:before{
+                    content: "";
+                    display: block;
+                    position: absolute;
+                    left: -23px;
+                    top: 9px;
+                    
+                    background-color: #5f9ea0;
+                    width: 10px;
+                    height: 10px;
+                }
+            }
+        }
     }     
         
 }
+
+
+.about-info-pane.active{ 
+
+     .tab {
+        //when info pane opened, remove border under the tab
+        border-bottom-color: transparent;
+        //when tab becomes active, border under tab must disappear immediatelly because 
+        //info div underneath is starting to appear and a tab must have common
+        //unseparated background with div underneath, remove transition for border-bottom 
+        //disapper with delay that was needed while hiding active popupdiv
+        transition: unset;
+
+        //flip the triangle
+        .icon::after{
+            border-width: 0px 10px 10px 10px;
+            border-color: transparent transparent #555 transparent;
+        }
+    }
+
+}
+  
+//hiding info popup div
+.about-info-pane:not(.active) .body {
+    margin-bottom: -2000px;
+    transition: margin-bottom 0.3s cubic-bezier(1, 0, 1, 1), visibility 0s 0.3s, max-height 0s 0.3s;
+    visibility: hidden;
+    max-height: 0;
+  }
 
 
 .search-bar{
@@ -489,56 +550,7 @@ h1, h2, h3{
     display: block;
 }
   
-.about-info-pane.active{ 
 
-    //add a border below element to be visible above the info div that is located under
-    .tab-row-supplement {
-        border-bottom-color: $devider_border_color;
-
-    }
-
-    .tab {
-        //when info pane opened, remove border under the tab
-        border-bottom-color: transparent;
-        //when tab becomes active, border under tab must disappear immediatelly because 
-        //info div underneath is starting to appear and a tab must have common
-        //unseparated background with div underneath
-        transition: unset;
-
-        //flip the triangle
-        .icon::after{
-            border-width: 0px 10px 10px 10px;
-            border-color: transparent transparent #555 transparent;
-        }
-    }
-
-    .body{
-        display: block;
-        transform: scaleY(1);
-        line-height: 26px;
-        
-        //create custom bullets
-        ul{
-            list-style: none;
-            padding-left: $margin_padding_double;
-            li{
-                position: relative;
-
-                &:before{
-                    content: "";
-                    display: block;
-                    position: absolute;
-                    left: -23px;
-                    top: 9px;
-                    
-                    background-color: $text-color;
-                    width: 10px;
-                    height: 10px;
-                }
-            }
-        }
-    }
-}
 
 .error{
     color: red;
