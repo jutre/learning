@@ -325,7 +325,6 @@ h1, h2, h3{
             display: inline-block;
             width: 20px;
             height: 10px;
-
             /*creating arrow with pseudo element */
             &:after {
                 content: "";
@@ -333,6 +332,7 @@ h1, h2, h3{
                 border-width: 10px 10px 0 10px;
                 border-style: solid;
                 border-color: #555 transparent transparent transparent;
+                transition: transform 0.3s linear;
             }
         }
     }
@@ -398,8 +398,7 @@ h1, h2, h3{
 
         //flip the triangle
         .icon::after{
-            border-width: 0px 10px 10px 10px;
-            border-color: transparent transparent #555 transparent;
+            transform: rotate(-180deg);
         }
     }
 
