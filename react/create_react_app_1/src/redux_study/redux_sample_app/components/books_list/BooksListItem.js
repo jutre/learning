@@ -1,8 +1,8 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { Link } from "react-router-dom";
-import { selectBookFullInfoById } from "../features/booksSlice";
-import { bookFavoriteStateToggled } from "../features/favoriteBooksSlice";
-import { bookCollectionAddedToSelection, singleBookRemovedFromSelection } from "../features/uiControlsSlice";
+import { selectBookFullInfoById } from "../../features/booksSlice";
+import { bookFavoriteStateToggled } from "../../features/favoriteBooksSlice";
+import { bookCollectionAddedToSelection, singleBookRemovedFromSelection } from "../../features/uiControlsSlice";
 
 
 export function BookListItem({bookId, editUrl, deleteUrl}) {

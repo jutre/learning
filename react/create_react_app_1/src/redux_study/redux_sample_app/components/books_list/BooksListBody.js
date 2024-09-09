@@ -3,14 +3,14 @@
  * filtered list is search string is set in filters state
  */
 import { useSelector } from 'react-redux';
-import { routes } from "../config";
+import { routes } from "../../config";
 import { Link } from "react-router-dom";
-import { selectFilteredBooksIds } from "../features/booksSlice";
-import { selectSearchString } from "../features/filtersSlice";
+import { selectFilteredBooksIds } from "../../features/booksSlice";
+import { selectSearchString } from "../../features/filtersSlice";
 import BooksListItemsSelectionBar from "./BooksListItemsSelectionBar"
 import { BookListItem } from "./BooksListItem";
-import { getBookListBaseUrl } from "../utils/utils";
-import { FAVORITE_BOOKS_LIST } from "../constants/bookListModes";
+import { getBookListBaseUrl } from "../../utils/utils";
+import { FAVORITE_BOOKS_LIST } from "../../constants/bookListModes";
 
 function BooksListBody ({listMode = null}) {
 

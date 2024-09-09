@@ -5,11 +5,11 @@
  */
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from "react-router-dom";
-import { routes } from "../config";
+import { routes } from "../../config";
 import {  bookCollectionAddedToSelection, 
           allBooksRemovedFromSelection, 
           selectIsAnyBookSelected,
-          selectBooksInSelection } from "../features/uiControlsSlice";
+          selectBooksInSelection } from "../../features/uiControlsSlice";
 
 function BooksListItemsSelectionBar({booksIds, searchGetParamVal}) {
   const dispatch = useDispatch();

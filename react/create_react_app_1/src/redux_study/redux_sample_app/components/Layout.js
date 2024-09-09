@@ -3,7 +3,7 @@ import { FAVORITE_BOOKS_LIST } from "../constants/bookListModes";
 import SettingsMenu from "./settings_menu/SettingsMenu";
 import PageHeader from "./page_header/PageHeader";
 import BookEditing from "./BookEditing";
-import BooksList from "./BooksList";
+import BooksList from "./books_list/BooksList";
 import CreateBook from "./CreateBook";
 import BooksListTypeMenu from "./BooksListTypeMenu";
 import { useSelector } from 'react-redux';

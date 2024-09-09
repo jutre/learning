@@ -10,10 +10,10 @@
  */
 import { useEffect } from "react";
 import { useDispatch } from 'react-redux'; 
-import { searchStringUpdated } from "../features/filtersSlice"
+import { searchStringUpdated } from "../../features/filtersSlice"
 import { useLocation } from "react-router-dom";
-import { getQueryParamValue, getBookListBaseUrl } from "../utils/utils";
-import { BookDeletionConfirmationDialog } from "./BookDeletionConfirmationDialog";
+import { getQueryParamValue, getBookListBaseUrl } from "../../utils/utils";
+import { BookDeletionConfirmationDialog } from "../BookDeletionConfirmationDialog";
 
 
 function BooksListParamProcessor ({listMode = null}) {

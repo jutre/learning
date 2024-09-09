@@ -1,10 +1,10 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
-import { routes } from "../config";
-import { FAVORITE_BOOKS_LIST } from "../constants/bookListModes";
+import { routes } from "../../config";
+import { FAVORITE_BOOKS_LIST } from "../../constants/bookListModes";
 import BooksListParamProcessor from "./BooksListParamsProcessor";
 import BooksListBody from "./BooksListBody";
-import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
+import { setPageTitleTagValue } from "../../utils/setPageTitleTagValue";
 
 function BooksList({listMode = null}) {
   
