@@ -61,7 +61,8 @@ export function BookListItem({bookId, editUrl, deleteUrl}) {
         <div className='title'>{book.title}</div>
       </div>
       <div className="actions">
-        <div className={addToFavoritesDivClassName} onClick={handleAddToFavoritesClick}></div>
+        <button className={addToFavoritesDivClassName} 
+                onClick={handleAddToFavoritesClick}></button>
         <div className="action_button edit"><Link to={editUrl}></Link></div>
         <div className="action_button delete"><Link to={deleteUrl}></Link></div>
       </div>

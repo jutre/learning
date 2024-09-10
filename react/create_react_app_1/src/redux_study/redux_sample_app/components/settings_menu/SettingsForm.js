@@ -40,14 +40,18 @@ function SettingsForm({closeMenuHandler}){
         {(dataSourceOptions).map((entry, index) =>
           <div  key={index}
                 className={"option" + (selectedRadioButtonValue === entry.value ? " active" : "")}>
-          <label>
-            <input type="radio" 
-                  name="data_source_options" 
-                  value={entry.value} 
-                  checked={selectedRadioButtonValue === entry.value}
-                  onChange={handleChange} />
-            {entry.label}
-          </label>
+
+            <input  type="radio" 
+                    name="data_source_options" 
+                    id={entry.value} 
+                    value={entry.value} 
+                    checked={selectedRadioButtonValue === entry.value}
+                    onChange={handleChange} />
+                    
+            <label htmlFor={entry.value}>
+              {entry.label}
+            </label>
+
           </div>
         )}
       </div>

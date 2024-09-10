@@ -70,15 +70,15 @@ function BooksListItemsSelectionBar({booksIds, searchGetParamVal}) {
   return  (
     <div className="book_list_selection_bar">
       <div className="checkbox_wrapper">
-        <div  onClick={handleBatchSelectorClick}
-              className={batchSelectorClassName}
-              title={batchSelectorModeTitle}>
-        </div>
+        <button onClick={handleBatchSelectorClick}
+                className={batchSelectorClassName}
+                title={batchSelectorModeTitle}>
+        </button>
       </div>
       
-      <div  className={deleteButtonClassName}
-            onClick={handleRedirectToDeletionUrl}>
-      </div>
+      <button className={deleteButtonClassName}
+              onClick={handleRedirectToDeletionUrl}>
+      </button>
 
     </div>
   )

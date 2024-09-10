@@ -77,7 +77,7 @@ function SettingsMenu(){
 
   return (
     <div className="settings_menu" ref={beginningOfMenuRef}>
-      <div onClick={handleMenuToggle} className="settings_icon"></div>
+      <button onClick={handleMenuToggle} className="settings_icon"></button>
       <div className={menuCssClassName}>
         <SettingsForm closeMenuHandler={closeMenuHandler}/>
       </div>

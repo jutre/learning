@@ -76,9 +76,9 @@ function AboutInfoPopupMenu(){
       actuator tab and info div and belongs to an area on which a click closes an opened 
       info div*/}
       <div onClick={closeOpenedInfoDiv} className="tab-row-supplement"></div>
-      <div onClick={handleMenuToggle} className="tab">
+      <button onClick={handleMenuToggle} className="tab">
         About this app <span className='icon'></span>
-      </div>
+      </button>
 
       <div className="collapsible_body_wrapper">
         <div className="body">

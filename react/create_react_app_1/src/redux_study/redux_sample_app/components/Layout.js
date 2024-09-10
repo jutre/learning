@@ -35,8 +35,8 @@ const Layout = () => {
           
 
           <div className="layout_wrapper">
-            <SettingsMenu/>
             <PageHeader/>
+            <SettingsMenu/>
           </div>
 
           <div className="layout_wrapper content_wrapper">

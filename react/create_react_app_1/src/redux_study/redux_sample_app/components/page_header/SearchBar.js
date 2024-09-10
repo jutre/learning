@@ -25,6 +25,9 @@ function SearchBar() {
   //(for performance issues don't use directly document.addEventListener/removeEventListener)
   const documentRef = useRef(document);
 
+  //for focusing text input field after clicking on "clear input field" button
+  const searchInputFieldRef = useRef();
+
 
   /**
    * This is a function attached to window.document as "click" event handler when there is any input in search string input field.
@@ -155,9 +158,10 @@ function SearchBar() {
   }
 
   /**
-   * sets search bar input field's entered string to empty when use clicks "clear input field" button.
+   * when use clicks "clear input field" button then resets search bar and focus on search phrase input field
    */
   function handleSearchInputClearing() {
+    searchInputFieldRef.current.focus();
     resetSearchBar();
   }
 
@@ -250,7 +254,8 @@ function SearchBar() {
           <input type='text'
             value={searchTerm}
             onChange={handleSearchTermInputChange}
-            onFocus={handleSearchInputFocus} />
+            onFocus={handleSearchInputFocus} 
+            ref={searchInputFieldRef}/>
 
           <div className='actions'>
             {searchTerm &&
