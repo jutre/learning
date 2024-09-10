@@ -188,15 +188,43 @@ h1, h2, h3{
     }
     .options_wrapper{
         display: flex;
+        border: 1px solid $devider_border_color;
     }
-    .option input[type=radio]{
-        position: absolute;
-        opacity: 0;
-
-        //styling to highlight radio group when user navigates using TAB key
-        &:focus-visible + label{
-            outline-style: auto;
+    .option {
+        background-color: white;
+        
+        &.active{
+            background-color: #eee;
+            border-width: 2px 3px;
+            border-style: solid;
+            border-color: $devider_border_color white;
         }
+
+        &:not(.active) label:hover{
+            background-color: $button_hover_background_color;
+            color: white;
+            cursor: pointer;
+        }
+        
+        
+        input[type=radio]{
+            position: absolute;
+            opacity: 0;
+
+            //styling to highlight radio group when user navigates using TAB key
+            &:focus-visible + label{
+                outline-style: auto;
+            }
+        }
+    }
+
+    //unselected option has border left and rirst child which is not active has border right - those styles are
+    //part of active option highligting style
+    .option.active  ~ .option{
+        border-left: 1px solid $devider_border_color;
+    }
+    .option:first-child:not(.active) {
+        border-right: 1px solid $devider_border_color;
     }
     
     label{
@@ -204,19 +232,10 @@ h1, h2, h3{
         min-width: 135px;
         height: 100%;
         padding: $margin_padding_base;
-        cursor: pointer;
     }
         
     
-    .option.active{
-        background-color: #eee;
-    }
-    .option:not(.active){
-        label:hover{
-            background-color: $button_hover_background_color;
-            color: white;
-        }
-    }
+    
 }
 
 
