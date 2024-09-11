@@ -628,6 +628,18 @@ h1, h2, h3{
     padding: $margin_padding_double  $margin_padding_base;
 }
 
+.loading_status_indicator{
+    position: absolute;
+    margin-top: -20px;
+    color: green;
+    
+    .error{
+        border: none;
+        padding: 0;
+        
+    }
+}
+
 .navigation{
     padding-bottom: $margin_padding_double;
 

@@ -6,19 +6,21 @@ import BookEditing from "./BookEditing";
 import BooksList from "./books_list/BooksList";
 import CreateBook from "./CreateBook";
 import BooksListTypeMenu from "./BooksListTypeMenu";
-import { useSelector } from 'react-redux';
-import { selectBooksFetchingStatus } from "../features/booksSlice";
+import DataFetchingProgressIndicator from "./DataFetchingProgressIndicator";
 import {
         BrowserRouter as Router,
         Routes,
         Route } from "react-router-dom";
+import DataFetchingErrorMessageResetter from "./DataFetchingErrorMessageResetter";
 
 const Layout = () => {
-  let fetchingStatus = useSelector(state => selectBooksFetchingStatus(state));
-
   return (
     <div className="root_container">
       <Router>
+        {/*DataFetchingErrorMessageResetter does not output anytning but must be child of react router <Router> child
+        to receive data from react router context to use it's api */}
+        <DataFetchingErrorMessageResetter/>
+
         <div className="left_column">
           <BooksListTypeMenu/>
         </div>
@@ -40,18 +42,19 @@ const Layout = () => {
           </div>
 
           <div className="layout_wrapper content_wrapper">
-            {fetchingStatus === "rejected" &&
-              <div className="error">fetching books has failed</div>}
-            {fetchingStatus === "loading" ? 
-              <div>loading...</div>
-              :
+            
+             
+            
+            
+            <DataFetchingProgressIndicator/>
+            
               <Routes>
                 <Route path={routes.bookListPath} element={<BooksList />} />
                 <Route path={routes.favoriteBooksListPath} element={<BooksList listMode={FAVORITE_BOOKS_LIST}/>} />
                 <Route path={routes.bookEditPath} element={<BookEditing />} />
                 <Route path={routes.createBookPath} element={<CreateBook />} />
               </Routes>
-            }
+            
           </div>
         </div>
         <div className="right_column"></div>

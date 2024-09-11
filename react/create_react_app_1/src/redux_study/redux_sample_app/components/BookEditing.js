@@ -1,11 +1,16 @@
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getQueryParamValue } from "../utils/utils";
-import { bookUpdated,getBookById } from "../features/booksSlice";
+import {
+  bookUpdated,
+  getBookById,
+  selectBooksFetchingStatus,
+  STATUS_IDLE
+} from "../features/booksSlice";
+import { useSelector } from 'react-redux';
+import store from "../store/store";
 import { routes } from "../config";
 import { FormBuilder } from '../utils/FormBuilder';
-//neede for selectors and action distching
-import store from "../store/store";
 import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 import { BookDeletionConfirmationDialog } from "./BookDeletionConfirmationDialog";
 
@@ -25,33 +30,47 @@ function BookEditing() {
   //will contain possible errors
   const [errorMsg, setErrorMsg] = useState();
 
+  let fetchingStatus = useSelector(state => selectBooksFetchingStatus(state));
+
   const { bookId } = useParams();
 
-  //set formInitialData state variable to the value of editable book
+  //this hook is used to populate form's fields with initial data. It's dependancy if book's state fetching status, 
+  //the actual data selection from store is done when fetching status becomes "idle". Such dependancu is created
+  //for case when application is initially opened using url corresponding to book editing page, like "/1/edit/"
+  //which means that initial data has not been loaded before, the initial data loading might still be in progress,
+  //the book data is selected from store only at moment when fetching status is "idle". If data loading state 
+  //is in "loading" or "rejected" state, current page does not show form, the loading status is displayed in other
+  //compoent
   useEffect(() => {
     //check if bookId segment is positive integer
     if (! /^[1-9][0-9]*$/.test(bookId)) {
       setErrorMsg(bookId + " - invalid parameter value! Value must be integer greater than zero.");
 
     } else {
-      let bookIdIntVal = parseInt(bookId);
-      //Check if book with such id exists
-      //here a Redux store is accessed directly instead of using useSelector. We need data from store only on first time
-      //component is rendered to get current book's data and fill the form with it. When user submit the form, the form is
-      //still snown will input user made, the input is saved to Redux store, but rerender is not needed. This component has 
-      //also a submitting indicator, indicator causes rerendering of component twice ofter submit, on every rerender userSelector
-      //will be invoked. Additionally useSelector will be invoked also after actual store's state update after form submit - four useEffect 
-      //invocations after a form submit. When accessing store directly, selector that gets book's data only once is invoked once
-      const initialData = getBookById(store.getState(), bookIdIntVal);
+      if(fetchingStatus === STATUS_IDLE){
+        let bookIdIntVal = parseInt(bookId);
+        
+        //here a Redux state in store is accessed directly instead of using useSelector. The reason for that is that 
+        //edit page needs data from store only on first time component is rendered (after app's initial data has
+        //succesfuly been loaded) to get current book's data and populate form's fields with initial data. 
+        //When user submits the form, there is no any state update that would be needed to be selected back for display 
+        //as the book's state is equal with form data that was dispatched to store after submitting the form, the form
+        //still snows input user made, thus bsing userSelector(getBookId) would cause unnecesary re-render 
+        const initialData = getBookById(store.getState(), bookIdIntVal);
 
-      if (initialData === undefined) {
-        setErrorMsg(`A book with id="${bookId}" was not found!`);
-      } else {
-        setFormInitialData(initialData);
+        //Check if book with such id exists
+        if (initialData === undefined) {
+          setErrorMsg(`A book with id="${bookId}" was not found!`);
+        } else {
+          setFormInitialData(initialData);
+        }
       }
     }
 
-    //setting page title from here
+  }, [fetchingStatus]);
+
+  useEffect(() => {
+    //setting page title after first render
     setPageTitleTagValue("Edit book");
   }, []);
   

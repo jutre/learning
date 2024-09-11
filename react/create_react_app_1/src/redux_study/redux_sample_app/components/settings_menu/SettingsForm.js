@@ -1,34 +1,64 @@
-/**
- * displays or hides settings menu. Menu can be closed by click on same element that opened the menu or on any 
- * element in page except menu itself
- * returns books information list. Inteded to use for initial data loading to prefill application with books data or when user
- * changes data source in data source menu.
- * Returns either books list hard coded in this function or fetched from api available at openlibrary.org. 
- */
-import { useState } from 'react';
-import store from '../../store/store';
-import { fetchBooks } from "../../features/booksSlice";
+import { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import {  fetchBooks, 
+          selectBooksFetchingStatus,
+          STATUS_IDLE,
+          STATUS_REJECTED
+} from "../../features/booksSlice";
 import { useNavigate } from "react-router-dom";
 import { routes } from "../../config";
 
+/**
+ * data source settings form. Displays menu with two options of data source for application's initial data, it is possible to
+ * choose one of them by clicking desired option. When other than currently selected option is choosen, data loading is
+ * initiated. If data loading ends succesfully then form is hidden and page is redirected to all books list as new data is
+ * loaded
+ */
 function SettingsForm({closeMenuHandler}){
   const [selectedRadioButtonValue, setSelectedRadioButtonValue] = useState("local");
+  const [closeFormAfterDataLoaded, setCloseFormAfterDataLoaded] = useState(false);
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  let fetchingStatus = useSelector(state => selectBooksFetchingStatus(state));
+
+
+  //This hook closes menu and redirects to all books list after succesful loading of new initial data.
+  //Redirect is needed because if currently user is on book edit page then book edit page form would  be filled
+  //with new data just loaded.
+  //Form closing is triggered by state variable "closeFormAfterDataLoaded". It is set to "true" after data fetching
+  //is initiated. When "closeFormAfterDataLoaded" is "true" and fetching state becomes "idle" menu is closed and page is
+  //redirected. If data fetching fails then menu is not closed, user can close it using menu; also loading error is 
+  //displayed in another component
+  useEffect(() => {
+    if(closeFormAfterDataLoaded === true){
+      if(fetchingStatus === STATUS_IDLE){
+        //data fetching ends with success - reset "closeFormAfterDataLoaded" variable (is is not needed to track
+        //data loading and close menu after data ends loading), close menu, redirect to books list
+        setCloseFormAfterDataLoaded(false);
+        navigate(routes.bookListPath);
+        closeMenuHandler();
+
+      }else if(fetchingStatus === STATUS_REJECTED){
+        //data fetching ends with failure - reset "closeFormAfterDataLoaded" variable (is is not needed to track
+        //data loading any more to close menu after successfull loading, loading has failed), menu stays opened
+        setCloseFormAfterDataLoaded(false);
+      }
+    }
+  }, [fetchingStatus, closeFormAfterDataLoaded]);
+  
   let dataSourceOptions = [
     {value: "local", label: "Local sample data"},
     {value: "remote", label: "Data from openlibrary.org"}
   ];
 
-  const navigate = useNavigate();
-
   function handleChange(event){
     let selectedValue = event.target.value;
     setSelectedRadioButtonValue(selectedValue);
-    store.dispatch(fetchBooks(selectedValue));
-    //after loading new initial data, close menu and redirect to all books list as if currently user is 
-    //on book edit page then book edit page form would be filled with data just loaded
-    closeMenuHandler();
-    navigate(routes.bookListPath);
+
+    dispatch(fetchBooks(selectedValue));
+    setCloseFormAfterDataLoaded(true);
   }
 
   return (

@@ -5,6 +5,13 @@ import {  createSlice,
 import { getBooksInitialData } from "../client/client";
 import { FAVORITE_BOOKS_LIST } from "../constants/bookListModes";
 
+//async thunk status that is keeded in state is used in some components. Create constants for 
+//purpose of comparing status values where status value are used for conditions
+export const STATUS_LOADING = "loading";
+export const STATUS_IDLE = "idle";
+export const STATUS_REJECTED = "rejected"
+
+
 const booksAdapter = createEntityAdapter();
 
 let initialState = booksAdapter.getInitialState({
@@ -53,6 +60,10 @@ const booksSlice = createSlice({
         const id = parseInt(timeStr);
         return { payload: {...value, id: id} }
       }
+    },
+
+    statusSetToIdle(state){    
+      state.status = STATUS_IDLE;
     }
 
   },
@@ -60,19 +71,19 @@ const booksSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(fetchBooks.pending, (state, action) => {
-        state.status = 'loading'
+        state.status = STATUS_LOADING
       })
       .addCase(fetchBooks.fulfilled, (state, action) => {
         booksAdapter.setAll(state, action.payload)
-        state.status = 'idle'
+        state.status = STATUS_IDLE
       })
       .addCase(fetchBooks.rejected, (state, action) => {
-        state.status = 'rejected'
+        state.status = STATUS_REJECTED
       })
   }
 });
 
-export const { bookUpdated, multipleBooksDeleted, bookCreated } = booksSlice.actions 
+export const { bookUpdated, multipleBooksDeleted, bookCreated, statusSetToIdle } = booksSlice.actions 
 
 export default booksSlice.reducer
 
