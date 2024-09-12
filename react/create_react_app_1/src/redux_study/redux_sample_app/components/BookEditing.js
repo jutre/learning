@@ -9,7 +9,9 @@ import {
 } from "../features/booksSlice";
 import { useSelector } from 'react-redux';
 import store from "../store/store";
-import { routes } from "../config";
+import {
+  routes,
+  bookEditFormFieldsDef } from "../config";
 import { FormBuilder } from '../utils/FormBuilder';
 import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 import { BookDeletionConfirmationDialog } from "./BookDeletionConfirmationDialog";
@@ -74,11 +76,7 @@ function BookEditing() {
     setPageTitleTagValue("Edit book");
   }, []);
   
-  let  formFieldsDefinition = [
-    {label: "id", name:"id", type:"hidden"},
-    {label: "Title", name:"title", type:"text", rule:"required"},
-    {label: "Author", name:"author", type:"text", rule:"required"}, 
-    {label: "Preface", name:"preface", type:"textarea"}];
+  let  formFieldsDefinition = bookEditFormFieldsDef;
     
   function saveSubmittedData(bookData){
     //part of loading indicator

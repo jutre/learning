@@ -17,7 +17,7 @@ function BooksList({listMode = null}) {
 
   useEffect(() => {
     setPageTitleTagValue(listTitle);
-  }, []);
+  }, [listTitle]);
 
   return  (
     <div className="book_list">

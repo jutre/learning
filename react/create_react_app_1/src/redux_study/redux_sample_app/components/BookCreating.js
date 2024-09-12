@@ -8,7 +8,7 @@ import store from "../store/store";
 import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 
 
-function CreateBook() {
+function BookCreating() {
   const [createdBook, setCreatedBook] = useState(null);
 
   useEffect(() => {
@@ -61,4 +61,4 @@ function CreateBook() {
 }
 
 
-export default CreateBook;
+export default BookCreating;

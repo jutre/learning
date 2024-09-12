@@ -62,6 +62,8 @@ const booksSlice = createSlice({
       }
     },
 
+    //for resetting "status" state from "rejected" to "idle" to clear "rejected" status when user navigates
+    //to some other page
     statusSetToIdle(state){    
       state.status = STATUS_IDLE;
     }

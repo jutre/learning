@@ -4,7 +4,7 @@ import SettingsMenu from "./settings_menu/SettingsMenu";
 import PageHeader from "./page_header/PageHeader";
 import BookEditing from "./BookEditing";
 import BooksList from "./books_list/BooksList";
-import CreateBook from "./CreateBook";
+import BookCreating from "./BookCreating";
 import BooksListTypeMenu from "./BooksListTypeMenu";
 import DataFetchingProgressIndicator from "./DataFetchingProgressIndicator";
 import {
@@ -52,7 +52,7 @@ const Layout = () => {
                 <Route path={routes.bookListPath} element={<BooksList />} />
                 <Route path={routes.favoriteBooksListPath} element={<BooksList listMode={FAVORITE_BOOKS_LIST}/>} />
                 <Route path={routes.bookEditPath} element={<BookEditing />} />
-                <Route path={routes.createBookPath} element={<CreateBook />} />
+                <Route path={routes.createBookPath} element={<BookCreating />} />
               </Routes>
             
           </div>
