@@ -1,8 +1,10 @@
 /**
  * slice that also updates it's state in response to actions from "booksSlice".
+ * Possibly current state could be placed in booksSlice as it is closely related, but for trying to work with
+ * all possible redux toolkit features data is placed into separate slice
  */
 import { createSlice } from '@reduxjs/toolkit';
-import { multipleBooksDeleted, fetchBooks } from './booksSlice';
+import { multipleBooksDeleted, fetchBookData } from './booksSlice';
 
 let initialState = {};
 
@@ -39,12 +41,15 @@ const favoriteBooksSlice = createSlice({
         })
       })
 
-      //when initial data is loaded then delete all data from current favorite books state. As completely new data is loaded
-      //existing favorite books data is unrelevant
-      .addCase(fetchBooks.fulfilled, (state, action) => {
-        let favoriteBookIds = Object.keys(state);
-        favoriteBookIds.forEach((bookId) => {
+      //when book data fetching action is fulfilled, which means new initial data (books, favorites list) is loaded, previous 
+      //data from favorite  books state must be deleted and favorite ids from action payload must be added to favorite books state
+      .addCase(fetchBookData.fulfilled, (state, action) => {
+        let currentFavoriteBookIds = Object.keys(state);
+        currentFavoriteBookIds.forEach((bookId) => {
           delete state[bookId];
+        })
+        action.payload.favoriteBooksIds.forEach((bookId) => {
+          state[bookId] = true;
         })
       })
   }

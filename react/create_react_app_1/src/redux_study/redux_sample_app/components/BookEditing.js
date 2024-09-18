@@ -4,15 +4,19 @@ import { getQueryParamValue } from "../utils/utils";
 import {
   bookUpdated,
   getBookById,
-  selectBooksFetchingStatus,
-  STATUS_IDLE
-} from "../features/booksSlice";
-import { useSelector } from 'react-redux';
-import store from "../store/store";
+  selectInitialDataFetchingStatus,
+  bookUpdatingStatusResetToIdle,
+  sendUpdatedBookDataToServer,
+  selectBookUpdatingStatus,
+  STATUS_IDLE,
+  STATUS_LOADING,
+  STATUS_REJECTED } from "../features/booksSlice";
+import { useSelector, useDispatch } from 'react-redux';
 import {
   routes,
   bookEditFormFieldsDef } from "../config";
 import { FormBuilder } from '../utils/FormBuilder';
+import DisappearingMessage from './DisappearingMessage';
 import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 import { BookDeletionConfirmationDialog } from "./BookDeletionConfirmationDialog";
 
@@ -23,34 +27,58 @@ import { BookDeletionConfirmationDialog } from "./BookDeletionConfirmationDialog
  * currently in input fields.
  */
 function BookEditing() {
-  const [submitingIndicator, setSubmitingIndicator] = useState(false);
+  const [displaySavingSuccessMsg, setDisplaySavingSuccessMsg] = useState(false);
   
-  //load book data from store and keep in compnent's state. Components state is needed as component
-  //will be re-rendered when submitting indicator will appear and we need a way to perform data loading only once
+  //keep form initial data in compnent's state as on first render page might be opened directly using page link and at
+  //that moment initial application data has not been loaded yet and there is nothing to display. When data loading finishes
+  //loading, editable book data will be set to this array and component will render the form
   const [formInitialData, setFormInitialData] = useState();
-
   //will contain possible errors
   const [errorMsg, setErrorMsg] = useState();
 
-  let fetchingStatus = useSelector(state => selectBooksFetchingStatus(state));
+  const [wasSubmitted, setWasSubmitted] = useState(false);
+  //previous status info is used after submitting when saving execution status becomes "loading",
+  //until then previous status info is not needed
+  const [prevBookUpdatingStatus, setPrevBookUpdatingStatus] = useState(null);
+
+  const dispatch = useDispatch();
+
+
+  useEffect(() => {
+    //for resetting "bookUpdatingStatus" state from "rejected" to "idle". It is needed in situation if submitting updated book
+    //data has ended up with "rejected" status and user navigated to other page and then came back. 
+    //At the moment when user comes back to book updating page the previously set "rejected" book saving status remains unchanged,
+    //it must be set to "idle" on first component render 
+    dispatch(bookUpdatingStatusResetToIdle());
+    //setting page title after first render
+    setPageTitleTagValue("Edit book");
+  }, []);
+
+  let initialDataFetchingStatus = useSelector(state => selectInitialDataFetchingStatus(state));
 
   const { bookId } = useParams();
+  let bookIdIntVal = parseInt(bookId);
+  //useSelector hook must be called directly in component, thats why it is called here. The actual book data might
+  //not be set yet because of initial fetching or path variable might be invalid. In either cases result is ignored
+  //until initial data is fetched 
+  let bookData = useSelector(state => getBookById(state, bookIdIntVal));
+
 
   //this hook is used to populate form's fields with initial data. It's dependancy if book's state fetching status, 
-  //the actual data selection from store is done when fetching status becomes "idle". Such dependancu is created
+  //the actual data selection from store is done when fetching status becomes "idle". Such dependency is created
   //for case when application is initially opened using url corresponding to book editing page, like "/1/edit/"
   //which means that initial data has not been loaded before, the initial data loading might still be in progress,
   //the book data is selected from store only at moment when fetching status is "idle". If data loading state 
   //is in "loading" or "rejected" state, current page does not show form, the loading status is displayed in other
-  //compoent
+  //component
   useEffect(() => {
     //check if bookId segment is positive integer
     if (! /^[1-9][0-9]*$/.test(bookId)) {
       setErrorMsg(bookId + " - invalid parameter value! Value must be integer greater than zero.");
 
     } else {
-      if(fetchingStatus === STATUS_IDLE){
-        let bookIdIntVal = parseInt(bookId);
+      if(initialDataFetchingStatus === STATUS_IDLE){
+        
         
         //here a Redux state in store is accessed directly instead of using useSelector. The reason for that is that 
         //edit page needs data from store only on first time component is rendered (after app's initial data has
@@ -58,34 +86,56 @@ function BookEditing() {
         //When user submits the form, there is no any state update that would be needed to be selected back for display 
         //as the book's state is equal with form data that was dispatched to store after submitting the form, the form
         //still snows input user made, thus bsing userSelector(getBookId) would cause unnecesary re-render 
-        const initialData = getBookById(store.getState(), bookIdIntVal);
-
+        //const initialData = getBookById(store.getState(), bookIdIntVal);
         //Check if book with such id exists
-        if (initialData === undefined) {
+        if (bookData === undefined) {
           setErrorMsg(`A book with id="${bookId}" was not found!`);
         } else {
-          setFormInitialData(initialData);
+          setFormInitialData(bookData);
         }
       }
     }
 
-  }, [fetchingStatus]);
+  }, [initialDataFetchingStatus]);
 
-  useEffect(() => {
-    //setting page title after first render
-    setPageTitleTagValue("Edit book");
-  }, []);
+
+  let bookUpdatingStatus = useSelector(state => selectBookUpdatingStatus (state));
   
+  useEffect(() => {
+    //after book was submitted, track sending status changes to make sure that had been "loading" and afte that
+    //became "idle". It is needed to be sure that status had transferred from "loading" to "idle"
+    //which means data saving function was in execution state, and came to success state. After such state transfer 
+    //saved book info can display on page
+    if(wasSubmitted){
+      if(bookUpdatingStatus === STATUS_LOADING){
+        setPrevBookUpdatingStatus(STATUS_LOADING);
+      }else if(prevBookUpdatingStatus === STATUS_LOADING){
+        if(bookUpdatingStatus === STATUS_IDLE){
+          setDisplaySavingSuccessMsg(true);
+          //reset prevBookUpdatingStatus state varible and set wasSubmitted to false to be ready for submitting
+          //updated book data another time as form stays visible
+          setPrevBookUpdatingStatus(null);
+          setWasSubmitted(false);
+
+        }else if(bookUpdatingStatus === STATUS_REJECTED){
+          //when after loading state there is rejected state, reset prevBookUpdatingStatus state varible and
+          //set wasSubmitted to false to be ready for repetative submitting in case user tries to submit again
+          setPrevBookUpdatingStatus(null);
+          setWasSubmitted(false);
+        }
+      }
+    }
+  }, [bookUpdatingStatus]);
+  
+  let formDisabled = bookUpdatingStatus === STATUS_LOADING;
+
   let  formFieldsDefinition = bookEditFormFieldsDef;
     
   function saveSubmittedData(bookData){
-    //part of loading indicator
-    setSubmitingIndicator(true);
-
-    store.dispatch(bookUpdated(bookData));
-    
-    //simulation of end of fetching, not using real submiting data to server
-    setTimeout( () => {setSubmitingIndicator(false)}, 500); 
+    setDisplaySavingSuccessMsg(false);
+    dispatch(sendUpdatedBookDataToServer(bookData));
+    //for tracking following data sending state changes
+    setWasSubmitted(true);
   }
 
   let parentListUrl = getQueryParamValue("parentListUrl");
@@ -113,11 +163,12 @@ function BookEditing() {
   }
 
   //when deleting get param set and data for form is set, show confirmation dialog, otherwise, nothing to delete
-  //when data is empty (first render or id of non existing book)
+  //when data is empty ( in case of initial data loading  or id of non existing book)
   let showDeletionConfirmationDialog = false;
   if(formInitialData && getQueryParamValue("delete") === "true"){
     showDeletionConfirmationDialog = true;
   }
+  
 
   return  (
     <div className="book_editing">
@@ -126,6 +177,22 @@ function BookEditing() {
       </div>
       <div className="content_section">
         <h2>Edit book</h2>
+
+        {/*if data sending has failed, display message*/}
+        {bookUpdatingStatus === STATUS_REJECTED &&
+          <div className="loading_status_indicator">
+            <div className="error">book updating has failed, try again later</div>
+          </div>
+        }
+        
+        {/*while data is being sent, show that data is loading*/}
+        {bookUpdatingStatus === STATUS_LOADING && 
+          <div className="loading_status_indicator">updating...</div>
+        }
+
+        {displaySavingSuccessMsg && 
+          <DisappearingMessage messageText="Saved!"/>
+        }
 
         <div className="delete_book_link">
           <div className="action_button delete">
@@ -146,13 +213,11 @@ function BookEditing() {
         {formInitialData && 
           <FormBuilder  formFieldsDefinition={formFieldsDefinition} 
                         submitButtonText="Update"
-                        initialData={formInitialData} 
-                        successfulSubmitCallback={saveSubmittedData}/>
+                        initialData={bookData} 
+                        successfulSubmitCallback={saveSubmittedData}
+                        disableAllFields={formDisabled}/>
         }
 
-        {submitingIndicator&&
-          <div className="load_indicator">saving...</div>
-        }
       </div>
     </div>
   )

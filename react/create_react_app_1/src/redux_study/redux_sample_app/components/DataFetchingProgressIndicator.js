@@ -1,7 +1,7 @@
 
 import { useSelector } from 'react-redux';
 import {
-  selectBooksFetchingStatus,
+  selectInitialDataFetchingStatus,
   STATUS_LOADING, 
   STATUS_REJECTED
 } from "../features/booksSlice";
@@ -14,14 +14,14 @@ import {
  * @returns 
  */
 function DataFetchingProgressIndicator () {
-  let fetchingStatus = useSelector(state => selectBooksFetchingStatus(state));
+  let fetchingStatus = useSelector(state => selectInitialDataFetchingStatus(state));
     
   return (
     <>
       {/*if fetching has failed, display message*/}
       {fetchingStatus === STATUS_REJECTED &&
         <div className="loading_status_indicator">
-          <div className="error">data fetching has failed</div>
+          <div className="error">initial data fetching has failed</div>
         </div>
       }
       

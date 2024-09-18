@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import {  fetchBooks, 
-          selectBooksFetchingStatus,
+import {  fetchBookData, 
+          selectInitialDataFetchingStatus,
           STATUS_IDLE,
           STATUS_REJECTED
 } from "../../features/booksSlice";
@@ -21,7 +21,7 @@ function SettingsForm({closeMenuHandler}){
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  let fetchingStatus = useSelector(state => selectBooksFetchingStatus(state));
+  let fetchingStatus = useSelector(state => selectInitialDataFetchingStatus(state));
 
 
   //This hook closes menu and redirects to all books list after succesful loading of new initial data.
@@ -57,7 +57,7 @@ function SettingsForm({closeMenuHandler}){
     let selectedValue = event.target.value;
     setSelectedRadioButtonValue(selectedValue);
 
-    dispatch(fetchBooks(selectedValue));
+    dispatch(fetchBookData(selectedValue));
     setCloseFormAfterDataLoaded(true);
   }
 

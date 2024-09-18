@@ -2,11 +2,11 @@ import {  createSlice,
           createEntityAdapter, 
           createSelector, 
           createAsyncThunk } from '@reduxjs/toolkit';
-import { getBooksInitialData } from "../client/client";
+import { apiClient } from "../client/APIClient";
 import { FAVORITE_BOOKS_LIST } from "../constants/bookListModes";
 
-//async thunk status that is keeded in state is used in some components. Create constants for 
-//purpose of comparing status values where status value are used for conditions
+//async thunk execution status is used in some components for logic comparison therefore
+//status values constants are created for using in those comparisons
 export const STATUS_LOADING = "loading";
 export const STATUS_IDLE = "idle";
 export const STATUS_REJECTED = "rejected"
@@ -15,12 +15,60 @@ export const STATUS_REJECTED = "rejected"
 const booksAdapter = createEntityAdapter();
 
 let initialState = booksAdapter.getInitialState({
-  status: 'idle',
+  //initial data loading thunk that execution state is stored in separate state field as it is displayed on all pages,
+  //it can't be reused for other async thunks like updating single item status because single item update status 
+  //value output logic is different
+  initialDataLoadingStatus: STATUS_IDLE,
+
+  //book saving thunk execution state
+  bookSavingStatus: STATUS_IDLE,
+  lastSavedBookId: null,
+
+  //book updating thunk execution state
+  bookUpdatingStatus: STATUS_IDLE
 })
 
-export const fetchBooks = createAsyncThunk('books/fetchTodos', async (url) => {
-  const response = await getBooksInitialData(url);
-  return response.books;
+/**
+ * fetches data from two endpoints: book list and favorite book list.
+ * @param string url - thunk function parameter - parameter value determines which data source to load data from
+ * @returns action with payload containing both book list and favorites list 
+ */
+export const fetchBookData = createAsyncThunk(
+  'books/fetchBookData', 
+  async (url) => {
+    //fetching from endpoints is done sequentially, not in parallel - when fetches from first is done, fetching from second 
+    //source occurs
+    const booksDataResponse = await apiClient.fetchBooks(url);
+    const favoriteBooksDataResponse = await apiClient.fetchFavoriteBooksIds(url);
+    return {
+      books: booksDataResponse.books,
+      favoriteBooksIds: favoriteBooksDataResponse.favoriteBooks
+    }
+})
+
+/**
+ * sends book data to REST endpoing for creating new record
+ * @param string newBookData - thunk function parameter - book data to be saved
+ * @returns action with payload that contains saved book data which consists of data sent with added unique identifier field
+ */
+export const sendNewBookDataToServer = createAsyncThunk(
+  'books/saveBookData', 
+  async (newBookData) => {
+    const response = await apiClient.saveNewBook(newBookData);
+    return response.bookData;
+})
+
+
+/**
+ * sends book data to REST endpoing for updating existing book
+ * @param string bookData - thunk function parameter - book data to update book with
+ * @returns action with payload that contains saved book data possibly with some fields updated
+ */
+export const sendUpdatedBookDataToServer = createAsyncThunk(
+  'books/updateBookData', 
+  async (bookData) => {
+    const response = await apiClient.updateBook(bookData);
+    return response.bookData;
 })
 
 const booksSlice = createSlice({
@@ -48,44 +96,98 @@ const booksSlice = createSlice({
       })
     },
 
-    bookCreated:{
-      reducer:(state, action) => {
-        booksAdapter.addOne(state, action);
-      },
-
-      //generate id property for book before saving
-      prepare: (value) => {
-        const date = new Date();
-        const timeStr = "" + date.getHours() + date.getMinutes() + date.getSeconds() + date.getMilliseconds();
-        const id = parseInt(timeStr);
-        return { payload: {...value, id: id} }
-      }
-    },
 
     //for resetting "status" state from "rejected" to "idle" to clear "rejected" status when user navigates
     //to some other page
-    statusSetToIdle(state){    
-      state.status = STATUS_IDLE;
+    initialDataLoadingStatusResetToIdle(state){ 
+      if(state.initialDataLoadingStatus === STATUS_REJECTED){    
+        state.initialDataLoadingStatus = STATUS_IDLE;
+      }
+    },
+
+    //for resetting "bookSavingStatus" state from "rejected" to "idle". It is needed in situation if submitting new book
+    //ended up with "rejected" status and user navigated to other page and then came back.
+    //At the moment when user comes back to book creation page the previously set "rejected" book saving status remains unchanged,
+    //it must be set to "idle" using this reducer 
+    bookSavingStatusResetToIdle(state){
+      if(state.bookSavingStatus === STATUS_REJECTED){   
+        state.bookSavingStatus = STATUS_IDLE;
+      }
+    },
+
+    //for resetting "bookUpdatingStatus" state from "rejected" to "idle". It is needed in situation if submitting updated book
+    //data ended up with "rejected" status and user navigated to other page and then came back.
+    //At the moment when user comes back to book updating page the previously set "rejected" book updating status remains unchanged,
+    //it must be set to "idle" using this reducer 
+    bookUpdatingStatusResetToIdle(state){
+      if(state.bookUpdatingStatus === STATUS_REJECTED){   
+        state.bookUpdatingStatus = STATUS_IDLE;
+      }
     }
+    
 
   },
 
   extraReducers: (builder) => {
     builder
-      .addCase(fetchBooks.pending, (state, action) => {
-        state.status = STATUS_LOADING
+      //
+      //reducers for initial data loading thunk function execution state actions
+      //
+      .addCase(fetchBookData.pending, (state, action) => {
+        state.initialDataLoadingStatus = STATUS_LOADING
       })
-      .addCase(fetchBooks.fulfilled, (state, action) => {
-        booksAdapter.setAll(state, action.payload)
-        state.status = STATUS_IDLE
+      .addCase(fetchBookData.fulfilled, (state, action) => {
+        booksAdapter.setAll(state, action.payload.books)
+        state.initialDataLoadingStatus = STATUS_IDLE
       })
-      .addCase(fetchBooks.rejected, (state, action) => {
-        state.status = STATUS_REJECTED
+      .addCase(fetchBookData.rejected, (state, action) => {
+        state.initialDataLoadingStatus = STATUS_REJECTED
+      })
+
+
+      //
+      //reducers for new book creating thunk function execution state actions
+      //
+      .addCase(sendNewBookDataToServer.pending, (state, action) => {
+        state.bookSavingStatus = STATUS_LOADING
+      })
+      .addCase(sendNewBookDataToServer.fulfilled, (state, action) => {
+        state.bookSavingStatus = STATUS_IDLE
+        //add saved book data to book list state an add saved book primary key to track last saved book
+        let savedBookData = action.payload;
+        booksAdapter.addOne(state, savedBookData);
+        state.lastSavedBookId = savedBookData.id;
+      })
+      .addCase(sendNewBookDataToServer.rejected, (state, action) => {
+        state.bookSavingStatus = STATUS_REJECTED
+      })
+
+
+      //
+      //reducers for book updating thunk function execution state actions
+      //
+      .addCase(sendUpdatedBookDataToServer.pending, (state, action) => {
+        state.bookUpdatingStatus = STATUS_LOADING
+      })
+      .addCase(sendUpdatedBookDataToServer.fulfilled, (state, action) => {
+        state.bookUpdatingStatus = STATUS_IDLE
+        //set updated book data to state
+        //ensure entity id field is of int type 
+        const bookId = parseInt(action.payload.id);
+        let newData = {...action.payload}; 
+        //removing id property from update object to prevent updating id of existing entity in state
+        delete newData["id"];
+        let updateObj = { id: bookId, changes: newData }
+        booksAdapter.updateOne(state, updateObj);
+      })
+      .addCase(sendUpdatedBookDataToServer.rejected, (state, action) => {
+        state.bookUpdatingStatus = STATUS_REJECTED
       })
   }
 });
 
-export const { bookUpdated, multipleBooksDeleted, bookCreated, statusSetToIdle } = booksSlice.actions 
+export const { bookUpdated, multipleBooksDeleted, initialDataLoadingStatusResetToIdle, bookSavingStatusResetToIdle, 
+  bookUpdatingStatusResetToIdle } = booksSlice.actions 
 
 export default booksSlice.reducer
 
@@ -219,8 +321,33 @@ export const selectFilteredBooksIds = createSelector(
 );
 
 /**
- * status for fetching books from remore source, used for loading indicator
+ * status of async thunk that fetches books from remore source, used for loading indicator
  * @param {*} state 
  * @returns 
  */
-export const selectBooksFetchingStatus = (state) => state.books.status
+export const selectInitialDataFetchingStatus = (state) => state.books.initialDataLoadingStatus
+
+
+/**
+ * status of async thunk that saves new book data
+ * @param {*} state 
+ * @returns 
+ */
+export const selectBookSavingStatus = (state) => state.books.bookSavingStatus
+
+
+/**
+ * last saved book id, will be used to create link to a book that was just saved in page that appears
+ * after successful book saving
+ * @param {*} state 
+ * @returns 
+ */
+export const selectLastSavedBookId = (state) => state.books.lastSavedBookId
+
+
+/**
+ * status of async thunk that updates book 
+ * @param {*} state 
+ * @returns 
+ */
+export const selectBookUpdatingStatus = (state) => state.books.bookUpdatingStatus

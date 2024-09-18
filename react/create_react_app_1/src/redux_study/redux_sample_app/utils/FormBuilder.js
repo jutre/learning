@@ -14,19 +14,31 @@ import { useState, useEffect } from 'react';
  *  {label: "Title", name:"title", type:"text", rule:"required"}, 
  *  {label: "Description", name:"description", type:"textarea", rule:"required"}]
  *
- * @param {string} submitButtonText - text for submit button, can be empty, default value "Submit"
+ * @param {string} submitButtonText - text for submit button, can be empty, if parameter empty, text will be "Submit"
  * @param {object} initialData - object with data that will be filled in form input fields on initial display.
  * Each object propertie's value will be displayed in input field with name same as propertie's name
  * @param {function(submittedData)} successfulSubmitCallback -function what will be invoked after form submit
  * if all fields pass validation
- * @returns 
+ * @param {boolean} disableAllFields - if set to true, all input fields, also submit button will be disabled using "disabled".
+ * Intended to be used in cases when form must be disabled like while data sending is in process after submit but meanwhile page
+ * still displays form
+ * attribure
+ * @returns
  */
-export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit", initialData, successfulSubmitCallback }) {
+export function FormBuilder({
+  formFieldsDefinition,
+  submitButtonText,
+  initialData,
+  successfulSubmitCallback,
+  disableAllFields }) {
+
+  
+  submitButtonText = submitButtonText ?? "Submit";
   /*
   TODO finish code for creating radio input, select
   TODO - currently in case if initial data object contains properties that are not present as form fields they are also
   submitted (unmodified). Decide is it is needed to eliminate them and submit only object with fields that are 
-  present in form as input fields */
+  present in form fields definition prop as input fields */
 
   //will track all input fields values
   const [inputFieldValues, setInputFieldValues] = useState({});
@@ -51,12 +63,12 @@ export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit",
     The following code converts all initial values for checkboxes to boolean type to correct than inconsitency. The outcome is 
     always passing boolean type value to successfulSubmitCallback for checbox fields*/
 
-    //Create a copy of @param initialData object as it might be modified. In some cases passed value might be read only as with
+    //Create a copy of @param initialData object as it might be modified. In some cases passed value might be readonly as with
     //objects coming from Redux, but we need an object that can be modified for checkbox fields values correction
-    if(! initialData){
-      initialData = {};
-    }
     let initialDataCopy = {...initialData};
+    if(! initialDataCopy){
+      initialDataCopy = {};
+    }
     let correctedCheckboxValues = {};
     formFieldsDefinition.forEach(formElementDef => {
       let fieldName = formElementDef.name;
@@ -116,9 +128,7 @@ export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit",
     //set actual errors to state for displaying
     setInputErrors(errors);
   }
-
- 
-
+   
   return (
     <form onSubmit={handleSubmit}>
       {(formFieldsDefinition).map((formElementDef) => {
@@ -131,6 +141,10 @@ export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit",
           id: fieldName ,
           onChange: onInputFieldsChange
         };
+
+        if(disableAllFields){
+          inputElemAttributes.disabled = true;
+        }
 
         //in "checbox" input element assign current field's value to "checked" attribute,
         //for all other input types value goes to "value" attribute.
@@ -190,7 +204,9 @@ export function FormBuilder({ formFieldsDefinition, submitButtonText = "Submit",
       }
       )}
 
-      <input type="submit" value={submitButtonText}/>
+      <input  type="submit" 
+              value={submitButtonText}
+              disabled={disableAllFields}/>
 
     </form>
   );

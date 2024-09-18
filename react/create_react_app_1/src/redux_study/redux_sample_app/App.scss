@@ -630,7 +630,7 @@ h1, h2, h3{
 
 .loading_status_indicator{
     position: absolute;
-    margin-top: -20px;
+    margin-top: -25px;
     color: green;
     
     .error{
@@ -931,8 +931,43 @@ h1, h2, h3{
 }
 
 
-.create_book .info_message{
-    margin-bottom: $margin_padding_double;
+.create_book{ 
+    position: relative;
+    .info_message{
+        margin-bottom: $margin_padding_double;
+    }
+
+    .content_section{
+        max-width: 700px;
+        position: relative;
+    }
+
+    .edit_book_link_wrapper{
+        a{
+            display: flex;
+            align-items: center;
+            max-width: max-content;
+
+            .action_button {
+                margin-left: 5px;
+            }
+            //fixing background for action_button class when it is in hovered link. Usually it is not needed as
+            //element with class "action_button" is hovered directly as is contains link or button but this 
+            //link time it is inside link; also set link text to black on hover to be visually synchronized
+            //with button dark background on hover
+            &:hover{ 
+                color: black;
+
+                .action_button {
+                background-color: $button_hover_background_color;
+            }}
+        }
+    }
+    .edit_book_link{
+        position: absolute;
+        right: 0;
+        top: 0;
+    }
 }
 
 div.table{
@@ -940,14 +975,31 @@ div.table{
 
     .row{
         display: flex;
-        :first-child{
-            flex: 0 0 120px;
+        
+        .field_title{
+            flex: 0 0 100px;
             font-weight: bold;
         }
         > div{
             padding: 0 $margin_padding_base $margin_padding_base 0;
          }
     }
+}
+
+.disappearing_message{
+    background-color: red;
+    color: white;
+    width: max-content;
+    position: absolute;
+    margin-top: -25px;
+    padding: 3px;
+    opacity: 1;
+    transition: all 1.3s ease-out;
+}
+
+.disappearing_message.hidden{
+    margin-top: -37px;
+    opacity: 0;
 }
 
 //forms and text input fields in content section
