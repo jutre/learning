@@ -36,49 +36,55 @@ class APIClient {
       }else{
         booksArr = [
           {
-            id: 1,
+            id: 101,
             title: "Calculus, part one",
             author: "Gilbert Strang",
             preface: "field for preface"
           },
           {
-            id: 2,
-            title: "Calculus, part two",
-            author: "Gilbert Strang",
+            id: 102,
+            title: "Test case - updating or deleting this book (alone or among deletable books) will fail",
+            author: "John Developer",
             preface: "field for preface"
           },
           {
-            id: 3,
+            id: 103,
             title: "Calculus, part three",
             author: "Gilbert Strang",
             preface: "field for preface"
           },
           {
-            id: 4,
+            id: 104,
+            title: "Calculus, part three",
+            author: "Gilbert Strang",
+            preface: "field for preface"
+          },
+          {
+            id: 105,
             title: "The basics of physics",
             author: "Steven Holzner",
             preface: "field for preface"
           },
           {
-            id: 5,
+            id: 106,
             title: "Transistor circuit basics",
             author: "Charles Pike",
             preface: "field for preface"
           },
           {
-            id: 6,
+            id: 107,
             title: "Calculus, part six",
             author: "Gilbert Strang",
             preface: "field for preface"
           },
           {
-            id: 7,
+            id: 108,
             title: "Calculus, part seven",
             author: "Gilbert Strang",
             preface: "field for preface"
           },
           {
-            id: 8,
+            id: 109,
             title: "Calculus, part eight",
             author: "Gilbert Strang",
             preface: "field for preface"
@@ -115,7 +121,7 @@ class APIClient {
       favoriteBooksIdsArr = [];
 
     }else{
-      favoriteBooksIdsArr = [1, 3, 4];
+      favoriteBooksIdsArr = [101, 103, 104];
     }
 
     return new Promise((resolve) => {
@@ -158,6 +164,14 @@ class APIClient {
     //locally created promise returning modified data from passed argument value
     const bookDataAfterUpdating = { ...bookData, lastModified: timeStr }
 
+    if(bookData.id === 102){
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject({ error: {message:"book updating failed"}})
+        }, 500)
+      });
+    }
+
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ bookData: bookDataAfterUpdating })
@@ -170,6 +184,13 @@ class APIClient {
    * @returns - object with success message as it would be returned from REST api backend in case of success
    */
   deleteBooks = async (bookIdsArr) => {
+    if(bookIdsArr.includes(102)){
+      return new Promise((resolve, reject) => {
+        setTimeout(() => {
+          reject({ error: {message:"book deleting failed"}})
+        }, 500)
+      });
+    }
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({ message: "book have been deleted" })

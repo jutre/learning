@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import { getQueryParamValue } from "../utils/utils";
 import {
   getBookById,
@@ -38,16 +38,32 @@ function BookEditing() {
   
   const dispatch = useDispatch();
 
+  const navigate = useNavigate();
 
+  let deleteParamVal = getQueryParamValue("delete");
+  //validate delete param val, accepting only "true" if it is not null because it will be used in hook as dependency
+  if(deleteParamVal !== null && deleteParamVal !== "true"){
+    deleteParamVal =  null;
+  }
+   
   useEffect(() => {
     //for resetting "bookUpdatingStatus" state from "rejected" to "idle". It is needed in situation if submitting updated book
     //data has ended up with "rejected" status and user navigated to other page and then came back. 
     //At the moment when user comes back to book updating page the previously set "rejected" book saving status remains unchanged,
-    //it must be set to "idle" on first component render 
+    //it must be set to "idle" on first component render
+    //Also it must be reset when user submits form to update book and it fails, showng "rejected" status and "delete book" link
+    //is clicked - a delete param is added to page url, modal dialog is snown, at that moment existing "rejected" status must
+    //be removed from page 
     dispatch(bookUpdatingStatusResetToIdle());
     //setting page title after first render
     setPageTitleTagValue("Edit book");
+  }, [deleteParamVal]);
+
+  useEffect(() => {
+    //setting page title after first render
+    setPageTitleTagValue("Edit book");
   }, []);
+
   
 
   const { bookId } = useParams();
@@ -91,7 +107,19 @@ function BookEditing() {
 
   let  formFieldsDefinition = bookEditFormFieldsDef;
     
+
+  /**
+   * dispatches updating thunk to update book data in redux store. Additionally gets excludes get params 
+   * from current book edit url by using useNavigate hook's returned function. A "delete" get param can be 
+   * page's url value if deleting failed when "Delete book" link was clicked in book edit screen. If get 
+   * param would not be removed from url also a delete confirmation modal dialog would be displayed in  
+   * response to "delete" get param. 
+   * @param {*} bookData 
+   */
   function saveSubmittedData(bookData){
+    //replace bookId segment in book edit route pattern
+    let bookEditUrlWithoutGetParams = routes.bookEditPath.replace(":bookId", bookId);
+    navigate(bookEditUrlWithoutGetParams);
     dispatch(sendUpdatedBookDataToServer(bookData));
   }
 
@@ -123,11 +151,11 @@ function BookEditing() {
   //when data is empty ( in case of initial data loading  or id of non existing book form is not displayed and
   //also there is no reason to display delete button)
   let showDeletionConfirmationDialog = false;
-  if(formInitialData && getQueryParamValue("delete") === "true"){
+  if(formInitialData && deleteParamVal === "true"){
     showDeletionConfirmationDialog = true;
   }
   //to delete a single book, create array with one book's id
-  let deletableBooksIdsArr = [bookId];
+  let deletableBooksIdsArr = [bookIdIntVal];
   
   return  (
     <div className="book_editing">
