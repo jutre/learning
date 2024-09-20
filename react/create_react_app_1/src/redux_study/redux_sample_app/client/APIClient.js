@@ -126,10 +126,8 @@ class APIClient {
   }
 
   /**
-   * 
    * @param {object} newBookData - book data to be stored that would be sent to REST api endpoint
    * @returns - same value as passed in parameter "bookData" with added "id" field value. 
-   * 
    */
   saveNewBook = async (newBookData) => {
     const date = new Date();
@@ -143,31 +141,41 @@ class APIClient {
     return new Promise((resolve) => {
       setTimeout(() => {
         resolve({bookData: bookDataAfterSaving})
-      }, 700)
+      }, 500)
     });
   }
 
   /**
-   * 
    * @param {object} bookData - book data to be stored to update book that would be sent to REST api endpoint
    * @returns - same value as passed in parameter "bookData" possibly with some concatenated and/or updated fields
-   * 
    */
-    updateBook = async (bookData) => {
-      //simulating lastUpdated field coming back from server after modification
-      const date = new Date();
-      const timeStr = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`;
-      //Clone original object which can be modified securely escaping possible issues caused by original object
-      //modification as this is simulated REST client that did not receives data over network but returns
-      //locally created promise returning modified data from passed argument value
-      const bookDataAfterUpdating = {...bookData, lastModified:timeStr}
-  
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          resolve({bookData: bookDataAfterUpdating})
-        }, 700)
-      });
-    }
+  updateBook = async (bookData) => {
+    //simulating lastUpdated field coming back from server after modification
+    const date = new Date();
+    const timeStr = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`;
+    //Clone original object which can be modified securely escaping possible issues caused by original object
+    //modification as this is simulated REST client that did not receives data over network but returns
+    //locally created promise returning modified data from passed argument value
+    const bookDataAfterUpdating = { ...bookData, lastModified: timeStr }
+
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ bookData: bookDataAfterUpdating })
+      }, 500)
+    });
+  }
+
+  /**
+   * @param {int[]} bookIdsArr - array of integers, would be sent to REST api 
+   * @returns - object with success message as it would be returned from REST api backend in case of success
+   */
+  deleteBooks = async (bookIdsArr) => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ message: "book have been deleted" })
+      }, 500)
+    });
+  }
   
 }
 

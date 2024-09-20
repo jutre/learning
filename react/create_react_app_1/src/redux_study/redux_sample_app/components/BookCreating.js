@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from 'react-redux';
 import {
@@ -7,31 +7,21 @@ import {
   selectBookSavingStatus,
   selectLastSavedBookId,
   selectBookFullInfoById,
-  STATUS_IDLE,
   STATUS_LOADING,
   STATUS_REJECTED } from "../features/booksSlice";
 import { 
   routes,
   bookCreatingFormFieldsDef  } from "../config";
 import { FormBuilder } from '../utils/FormBuilder';
-//needed for action distching
-import store from "../store/store";
+import { useTrackThunkSuccessfulFinishing } from "../hooks/useTrackThunkSuccessfulFinishing";
 import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 
 
 function BookCreating() {
-  const [createdBook, setCreatedBook] = useState(null);
-  const [wasSubmitted, setWasSubmitted] = useState(false);
-  //previous status info is used after submitting when saving execution status becomes "loading",
-  //until then previous status info is not needed
-  const [prevSendingToServerStatus, setPrevSendingToServerStatus] = useState(null);
-
-
-  let sendingToServerStatus = useSelector(state => selectBookSavingStatus(state));
   let lastSavedBookId = useSelector(state => selectLastSavedBookId(state));
   //actually needed only after successful saving, but useSelector hook must be called directly in component.
   //The result is ignored until the moment book data has been saved
-  let savedBookInfo = useSelector(state => selectBookFullInfoById(state, lastSavedBookId));
+  let createdBookInfo = useSelector(state => selectBookFullInfoById(state, lastSavedBookId));
   
   const dispatch = useDispatch();
 
@@ -44,38 +34,14 @@ function BookCreating() {
     setPageTitleTagValue("Create new book");
   }, []);
 
-  useEffect(() => {
-    //after book was submitted, track sending status changes to make sure that had been "loading" and afte that
-    //became "idle". It is needed to be sure that status had transferred from "loading" to "idle"
-    //which means data saving function was in execution state, and came to success state. After such state transfer 
-    //saved book info can display on page
-    if(wasSubmitted){
-      if(sendingToServerStatus === STATUS_LOADING){
-        setPrevSendingToServerStatus(STATUS_LOADING);
-      }else if(prevSendingToServerStatus === STATUS_LOADING){
-        if(sendingToServerStatus === STATUS_IDLE){
-          setCreatedBook(savedBookInfo);
-          //reset prevSendingToServerStatus state varible and set wasSubmitted to false to be ready for submitting
-          //another book in case use clicks "Add another book" link and submits next book data
-          setPrevSendingToServerStatus(null);
-          setWasSubmitted(false);
+  let sendingToServerStatus = useSelector(state => selectBookSavingStatus(state));
 
-        }else if(sendingToServerStatus === STATUS_REJECTED){
-          //when after loading state there is rejected state, reset prevSendingToServerStatus state varible and
-          //set wasSubmitted to false to be ready for repetative submitting in case user tries to submit again
-          setPrevSendingToServerStatus(null);
-          setWasSubmitted(false);
-        }
-      }
-    }
-  }, [sendingToServerStatus]);
+  const [displaySuccessMsg, resetDisplaySuccessMsg] = useTrackThunkSuccessfulFinishing(sendingToServerStatus);
 
   let formDisabled = sendingToServerStatus === STATUS_LOADING;
     
   function saveSubmittedData(bookData){
     dispatch(sendNewBookDataToServer(bookData));
-    //for tracking following data sending state changes
-    setWasSubmitted(true);
   }
 
 
@@ -88,19 +54,14 @@ function BookCreating() {
    * initial state in hook that tracks readux book data saving function execution state
    */
   function handleAddNewBookLinkClick(){
-    setCreatedBook(null);
+    resetDisplaySuccessMsg();
   }
 
   
   let mainContent;
-  if( ! createdBook){
-    mainContent = 
-      <FormBuilder  formFieldsDefinition={bookCreatingFormFieldsDef} 
-                    successfulSubmitCallback={saveSubmittedData}
-                    disableAllFields={formDisabled}/>;
-  
-  }else{
-    let editUrl = routes.bookEditPath.replace(":bookId", createdBook.id)
+  if(displaySuccessMsg){
+    //in case book saving thunk execution finished successfully, display just create book
+    let editUrl = routes.bookEditPath.replace(":bookId", createdBookInfo.id)
     mainContent = (
       <>
         <div className="add_book_link">
@@ -118,15 +79,15 @@ function BookCreating() {
           <div className="table">
             <div className="row">
               <div className="field_title">Title:</div>
-              <div>{createdBook.title}</div>
+              <div>{createdBookInfo.title}</div>
             </div>
             <div className="row">
               <div className="field_title">Author:</div>
-              <div>{createdBook.author}</div>
+              <div>{createdBookInfo.author}</div>
             </div>
             <div className="row">
               <div className="field_title">Preface:</div>
-              <div>{createdBook.preface}</div>
+              <div>{createdBookInfo.preface}</div>
             </div>
           </div>
           
@@ -140,6 +101,11 @@ function BookCreating() {
         </div>
       </>
     );
+  }else{
+    mainContent = 
+      <FormBuilder  formFieldsDefinition={bookCreatingFormFieldsDef} 
+                    successfulSubmitCallback={saveSubmittedData}
+                    disableAllFields={formDisabled}/>;
   }
 
   return (
@@ -162,8 +128,8 @@ function BookCreating() {
         <div className="loading_status_indicator">saving...</div>
       }
       
-      
       {mainContent}
+
     </div>
   )
 }

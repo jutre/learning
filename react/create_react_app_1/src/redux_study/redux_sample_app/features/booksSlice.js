@@ -25,7 +25,10 @@ let initialState = booksAdapter.getInitialState({
   lastSavedBookId: null,
 
   //book updating thunk execution state
-  bookUpdatingStatus: STATUS_IDLE
+  bookUpdatingStatus: STATUS_IDLE,
+
+  //book deleting thunk execution state
+  bookDeletingStatus: STATUS_IDLE
 })
 
 /**
@@ -71,6 +74,15 @@ export const sendUpdatedBookDataToServer = createAsyncThunk(
     return response.bookData;
 })
 
+
+export const sendDeletableBooksListToServer = createAsyncThunk(
+  'books/deleteBooks', 
+  async (bookIdsArr, thunkAPI) => {
+    await apiClient.deleteBooks(bookIdsArr);
+    //when api function finishes executing, dispath book collection action
+    thunkAPI.dispatch(multipleBooksDeleted(bookIdsArr));
+})
+
 const booksSlice = createSlice({
   name: 'books',
   initialState,
@@ -97,31 +109,42 @@ const booksSlice = createSlice({
     },
 
 
-    //for resetting "status" state from "rejected" to "idle" to clear "rejected" status when user navigates
-    //to some other page
+    //for resetting "initialDataLoadingStatus" state from "rejected" to "idle". It is needed in situation if unitial data loading
+    //thunk execution ended with "rejected" status and user navigates to some other next page
     initialDataLoadingStatusResetToIdle(state){ 
       if(state.initialDataLoadingStatus === STATUS_REJECTED){    
         state.initialDataLoadingStatus = STATUS_IDLE;
       }
     },
 
-    //for resetting "bookSavingStatus" state from "rejected" to "idle". It is needed in situation if submitting new book
-    //ended up with "rejected" status and user navigated to other page and then came back.
-    //At the moment when user comes back to book creation page the previously set "rejected" book saving status remains unchanged,
-    //it must be set to "idle" using this reducer 
+    //for resetting "bookSavingStatus" state from "rejected" to "idle". It is needed in situation if corresponding thunk
+    //execution ended with "rejected" status and user navigated to other page and then came back to new book creation page.
+    //At the moment when user comes back to book list the previously set "rejected" execution status remains unchanged,
+    //it must be set to "idle" using this reducer
     bookSavingStatusResetToIdle(state){
       if(state.bookSavingStatus === STATUS_REJECTED){   
         state.bookSavingStatus = STATUS_IDLE;
       }
     },
 
-    //for resetting "bookUpdatingStatus" state from "rejected" to "idle". It is needed in situation if submitting updated book
-    //data ended up with "rejected" status and user navigated to other page and then came back.
-    //At the moment when user comes back to book updating page the previously set "rejected" book updating status remains unchanged,
-    //it must be set to "idle" using this reducer 
+    //for resetting "bookUpdatingStatus" state from "rejected" to "idle". It is needed in situation if corresponding thunk
+    //execution ended with "rejected" status and user navigated to other page and then came back to book updating page.
+    //At the moment when user comes back to book list the previously set "rejected" execution status remains unchanged,
+    //it must be set to "idle" using this reducer
     bookUpdatingStatusResetToIdle(state){
       if(state.bookUpdatingStatus === STATUS_REJECTED){   
         state.bookUpdatingStatus = STATUS_IDLE;
+      }
+    },
+
+
+    //for resetting "bookDeletingStatus" state from "rejected" to "idle". It is needed in situation if corresponding thunk
+    //execution ended with "rejected" status and user navigated to other page and then came back to book updating page.
+    //At the moment when user comes back to book list the previously set "rejected" execution status remains unchanged,
+    //it must be set to "idle" using this reducer 
+    bookDeletingStatusResetToIdle(state){
+      if(state.bookDeletingStatus === STATUS_REJECTED){   
+        state.bookDeletingStatus = STATUS_IDLE;
       }
     }
     
@@ -183,11 +206,26 @@ const booksSlice = createSlice({
       .addCase(sendUpdatedBookDataToServer.rejected, (state, action) => {
         state.bookUpdatingStatus = STATUS_REJECTED
       })
+
+      //sendDeletableBooksListToServer
+      //
+      //reducers for books deleting thunk function execution state actions
+      //
+      .addCase(sendDeletableBooksListToServer.pending, (state, action) => {
+        state.bookDeletingStatus = STATUS_LOADING
+      })
+      .addCase(sendDeletableBooksListToServer.fulfilled, (state, action) => {
+        state.bookDeletingStatus = STATUS_IDLE
+      })
+      .addCase(sendDeletableBooksListToServer.rejected, (state, action) => {
+        state.bookDeletingStatus = STATUS_REJECTED
+      })
   }
 });
 
-export const { bookUpdated, multipleBooksDeleted, initialDataLoadingStatusResetToIdle, bookSavingStatusResetToIdle, 
-  bookUpdatingStatusResetToIdle } = booksSlice.actions 
+export const { 
+  bookUpdated, multipleBooksDeleted, initialDataLoadingStatusResetToIdle, 
+  bookSavingStatusResetToIdle, bookUpdatingStatusResetToIdle, bookDeletingStatusResetToIdle } = booksSlice.actions 
 
 export default booksSlice.reducer
 
@@ -351,3 +389,10 @@ export const selectLastSavedBookId = (state) => state.books.lastSavedBookId
  * @returns 
  */
 export const selectBookUpdatingStatus = (state) => state.books.bookUpdatingStatus
+
+/**
+ * status of async thunk that deletes books 
+ * @param {*} state 
+ * @returns 
+ */
+export const selectBookDeletingStatus = (state) => state.books.bookDeletingStatus

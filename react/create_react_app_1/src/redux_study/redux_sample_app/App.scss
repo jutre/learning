@@ -987,14 +987,14 @@ div.table{
 }
 
 .disappearing_message{
-    background-color: red;
+    background-color: orangered;
     color: white;
     width: max-content;
     position: absolute;
     margin-top: -25px;
     padding: 3px;
     opacity: 1;
-    transition: all 1.3s ease-out;
+    transition: all 1s ease-out;
 }
 
 .disappearing_message.hidden{
