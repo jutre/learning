@@ -14,26 +14,28 @@ import {
   import { ModalDialog } from "./ModalDialog";
 
 /**
- * displays deletion confirmation modal dialog before deleting one or multiple books. In one book is to be deleted, dialog displays
+ * displays deletion confirmation modal dialog before deleting and invokes redux thunks to delete book(s). 
+ * If one book is to be deleted, dialog displays
  * confirmation question about deleting a single book while also displaying deletable book title. If multiple books are selected 
  * for deleting confirmation question displays amount of deleteable books. Dialog has two options: confirm deleting and cancel.
- * If user confirms deleting, book deleting from redux store is performem and user is redirected to url speficied in components
- * "afterDeletingRedirectUrl" property). Is user cancels deleting, page url is set to a value speficied in a "cancelActionUrl" prop.
+ * If user confirms deleting, book deleting from redux store is performed and user is redirected to url speficied in components
+ * "afterDeletingRedirectUrl" property. If user cancels deleting, page is redirected to url speficied in a "cancelActionUrl" prop.
  * In case of deleting one book, the existance of book is checked in store, if book does not exist returns error message. In case of 
- * deleting multiple books, book existance is not checked, not any error messages are displayed, the reducer deleting books
+ * deleting multiple books, book existance is not checked, not any error messages are displayed, the books deleting redux thunk
  * is invoked
- * @param {int} booksIds - a book id to be deleted
- * @param {string} afterDeletingRedirectUrl - when book is deleted page tipically will be redirected to book list url, but in some cases
+ * @param arr[int] booksIds - an array where each element is book id to be deleted (in case of deleting single book, array must contain
+ * one element)
+ * @param string afterDeletingRedirectUrl - when book is deleted page tipically will be redirected to book list url, but in some cases
  * additional params might be needed to be keeped also after deleting like search params
- * @param {string} cancelActionUrl - an url to which page should be redirected if user chooses "cancel" action in dialog. Current 
+ * @param string cancelActionUrl - an url to which page should be redirected if user chooses "cancel" action in dialog. Current 
  * component is used in items list and edit pages, both pages have different url and form of get parameter that initiates delete confirmation
  * dialog, for list param would be in form "deleteId=1", edit screen "delete=true", there is no pattern that delete param would be identified 
  * to be removed from deletion initiation url, for that reason an url where to redirect after user cancellation of deletion must be defined
  * in page and passed to deletion dialog as property
  *
- * @returns {jsx} markup that shapes html for confirmation dialog or error message
+ * @returns jsx - markup that shapes html for confirmation dialog or error message
  */
-export function BookDeletionConfirmationDialog({ booksIds, afterDeletingRedirectUrl, cancelActionUrl }) {
+export function BookDeletionProcessor({ booksIds, afterDeletingRedirectUrl, cancelActionUrl }) {
   //it is needed to remember that user has clicked "Confirm" because to create correct condition
   //as not to show confirmation dialog after deletion trunk has finisked, it's execution state ir "Idle",
   //but useTrackThunkSuccessfulFinishing has not returned that thunk execution status has successfully funished
