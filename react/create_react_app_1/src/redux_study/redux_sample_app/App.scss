@@ -4,8 +4,9 @@ For better readibility create dedicated variables instead of multiplying in CSS 
 $margin_padding_base: 15px;
 $margin_padding_double: $margin_padding_base * 2;
 
-$mobile-breakpoint:450px;
-$tablet-breakpoint:1000px;
+$mobile-breakpoint:550px;
+$tablet-breakpoint-768px:768px;
+$widescreen-tablet-breakpoint:1000px;
 $large-screen-breakpoint:1366px;
 $button-padding:10px;
 $elements-border-radius:8px;
@@ -98,12 +99,12 @@ h1, h2, h3{
 
 .root_container{
     
-    @media screen and (min-width: $tablet-breakpoint) {  
+    @media screen and (min-width: $widescreen-tablet-breakpoint) {  
         display: flex;
     }
 }
 .left_column{
-    @media screen and (min-width: $tablet-breakpoint) { 
+    @media screen and (min-width: $widescreen-tablet-breakpoint) { 
         //left column has minimal width - the width of largest menu entry as there is one menu antry with toggling text  -changes width
         //causing left column width change
         flex: 1 0 auto;
@@ -116,14 +117,14 @@ h1, h2, h3{
     }
 }
 .central_column{
-    @media screen and (min-width: $tablet-breakpoint) {     
+    @media screen and (min-width: $widescreen-tablet-breakpoint) {     
         position: relative;
         flex: 0 0 auto ;
     }
     
 }
 .right_column{
-    @media screen and (min-width: $tablet-breakpoint) { 
+    @media screen and (min-width: $widescreen-tablet-breakpoint) { 
         flex: 1 1 auto;
     }
     @media screen and (min-width: $large-screen-breakpoint) { 
@@ -141,11 +142,8 @@ h1, h2, h3{
     position: absolute;
     top: 7px;
     //same indent from container as other elements
-    right: $margin_padding_base;
+    right: 20px;
     z-index: 1100;
-    @media screen and (min-width: 850px) { 
-        top: 12px;
-    }
 
     button.settings_icon{
         height: 22px;
@@ -240,13 +238,12 @@ h1, h2, h3{
 
 
 .list_type_menu{
-    
     position: fixed;
     bottom: 0;
     z-index: 100;
     width: 100%;
 
-    @media screen and (min-width: $tablet-breakpoint) {     
+    @media screen and (min-width: $widescreen-tablet-breakpoint) {     
         position: static;
         bottom: unset;
         width: auto;
@@ -256,28 +253,13 @@ h1, h2, h3{
         padding-right: $margin_padding_double;
     }
     
-    a{
-        display: block;
-        font-weight: bold;
-        padding: 10px;
-        transition: unset;
-
-        &:hover{
-            transition: transform 0.2s linear;
-            transform: scale(1.08);
-            @media screen and (min-width: $tablet-breakpoint) {
-                transform-origin: left top;
-            }
-        }
-    }
-
     .layout_wrapper{
         display: flex;
-        padding: 2px 0;
-        border-top: 1px solid $devider_border_color;
+        padding: 10px 0;
+        border-top: 2px solid black;
         background-color: white;
     
-        @media screen and (min-width: $tablet-breakpoint) {
+        @media screen and (min-width: $widescreen-tablet-breakpoint) {
             padding-top: 110px;
             display: block;
             width: unset;
@@ -285,18 +267,43 @@ h1, h2, h3{
             background-color: unset;
         }
     }
+    
+    a{
+        display: block;
+        font-weight: bold;
+        padding: 5px 10px;
+        border: 1px solid black;
+        border-radius: $elements-border-radius;
+
+        @media screen and (min-width: $widescreen-tablet-breakpoint) {
+            padding: 10px $margin_padding_base 10px 10px;
+            border:none;
+        }
+
+        &:hover span{
+            @media screen and (min-width: $widescreen-tablet-breakpoint) {
+                display:block;
+                transition: transform 0.2s linear;
+                transform: scale(1.08);
+                transform-origin: left top;
+            }
+        }
+    }
+
 
     .item{
-        flex: 1 1 50%;
-        text-align: center;
-        min-width: 160px;
-        @media screen and (min-width: $tablet-breakpoint) {
+        flex: 0 0 50%;
+        display: flex;
+        justify-content: center;
+        @media screen and (min-width: $widescreen-tablet-breakpoint) {
+            overflow: hidden;
             flex: unset; 
             text-align: left;
+            display: block;
         }
     
-        &.active{
-            background-color: #ccc;
+        &.active a{
+            background-color: #c6c9ce;
         }
     }
     
@@ -305,11 +312,9 @@ h1, h2, h3{
 //class for element that wraps around content for creating central column 
 .layout_wrapper{
     position: relative;
-    @media screen and (min-width: $mobile-breakpoint) {
-        margin:0 $margin_padding_base;
-    }
+    
 
-    @media screen and (min-width: $tablet-breakpoint) {     
+    @media screen and (min-width: $widescreen-tablet-breakpoint) {     
         width: 840px;
         margin:0 auto;
     }
@@ -327,13 +332,16 @@ h1, h2, h3{
 }
 
 .header{
-    background-color: rgba(141, 148, 157, 0.5);
+    background-color: #c6c9ce;
     padding: $margin_padding_double $margin_padding_base;
+    @media screen and (min-width: $mobile-breakpoint) {
+        padding: $margin_padding_double  $margin_padding_double;
+    }
     
     //additional wrapper is needed to place absolute positioned popup div correctly in existing context
     .wrapper{
         display: flex;
-        //if search box width becomes less than mimimal set, it reflows under the "about info actuator tab". 
+        //if search box width becomes less than mimimal set, it reflows under the "About info" tab. 
         //It can happen on some tablet devices
         flex-wrap: wrap;
         align-items: center;
@@ -345,7 +353,7 @@ h1, h2, h3{
         z-index: 1000;
 
         //not needed beginning from laptop screens, make search input fields look more centered
-        @media screen and (min-width: $tablet-breakpoint) { 
+        @media screen and (min-width: $widescreen-tablet-breakpoint) { 
             gap: unset;
         }
     }
@@ -478,7 +486,18 @@ h1, h2, h3{
     position: relative;
     flex: 1 0 auto;
     display: flex;
-    justify-content: center;
+
+    //make element width so that it is wrapped after previous until width of widespread tablet device with 
+    min-width: 90%;
+
+    //on minimal tablet width start aligning search field next to "About" menu by preventing
+    @media screen and (min-width: $tablet-breakpoint-768px) {
+        min-width: unset;
+    }
+
+    @media screen and (min-width: 800px) {
+        justify-content: center;
+    }
 
     //on desktop screens place search input field in the middle of central container column
     @media screen and (min-width: $large-screen-breakpoint) {
@@ -492,8 +511,11 @@ h1, h2, h3{
     .form_and_results_container{
         flex: 1 1 auto;
         position: relative;
-        min-width: 300px;
-        max-width: 500px;
+        width: 100%;
+
+        @media screen and (min-width: $tablet-breakpoint-768px) {
+            max-width: 485px;
+        }
     }
     
 
@@ -502,7 +524,6 @@ h1, h2, h3{
         //input field's border has to be visible above it's next sibling div (resut list)
         z-index: 12;
         
-
         input {
             padding-right: 70px;
             //width to equal with form width, but form is equal to containing element width, 
@@ -626,6 +647,9 @@ h1, h2, h3{
 .content_wrapper{
     background-color: white;
     padding: $margin_padding_double  $margin_padding_base;
+    @media screen and (min-width: $mobile-breakpoint) {
+        padding: $margin_padding_double  $margin_padding_double;
+    }
 }
 
 .loading_status_indicator{
@@ -988,6 +1012,7 @@ div.table{
 
 .disappearing_message{
     background-color: orangered;
+    border-radius: $elements-border-radius;
     color: white;
     width: max-content;
     position: absolute;

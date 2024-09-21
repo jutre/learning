@@ -20,7 +20,7 @@ function BooksListTypeMenu () {
         {(menuEntries).map((entry, index) =>
           <div  key={index} 
                 className={"item" + (currentPath === entry.url ? " active" : "")}>
-            <Link to={entry.url}>{entry.linkText}</Link>
+            <Link to={entry.url}><span>{entry.linkText}</span></Link>
           </div>
         )}
       </div>
