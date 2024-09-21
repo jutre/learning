@@ -17,7 +17,7 @@ import {
 import { FormBuilder } from '../utils/FormBuilder';
 import DisappearingMessage from './DisappearingMessage';
 import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
-import { BookDeletionConfirmationDialog } from "./BookDeletionConfirmationDialog";
+import { BookDeletionProcessor } from "./BookDeletionProcessor";
 import { useTrackThunkSuccessfulFinishing } from "../hooks/useTrackThunkSuccessfulFinishing";
 
 
@@ -188,7 +188,7 @@ function BookEditing() {
         </div>
         
         {showDeletionConfirmationDialog &&
-          <BookDeletionConfirmationDialog booksIds={deletableBooksIdsArr}
+          <BookDeletionProcessor booksIds={deletableBooksIdsArr}
                                           afterDeletingRedirectUrl={backToListUrl} 
                                           cancelActionUrl={deletionCancelActionUrl}/>
         }

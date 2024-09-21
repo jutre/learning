@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux';
 import { searchStringUpdated } from "../../features/filtersSlice"
 import { useLocation } from "react-router-dom";
 import { getQueryParamValue, getBookListBaseUrl } from "../../utils/utils";
-import { BookDeletionConfirmationDialog } from "../BookDeletionConfirmationDialog";
+import { BookDeletionProcessor } from "../BookDeletionProcessor";
 
 
 function BooksListParamProcessor ({listMode = null}) {
@@ -100,7 +100,7 @@ function BooksListParamProcessor ({listMode = null}) {
       }
 
       {displayDeletionConfirmationDialog &&
-        <BookDeletionConfirmationDialog booksIds={deletableBooksIdsArr} 
+        <BookDeletionProcessor booksIds={deletableBooksIdsArr} 
                                         afterDeletingRedirectUrl={afterDeletingRedirectUrl} 
                                         cancelActionUrl={cancelDeletingRedirectUrl}/>
      }
