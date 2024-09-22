@@ -3,9 +3,9 @@ class APIClient {
    * returns books information list. Inteded to use for initial data loading to prefill application with books data or when user
    * changes data source in data source menu.
    * Returns either books list hard coded in this function or fetched from api available at openlibrary.org.
-   * @param {string} dataSource - returns fetched data from remove api if parameter value is equal to "remote", otherwise
+   * @param {string} dataSource - returns fetched data from remote api if parameter value is equal to "remote", otherwise
    * returns books list that is hard coded in this function
-   * @returns 
+   * @returns array of book objects wrapped in Promise object which returns data with some delay to simulate network access timeout
    */
   fetchBooks = async (dataSource = "local") => {
       let booksArr;
@@ -104,13 +104,14 @@ class APIClient {
   /**
    * returns favorite books information list. Inteded to use for initial data loading to prefill application with books data or when user
    * changes data source in data source menu where user can choose to load local or remote data (from openlibrary.org).
-   * In case of fetching remote data (books are fetched from openlibrary.org), define empty array
-   * which conforms to no any book added to favorite books list but when chooses local data, return favorites array filled with some values
-   * to display some books marked as added to favorites. The intention of this is that user would see the difference in books list loaded 
-   * from different data sources also in terms of added favorite books
+   * In case of fetching remote data (books are fetched from openlibrary.org), define empty array which conforms to no any book added 
+   * to favorite books list but when chooses local data, return favorites array filled with some values to display some books marked
+   * as added to favorites. The intention of this is that user would see the difference in books list loaded from different data sources
+   * also in terms of added favorite books
    * 
    * @param string dataSource - if set to "remote", method will returns empty array list, otherwise returns non empty array
-   * @returns array
+   * @returns array of favorite book id integer values wrapped in Promise object which returns data with some delay to simulate 
+   * network access timeout
    */
   fetchFavoriteBooksIds = async (dataSource = "local") => {
     let favoriteBooksIdsArr;
@@ -132,8 +133,11 @@ class APIClient {
   }
 
   /**
-   * @param {object} newBookData - book data to be stored that would be sent to REST api endpoint
-   * @returns - same value as passed in parameter "bookData" with added "id" field value. 
+   * async function simulating access to REST api endpoint for book saving. Accepts book data to be saved,
+   * returns passed book data with "id" identifier field added
+   * @param {object} newBookData - book data to be stored
+   * @returns - same value as passed in parameter "bookData" with added "id" field value. Value is
+   * wrapped in Promise object which returns data with some delay to simulate network access timeout
    */
   saveNewBook = async (newBookData) => {
     const date = new Date();
@@ -152,13 +156,19 @@ class APIClient {
   }
 
   /**
-   * @param {object} bookData - book data to be stored to update book that would be sent to REST api endpoint
-   * @returns - same value as passed in parameter "bookData" possibly with some concatenated and/or updated fields
+   * async function simulating access to REST api endpoint for book updating. Accepts book data with new data,
+   * returns same book data with with updated last modified field. To demonstrate error message display in UI, if book "id"
+   * field is equal with "102", returns Promose with "reject" callback to execute rejected path in function that processes current
+   * function's return value
+   * @param {object} bookData - new data, must contain "id" field
+   * @returns - same value as passed in parameter "bookData" with updated last modified field. Value is
+   * wrapped in Promise object which returns data with some delay to simulate network access timeout
    */
   updateBook = async (bookData) => {
     //simulating lastUpdated field coming back from server after modification
     const date = new Date();
     const timeStr = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}:${date.getMilliseconds()}`;
+    
     //Clone original object which can be modified securely escaping possible issues caused by original object
     //modification as this is simulated REST client that did not receives data over network but returns
     //locally created promise returning modified data from passed argument value
@@ -180,7 +190,12 @@ class APIClient {
   }
 
   /**
-   * @param {int[]} bookIdsArr - array of integers, would be sent to REST api 
+   * async function simulating access to REST api endpoint for book deleting. Accepts array with book identifiers each
+   * pointing a book to be deleted. Returns object with message describing deleting success for failure. To demonstrate 
+   * error message display in UI, if array has value equal with "102", returns Promose with "reject" callback to execute
+   * rejected path in function that processes current function's return value
+   * 
+   * @param int[] bookIdsArr - array of integers, would be sent to REST api 
    * @returns - object with success message as it would be returned from REST api backend in case of success
    */
   deleteBooks = async (bookIdsArr) => {

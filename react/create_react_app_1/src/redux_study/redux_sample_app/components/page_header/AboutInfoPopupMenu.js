@@ -82,14 +82,14 @@ function AboutInfoPopupMenu(){
 
       <div className="collapsible_body_wrapper">
         <div className="body">
-          This app was created to get experience with Redux (redux toolkit, multiple slices). <br />
+          This app was created to get experience with Redux. Redux Toolkit is used, data is fetched from REST api using thunks. <br />
           Other technical features used:
           <ul>
-            <li>react-router</li>
-            <li>various CSS features used to create typical UI elements: popup menu, modal dialog, autocomplete search box,
-              styled checkboxes; responsive design
+            <li>React router</li>
+            <li>CSS used to create typical UI elements: popup menu, modal dialog, autocomplete search box,
+              styled checkboxes, responsive design
             </li>
-            <li>created a function that lets quickly generate HTML form by defining it's structure in
+            <li>a function created that lets easily generate HTML form by defining it's structure using
               array of objects</li>
           </ul>
         </div>
