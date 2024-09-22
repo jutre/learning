@@ -296,7 +296,6 @@ h1, h2, h3{
         display: flex;
         justify-content: center;
         @media screen and (min-width: $widescreen-tablet-breakpoint) {
-            overflow: hidden;
             flex: unset; 
             text-align: left;
             display: block;

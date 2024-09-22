@@ -43,8 +43,8 @@ class APIClient {
           },
           {
             id: 102,
-            title: "Test case - updating or deleting this book (alone or among deletable books) will fail",
-            author: "John Developer",
+            title: "DEMO CASE - updating or deleting this book (alone or among multiple books) will fail",
+            author: "Author Name",
             preface: "field for preface"
           },
           {
