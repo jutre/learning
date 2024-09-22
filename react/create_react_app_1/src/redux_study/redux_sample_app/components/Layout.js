@@ -6,6 +6,7 @@ import BookEditing from "./BookEditing";
 import BooksList from "./books_list/BooksList";
 import BookCreating from "./BookCreating";
 import BooksListTypeMenu from "./BooksListTypeMenu";
+import PageNotFound from './PageNotFound';
 import DataFetchingProgressIndicator from "./DataFetchingProgressIndicator";
 import {
         BrowserRouter as Router,
@@ -42,19 +43,15 @@ const Layout = () => {
           </div>
 
           <div className="layout_wrapper content_wrapper">
-            
-             
-            
-            
-            <DataFetchingProgressIndicator/>
-            
-              <Routes>
-                <Route path={routes.bookListPath} element={<BooksList />} />
-                <Route path={routes.favoriteBooksListPath} element={<BooksList listMode={FAVORITE_BOOKS_LIST}/>} />
-                <Route path={routes.bookEditPath} element={<BookEditing />} />
-                <Route path={routes.createBookPath} element={<BookCreating />} />
-              </Routes>
-            
+            <DataFetchingProgressIndicator />
+
+            <Routes>
+              <Route path={routes.bookListPath} element={<BooksList />} />
+              <Route path={routes.favoriteBooksListPath} element={<BooksList listMode={FAVORITE_BOOKS_LIST} />} />
+              <Route path={routes.bookEditPath} element={<BookEditing />} />
+              <Route path={routes.createBookPath} element={<BookCreating />} />
+              <Route path="*" element={<PageNotFound />} />
+            </Routes>
           </div>
         </div>
         <div className="right_column"></div>
