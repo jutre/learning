@@ -178,7 +178,7 @@ function BookEditing() {
         }
 
         {displaySuccessMsg && 
-          <DisappearingMessage messageText="Updated" initialDisplayDuration={1000}/>
+          <DisappearingMessage messageText="Changes saved" initialDisplayDuration={1000}/>
         }
 
         <div className="delete_book_link">

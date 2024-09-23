@@ -971,9 +971,6 @@ h1, h2, h3{
 
 .create_book{ 
     position: relative;
-    .info_message{
-        margin-bottom: $margin_padding_double;
-    }
 
     .content_section{
         max-width: 700px;
@@ -1009,7 +1006,7 @@ h1, h2, h3{
 }
 
 div.table{
-    margin-bottom: $margin_padding_double;
+    margin-bottom: $margin_padding_base;
 
     .row{
         display: flex;
@@ -1025,13 +1022,13 @@ div.table{
 }
 
 .disappearing_message{
-    background-color: orangered;
+    background-color: green;
     border-radius: $elements-border-radius;
     color: white;
     width: max-content;
     position: absolute;
-    margin-top: -25px;
-    padding: 3px;
+    margin-top: -30px;
+    padding: 4px;
     opacity: 1;
     transition: all 1s ease-out;
 }

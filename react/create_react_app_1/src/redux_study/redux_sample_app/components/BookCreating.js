@@ -14,6 +14,7 @@ import {
   bookCreatingFormFieldsDef  } from "../config";
 import { FormBuilder } from '../utils/FormBuilder';
 import { useTrackThunkSuccessfulFinishing } from "../hooks/useTrackThunkSuccessfulFinishing";
+import DisappearingMessage from './DisappearingMessage';
 import { setPageTitleTagValue } from "../utils/setPageTitleTagValue";
 
 
@@ -70,11 +71,7 @@ function BookCreating() {
         </div>
 
         <div className="content_section">
-          <div className="edit_book_link">
-            
-          </div>
-          
-          <div className="info_message">Book data was saved.</div>
+          <DisappearingMessage messageText="Book was added" initialDisplayDuration={1000}/>
           
           <div className="table">
             <div className="row">
@@ -94,7 +91,7 @@ function BookCreating() {
           {/*link for editing just created book*/} 
           <div className="edit_book_link_wrapper">
               <Link to={editUrl}>
-                <span>Edit saved book</span>
+                <span>Edit added book</span>
                 <div className="action_button edit"></div>
               </Link>
           </div>
@@ -125,7 +122,7 @@ function BookCreating() {
       
       {/*while data is being sent, show that data is loading*/}
       {sendingToServerStatus === STATUS_LOADING && 
-        <div className="loading_status_indicator">saving...</div>
+        <div className="loading_status_indicator">adding...</div>
       }
       
       {mainContent}
