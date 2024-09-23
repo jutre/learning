@@ -645,9 +645,19 @@ h1, h2, h3{
 //class for element that wraps around content for creating padding, background for content
 .content_wrapper{
     background-color: white;
-    padding: $margin_padding_double  $margin_padding_base;
+
+    $space_behind_menu_at_page_bottom: 65px;
+    //on screens until 1000px wide menu is placed fixed at browser's window bottom, set wrapper's  
+    //padding-bottom a little more than menu height
+    padding: $margin_padding_double $margin_padding_base $space_behind_menu_at_page_bottom;
+
     @media screen and (min-width: $mobile-breakpoint) {
-        padding: $margin_padding_double  $margin_padding_double;
+        //a little more left, right padding on tablet devices
+        padding: $margin_padding_double $margin_padding_double $space_behind_menu_at_page_bottom;
+    }
+
+    @media screen and (min-width: $widescreen-tablet-breakpoint) {
+        padding-bottom:  $margin_padding_double;
     }
 }
 
