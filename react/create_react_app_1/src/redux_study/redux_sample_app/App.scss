@@ -1086,3 +1086,7 @@ textarea:focus, [type="text"]:focus{
     border-color:rgb(107, 114, 128);
     outline: none;
 }
+
+input[disabled], textarea[disabled]{
+    color: gray;
+}
