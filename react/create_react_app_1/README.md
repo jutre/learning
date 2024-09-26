@@ -28,7 +28,7 @@ process indication in UI.
 Application has almost all typical UI elements that a web page can have: dropdown menu, modal dialog, a settings menu that can be
 activated by control icon, multiple items selection/unselection functionality in items list, page has search form which displays results in dynamic way. There are data sending indicators, data sending failure indicators (REST api client simulates error responses for some cases).
 Design is responsive on all devices. Accessibility also is concerned - all interactive elements are highlighted when page elements are
-navigated using TAB key.
+navigated using TAB key.\
 A component was created that lets easily generate HTML form by defining it's structure using array of objects.
 
 
