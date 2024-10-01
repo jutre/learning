@@ -107,16 +107,61 @@ export function FormBuilder({
     setInputFieldValues(values => ({ ...values, [name]: value }));
   };
 
+  /**
+   * when form is submited, validate each field's value according each fields validation rules from form definition array. 
+   * If no errors found, invoke function passed to successfulSubmitCallback parameter
+   * @param {*} event 
+   */
   const handleSubmit = (event) => {
     event.preventDefault();
 
-    let errors = {}; //actually clear previous errors, as this will be filled with errors from current validation
+    //clear previous errors, as this will be filled with errors from current validation
+    let errors = {}; 
 
     for (const formElementDef of formFieldsDefinition) {
-      let fieldName = formElementDef.name;
-      if (formElementDef.rule === "required" && !inputFieldValues[fieldName ]) {
-        errors = { ...errors, [fieldName ]: "this field must not be empty" };
+      //if validation rules are absent for this field, go to next field
+      if(!Array.isArray(formElementDef.validationRules)){
+        continue;
       }
+
+      let fieldName = formElementDef.name;
+      formElementDef.validationRules.forEach((validatRulesObj) => {
+        let errMsgForCurrentField = null;
+
+        //rule "required" - don't allow empty string
+        if (validatRulesObj.name === "required" && 
+            (inputFieldValues[fieldName] === undefined || inputFieldValues[fieldName].trim() === "")) {
+            const defaultErrMsg = "this field must not be empty";
+
+            //use error message from form definition if it is set
+            errMsgForCurrentField = validatRulesObj.message ? validatRulesObj.message : defaultErrMsg;
+        
+            
+        //rule "minLength" - don't allow shorter than string length than defined in rule's "value" field.
+        //If field is empty string, create error message that field must not be empty and minimal length that 
+        //string should be, if string is not empty and too short, create error message that field value's length
+        //should not be shorter than specified in rule
+        } else if (validatRulesObj.name === "minLength") {
+          let fieldValueMinLength = parseInt(validatRulesObj.value);
+          
+          if(inputFieldValues[fieldName] === undefined || inputFieldValues[fieldName].trim() === "") {
+            errMsgForCurrentField = `this field must not be empty and it's value not shorter than  
+              ${fieldValueMinLength} symbol${ fieldValueMinLength > 1 ? "s" : "" }`;
+
+          }else if(inputFieldValues[fieldName].trim().length < fieldValueMinLength){
+            const defaultErrorMsg = `this field's value must not shorter than 
+                ${fieldValueMinLength} symbol${ fieldValueMinLength > 1 ? "s" : "" }`;
+                
+            //use error message from form definition if it is set
+            errMsgForCurrentField = validatRulesObj.message ? validatRulesObj.message : defaultErrorMsg;
+            
+          }
+        }
+
+        if(errMsgForCurrentField !== null){
+          errors = { ...errors, [fieldName]: errMsgForCurrentField };
+        }
+      })
     }
   
 

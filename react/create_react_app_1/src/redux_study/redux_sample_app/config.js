@@ -8,9 +8,36 @@ export const routes = {
 
 
 export const bookCreatingFormFieldsDef = [
-    { label: "Title", name: "title", type: "text", rule: "required" },
-    { label: "Author", name: "author", type: "text", rule: "required" },
-    { label: "Preface", name: "preface", type: "textarea" }];
+    {
+        label: "Title",
+        name: "title",
+        type: "text",
+        validationRules: [
+            {
+                name: "minLength",
+                value: 3,
+                message: "field length must be at least three symbols"
+            }
+        ]
+    },
+    {
+        label: "Author",
+        name: "author",
+        type: "text",
+        validationRules: [
+            {
+                name: "minLength",
+                value: 3,
+                message: "field length must be at least three symbols"
+            }
+        ]
+    },
+    {
+        label: "Preface",
+        name: "preface",
+        type: "textarea"
+    }
+];
 
 //book editing form has same fields as new book creating form and an extra "id" field
 export const bookEditFormFieldsDef = [
