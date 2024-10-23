@@ -74,18 +74,14 @@ function BookCreating() {
           <DisappearingMessage messageText="Book was added" initialDisplayDuration={1000}/>
           
           <div className="table">
-            <div className="row">
-              <div className="field_title">Title:</div>
-              <div>{createdBookInfo.title}</div>
-            </div>
-            <div className="row">
-              <div className="field_title">Author:</div>
-              <div>{createdBookInfo.author}</div>
-            </div>
-            <div className="row">
-              <div className="field_title">Preface:</div>
-              <div>{createdBookInfo.preface}</div>
-            </div>
+            {/*output all fields of book. Loop through form definition array and get label for each field from
+            it and field value from created book*/}
+            {bookCreatingFormFieldsDef.map((field, index) =>
+              <div className="row">
+                <div key={index} className="field_title">{field.label}:</div>
+                <div>{createdBookInfo[field.name]}</div>
+              </div>
+            )}
           </div>
           
           {/*link for editing just created book*/} 

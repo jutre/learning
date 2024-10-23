@@ -98,10 +98,8 @@ h1, h2, h3{
 }
 
 .root_container{
-    
-    @media screen and (min-width: $widescreen-tablet-breakpoint) {  
-        display: flex;
-    }
+    display: flex;
+    min-height: 100vh;
 }
 .left_column{
     @media screen and (min-width: $widescreen-tablet-breakpoint) { 
@@ -117,9 +115,17 @@ h1, h2, h3{
     }
 }
 .central_column{
+    position: relative;
+    display: flex;
+    flex-grow: 1;
+    flex-direction: column;
     @media screen and (min-width: $widescreen-tablet-breakpoint) {     
         position: relative;
-        flex: 0 0 auto ;
+        flex: 0 0 840px;
+    }
+
+    @media screen and (min-width: $laptop-breakpoint) {     
+        flex: 0 0 950px;
     }
     
 }
@@ -131,12 +137,7 @@ h1, h2, h3{
         flex: 1 0 0;
     }
 }
-.container_for_background_div{
-    position: absolute;
-    left: 0;
-    right: 0;
-    z-index: -1;
-}
+
 
 .settings_menu{
     position: absolute;
@@ -253,7 +254,7 @@ h1, h2, h3{
         padding-right: $margin_padding_double;
     }
     
-    .layout_wrapper{
+    .items_wrapper{
         display: flex;
         padding: $margin_padding_base 0;
         border-top: 2px solid black;
@@ -306,28 +307,6 @@ h1, h2, h3{
         }
     }
     
-}
-
-//class for element that wraps around content for creating central column 
-.layout_wrapper{
-    position: relative;
-    
-
-    @media screen and (min-width: $widescreen-tablet-breakpoint) {     
-        width: 840px;
-        margin:0 auto;
-    }
-
-    @media screen and (min-width: $laptop-breakpoint) {     
-        width: 950px;
-    }
-    
-}
-
-.layout_wrapper.horizontal_background_container{
-    //book edit form, book list with couple of books are too short to span till browsers bottom. This div create content column 
-    //with it's background that spans till end of browser window 
-    height: 100vh;
 }
 
 .header{
@@ -644,6 +623,8 @@ h1, h2, h3{
 
 //class for element that wraps around content for creating padding, background for content
 .content_wrapper{
+    //will stretch vertically content part with bg color till end of container
+    flex-grow: 1;
     background-color: white;
 
     $space_behind_menu_at_page_bottom: 65px;

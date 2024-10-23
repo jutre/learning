@@ -16,7 +16,7 @@ function BooksListTypeMenu () {
   
   return (
     <div className="list_type_menu">
-      <div className="layout_wrapper">
+      <div className="items_wrapper">
         {(menuEntries).map((entry, index) =>
           <div  key={index} 
                 className={"item" + (currentPath === entry.url ? " active" : "")}>

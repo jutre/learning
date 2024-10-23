@@ -289,7 +289,7 @@ const performSearchByTitle = (booksArr, searchStr) => {
   //return empty book list if search string not empty but length is less than three symbols. In such case display empty book list in 
   //book list component (then also message is displayed that seach string must be of length of at least three symbols). In case of 
   //autocomplete search bar this result is not used as no searching is done until user inputs at least three symbols
-  }else if (searchStr.length === 2 || searchStr.length === 2) {
+  }else if (searchStr.length === 1 || searchStr.length === 2) {
     return [];
   }
 

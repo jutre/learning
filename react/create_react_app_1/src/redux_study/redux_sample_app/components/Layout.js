@@ -25,24 +25,11 @@ const Layout = () => {
         <div className="left_column">
           <BooksListTypeMenu/>
         </div>
-        <div className="central_column"> 
-          {//book edit form, book list with couple of books are too short to span till browsers bottom. Thoose divs create content column 
-            //with it's background that spans till end of browser window. That might be achieved with flex layout, but it is needed
-            //to place menu item under level of header but that would not be possible in flex container as absolute flex item
-            //would be placed at the beginning of flex container
-          }
-          <div className="container_for_background_div">
-            <div className="layout_wrapper content_wrapper horizontal_background_container"></div>
-          </div>
+        <div className="central_column">
+          <PageHeader/>
+          <SettingsMenu/>
 
-          
-
-          <div className="layout_wrapper">
-            <PageHeader/>
-            <SettingsMenu/>
-          </div>
-
-          <div className="layout_wrapper content_wrapper">
+          <div className="content_wrapper">
             <DataFetchingProgressIndicator />
 
             <Routes>

@@ -50,7 +50,7 @@ function SettingsForm({closeMenuHandler}){
   
   let dataSourceOptions = [
     {value: "local", label: "Local sample data"},
-    {value: "remote", label: "Data from openlibrary.org"}
+    {value: "remote", label: "Data from gutendex.com"}
   ];
 
   function handleChange(event){
@@ -66,22 +66,23 @@ function SettingsForm({closeMenuHandler}){
       <div className="form_header">
         Choose source for initial app data:
       </div>
+      {/*menu with two data source options, active one is highlighted. Using hidden radio buttons, label is visible
+      and by clicking label appropriate radio button option is activated*/}
       <div className="options_wrapper">
         {(dataSourceOptions).map((entry, index) =>
-          <div  key={index}
-                className={"option" + (selectedRadioButtonValue === entry.value ? " active" : "")}>
+          <div key={index}
+            className={"option" + (selectedRadioButtonValue === entry.value ? " active" : "")}>
 
-            <input  type="radio" 
-                    name="data_source_options" 
-                    id={entry.value} 
-                    value={entry.value} 
-                    checked={selectedRadioButtonValue === entry.value}
-                    onChange={handleChange} />
-                    
+            <input type="radio"
+              name="data_source_options"
+              id={entry.value}
+              value={entry.value}
+              checked={selectedRadioButtonValue === entry.value}
+              onChange={handleChange} />
+
             <label htmlFor={entry.value}>
               {entry.label}
             </label>
-
           </div>
         )}
       </div>

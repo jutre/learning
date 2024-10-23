@@ -13,7 +13,7 @@ class APIClient {
       if(dataSource === "remote"){
         let data;
         //fetch twenty books
-        let url = "https://openlibrary.org/search.json?q=Transistor+circuit&fields=key,title,author_name&page=1&limit=20";
+        let url = "https://gutendex.com/books/";
         try {
           const response = await fetch(url);
           data = await response.json();
@@ -23,13 +23,12 @@ class APIClient {
         } catch (err) {
           return Promise.reject(err.message ? err.message : data)
         }
-        booksArr = data.docs.map((bookInfo, arrIndex) => {
+        booksArr = data.results.map((bookInfo, arrIndex) => {
           return {
-            //use array index as object id field value (one based as application does not allow zero indexes)
-            id: arrIndex + 1, 
+            id: bookInfo.id, 
             title: bookInfo.title,
-            //author field is array, create single string of authors from author names
-            author: bookInfo.author_name.join(","),
+            //author field is array, get only first author if fields has data
+            author: bookInfo.authors[0] ? bookInfo.authors[0].name : "unknown",
             preface: "field for preface"
           }
         })
@@ -49,7 +48,7 @@ class APIClient {
           },
           {
             id: 103,
-            title: "Calculus, part three",
+            title: "Calculus, part two",
             author: "Gilbert Strang",
             preface: "field for preface"
           },

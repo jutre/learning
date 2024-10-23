@@ -175,7 +175,7 @@ export function FormBuilder({
   }
    
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={handleSubmit} className="form_builder">
       {(formFieldsDefinition).map((formElementDef) => {
         let fieldName = formElementDef.name;
 
