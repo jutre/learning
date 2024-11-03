@@ -93,7 +93,9 @@ a{
 }
 
 
-h1, h2, h3{
+h1{
+    font-size: 24px;
+    line-height: 29px;
     margin-bottom: $margin_padding_double;
 }
 
@@ -553,16 +555,17 @@ h1, h2, h3{
     box-shadow: 0 5px 10px rgba(0,0,0,0.2);
     
     
-    .result_item a {
-        display: block;
-        padding: $margin_padding_base;
-        position: relative;
-        //to always be visible over element created using :before pseudo element
-        z-index: 1;
-
+    .result_item{ 
+        a {
+            display: block;
+            padding: $margin_padding_base;
+            position: relative;
+            //to always be visible over element created using :before pseudo element
+            z-index: 1;
+        }
         //last item and :before pseudo element in it must have rounded bottom corner radius to not overlap
         //parent element's rounded bottom corners with border
-        &:last-child {
+        &:last-child a{
             border-radius: 0 0 $elements-border-radius $elements-border-radius;
 
             &:before{

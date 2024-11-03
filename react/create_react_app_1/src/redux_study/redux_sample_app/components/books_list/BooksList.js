@@ -21,7 +21,7 @@ function BooksList({listMode = null}) {
 
   return  (
     <div className="book_list">
-      <h2>{listTitle}</h2>
+      <h1>{listTitle}</h1>
       <div className="add_book_link">
         <Link to={routes.createBookPath}>Add book</Link>
       </div>

@@ -107,7 +107,7 @@ function BookCreating() {
         <Link to={routes.bookListPath}>Back</Link>
       </div>
       
-      <h2>Add book</h2>
+      <h1>Add book</h1>
 
       {/*if data sending has failed, display message*/}
       {sendingToServerStatus === STATUS_REJECTED &&

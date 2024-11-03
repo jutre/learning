@@ -13,7 +13,7 @@ function PageNotFound() {
   let pagePath = location.pathname;
   return  (
     <div className="page_not_found">
-      <h2>Page not found</h2>
+      <h1>Page not found</h1>
       <p>The page with URL "<em>{pagePath}</em>" for was not found.</p>
       
       <p>You can explore books list on <Link to={routes.bookListPath}>books list page</Link> or by using searching form 

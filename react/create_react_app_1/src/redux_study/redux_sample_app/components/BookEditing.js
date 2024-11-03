@@ -163,7 +163,7 @@ function BookEditing() {
         <Link to={backToListUrl}>Back</Link>
       </div>
       <div className="content_section">
-        <h2>Edit book</h2>
+        <h1>Edit book</h1>
 
         {/*if data sending has failed, display message*/}
         {bookUpdatingStatus === STATUS_REJECTED &&
