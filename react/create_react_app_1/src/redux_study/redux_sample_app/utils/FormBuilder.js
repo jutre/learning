@@ -144,13 +144,10 @@ export function FormBuilder({
         } else if (validatRulesObj.name === "minLength") {
           let fieldValueMinLength = parseInt(validatRulesObj.value);
           
-          if(inputFieldValues[fieldName] === undefined || inputFieldValues[fieldName].trim() === "") {
-            errMsgForCurrentField = `this field must not be empty and it's value not shorter than  
-              ${fieldValueMinLength} symbol${ fieldValueMinLength > 1 ? "s" : "" }`;
-
-          }else if(inputFieldValues[fieldName].trim().length < fieldValueMinLength){
-            const defaultErrorMsg = `this field's value must not shorter than 
-                ${fieldValueMinLength} symbol${ fieldValueMinLength > 1 ? "s" : "" }`;
+          if(inputFieldValues[fieldName] === undefined || 
+            inputFieldValues[fieldName].trim().length < fieldValueMinLength) {
+              const defaultErrorMsg =  `field's length must be at least ${fieldValueMinLength} 
+                symbol${ fieldValueMinLength > 1 ? "s" : "" }`;
                 
             //use error message from form definition if it is set
             errMsgForCurrentField = validatRulesObj.message ? validatRulesObj.message : defaultErrorMsg;
